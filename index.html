@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f0e8">
+<title>나의 서재 v2.7.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
+:root{--bg:#f4f0e8;--paper:#fbf9f4;--ink:#2e322f;--muted:#8b8b82;--line:#e2ded5;--accent:#496456;--wood:#7b5a42}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.app{max-width:1460px;margin:auto;min-height:100vh;display:grid;grid-template-columns:240px minmax(0,1fr)}.sidebar{border-right:1px solid var(--line);padding:36px 22px;display:flex;flex-direction:column;gap:42px;min-height:100vh}.brand{font-family:'Noto Serif KR',serif;font-size:21px;letter-spacing:-1px}.brand small{display:block;font:10px 'DM Sans',sans-serif;letter-spacing:2.2px;color:var(--muted);margin-top:11px}.sidegroup{display:grid;gap:8px}.sidelabel{font-size:10px;text-transform:uppercase;color:#aaa59c;letter-spacing:2px;padding:0 14px;margin-bottom:12px}.navitem{border:0;background:transparent;text-align:left;padding:13px 14px;border-radius:9px;color:#777b72;display:flex;gap:12px;align-items:center;font-size:13px}.navitem.active{background:#e6e7dc;color:var(--accent);font-weight:700}.navitem svg{width:17px;height:17px}.sidefoot{margin-top:auto;color:#a3a098;font-size:11px;line-height:1.8;padding:12px 14px}.main{min-width:0;padding:39px clamp(24px,5vw,84px) 65px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px}.breadcrumb{font-size:12px;color:var(--muted)}.topbuttons{display:flex;gap:10px}.btn{padding:11px 16px;background:transparent;border:1px solid var(--line);border-radius:7px;color:var(--ink);font-size:12px;font-weight:600}.btn.primary{background:var(--accent);color:white;border-color:var(--accent)}.btn:hover{filter:brightness(.96)}.eyebrow{font-size:10px;letter-spacing:2.5px;color:#9a9a8b;text-transform:uppercase;margin:0 0 13px}.hero{display:flex;align-items:end;justify-content:space-between;gap:26px;padding:64px 0 34px}.hero h1{font-family:'Noto Serif KR',serif;font-size:clamp(29px,4vw,47px);font-weight:500;letter-spacing:-2px;margin:0 0 14px}.hero p.desc{margin:0;color:#84867e;font-size:13px;line-height:1.8}.count{font-size:13px;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:12px 0 34px}.stat{background:var(--paper);border:1px solid #e9e5dc;border-radius:10px;padding:21px 23px}.stat small{display:block;color:#888b82;font-size:11px;margin-bottom:10px}.stat strong{font-family:'Noto Serif KR',serif;font-size:30px;font-weight:500}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:13px;margin:30px 0 20px;flex-wrap:wrap}.tabs{display:flex;gap:20px;overflow-x:auto}.tab{background:none;border:none;color:#9a9b94;padding:10px 0;font-size:12px;white-space:nowrap;border-bottom:2px solid transparent}.tab.active{border-color:var(--accent);color:var(--accent);font-weight:700}.searchrow{display:flex;gap:8px;align-items:center}.search{border:1px solid var(--line);background:#fbf9f4;padding:12px 14px;width:180px;border-radius:6px;font-size:12px;min-width:0}.sort{border:1px solid var(--line);background:#fbf9f4;border-radius:6px;padding:11px;color:#75796f;font-size:12px}.shelf{position:relative;background:linear-gradient(90deg,#e8dfce,#f0e9dc 10%,#e9e1d3 95%,#e0d5c3);border:14px solid #8b684d;border-bottom-width:20px;border-radius:3px;min-height:355px;padding:35px 25px 0;box-shadow:inset 0 7px 12px #51371c18,0 20px 35px #40352213}.shelf:after{content:"";position:absolute;height:16px;bottom:-7px;left:-13px;right:-13px;background:linear-gradient(#ab8768,#775238);box-shadow:0 5px 6px #4e39202a}.books{display:flex;align-items:flex-end;gap:5px;min-height:270px;flex-wrap:wrap;position:relative;z-index:1}.spine{width:clamp(39px,4vw,56px);height:var(--height);max-height:255px;border:0;border-radius:3px 5px 1px 1px;display:flex;align-items:center;justify-content:space-between;flex-direction:column;padding:13px 7px;background:var(--color);color:#f8ebcf;box-shadow:inset 3px 0 3px #ffffff2d,inset -4px 0 3px #130e1328,3px 2px 4px #261b1933;transition:transform .17s,box-shadow .17s;position:relative}.spine:hover{transform:translateY(-14px);box-shadow:inset 3px 0 3px #ffffff2d,4px 6px 9px #261b1938}.spine .symbol{font-size:11px;opacity:.7}.spine .title{writing-mode:vertical-rl;font:500 12px 'Noto Serif KR',serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-height:145px;letter-spacing:1.5px}.spine .by{writing-mode:vertical-rl;font-size:9px;opacity:.7;overflow:hidden;white-space:nowrap;max-height:56px}.empty{width:100%;align-self:center;text-align:center;padding:50px 5px;color:#978e7f}.empty .icon{font:36px 'Noto Serif KR',serif;color:#aa947b}.empty h3{font-family:'Noto Serif KR',serif;color:#574c40;font-weight:500}.empty p{font-size:12px;line-height:1.7}.sectionbottom{display:flex;align-items:center;justify-content:space-between;padding-top:19px;color:#aaa69b;font-size:11px}.hint{font-size:11px;color:#9b978d}.overlay{position:fixed;inset:0;z-index:10;background:#171c19a3;display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto}.modal{position:relative;width:min(100%,530px);max-height:calc(100vh - 35px);overflow:auto;background:var(--paper);border-radius:12px;padding:34px;box-shadow:0 30px 80px #151d152c}.modal.wide{width:min(100%,730px)}.close{position:absolute;right:22px;top:21px;border:0;background:transparent;font-size:24px;color:#73766d}.modal h2{font:500 27px 'Noto Serif KR',serif;margin:0 0 25px}.field{display:flex;flex-direction:column;gap:8px;margin-bottom:17px}.field label{font-size:12px;color:#666d62;font-weight:600}.field input,.field select,.field textarea{border:1px solid #dddcd2;background:#fff;border-radius:7px;padding:12px;color:var(--ink);width:100%;font-size:13px}.field textarea{min-height:95px;resize:vertical;line-height:1.6}.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:24px}.previewdetail{display:grid;grid-template-columns:155px 1fr;gap:27px;margin-bottom:26px}.cover{min-height:230px;padding:20px;color:#f8ebd1;background:var(--color);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;box-shadow:6px 8px 14px #2a23232d;border-radius:2px 6px 6px 2px}.cover strong{font:500 20px 'Noto Serif KR',serif;word-break:keep-all}.cover small{font-size:11px;opacity:.8}.detailtitle{font:500 27px 'Noto Serif KR',serif;margin:0 0 9px}.muted{color:#8e9187;font-size:12px;line-height:1.7}.rating{display:flex;gap:6px}.star{border:0;background:none;font-size:25px;color:#d1cec4;padding:0}.star.selected{color:#bd965e}.detailsub{font-size:11px;color:#81877a;margin:18px 0 9px}.detailnotes{border-top:1px solid var(--line);padding-top:19px;line-height:1.8;font-size:13px;white-space:pre-wrap;color:#596258}.link{color:var(--accent);font-size:12px;text-decoration:underline;text-underline-offset:3px}.danger{color:#ab6661}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);z-index:30;background:#36483d;color:white;padding:12px 18px;border-radius:7px;font-size:12px;box-shadow:0 8px 22px #0002}.privacy{font-size:11px;color:#98998e;line-height:1.8;margin-top:18px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.mobilebrand{display:none}.analysis{background:#fbf9f4;border:1px solid var(--line);border-radius:10px;padding:28px;line-height:1.9}.analysis h3{font:500 22px 'Noto Serif KR',serif;margin:0 0 15px}.analysis p{font-size:13px;color:#7d8178}.hidden{display:none!important}@media(max-width:940px){.app{grid-template-columns:1fr}.sidebar{display:none}.mobilebrand{display:block;font:600 16px 'Noto Serif KR',serif}.main{padding:26px 23px 50px}.hero{padding-top:49px}}@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.hero{align-items:start}.hero h1{font-size:32px}.searchrow{width:100%}.search{flex:1}.toolbar{align-items:stretch}.shelf{padding:22px 11px 0;border-width:9px;border-bottom-width:17px}.spine{width:38px}.fieldgrid,.previewdetail{grid-template-columns:1fr}.previewdetail{justify-items:start}.cover{width:135px;min-height:190px}.modal{padding:25px}.topbuttons{gap:6px}.btn{padding:10px 11px}.breadcrumb{display:none}}
+
+/* v1.1 improvements */
+.sidebar .brand{font-weight:600}.shelf{min-height:0;padding:0;border:0;background:none;box-shadow:none;display:grid;gap:24px}.shelf-tier{position:relative;border:12px solid #876348;border-bottom:19px solid #805b3f;border-radius:3px;background:linear-gradient(90deg,#e8dfce,#f4ebdf 45%,#e9dfce);box-shadow:inset 0 7px 12px #51371c18,0 13px 21px #40352215;padding:22px 18px 0;min-width:0}.shelf-tier:after{content:"";position:absolute;height:14px;bottom:-7px;left:-10px;right:-10px;background:linear-gradient(#b18c6c,#765138);box-shadow:0 5px 6px #4e39202a}.shelf-tier .books{min-height:240px;gap:5px;flex-wrap:nowrap;overflow:hidden;align-items:flex-end}.spine{flex:0 0 auto}.mobile-nav{display:none}.edition-info{background:#f1eee6;border:1px solid var(--line);border-radius:8px;padding:13px 16px;margin:12px 0}.edition-info p{margin:5px 0;font-size:12px;color:#676b62}.details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.details-grid .detailsub{margin:0 0 4px}.detail-info{padding:12px;background:#f3f0e9;border-radius:8px}.detail-info strong{font-size:13px;font-weight:500}.detailnotes{max-height:270px;overflow:auto}.aisummary{border-top:1px solid var(--line);padding-top:17px;margin:0 0 4px;line-height:1.9;font-size:14px;color:var(--ink);word-break:keep-all}.booksummary.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;max-height:none}.bookquote{margin:16px 0 4px;padding:14px 18px;border-left:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);border-radius:0 8px 8px 0}.bookquote p{margin:0;font-family:'Noto Serif KR',serif;font-size:15px;line-height:1.8;color:var(--ink);word-break:keep-all}.bookquote p::before{content:'“';color:var(--accent);margin-right:2px}.bookquote p::after{content:'”';color:var(--accent);margin-left:2px}.bookquote{margin:12px 0 0}.motifidea{display:block;font-size:11px;color:var(--muted);margin-left:4px}.motif-preview{flex-wrap:wrap}.motifline{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink);margin:0 0 6px}.motifmini{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;color:var(--accent);flex:none}.motifmini svg{width:26px;height:26px}.motifline .link{margin-left:auto;background:none;border:0;padding:0;cursor:pointer}.quotemeta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:var(--muted)}.quotemeta span{letter-spacing:.02em}.quotedel{margin-left:auto;background:none;border:0;padding:0;font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}.quotedel:hover{color:var(--accent)}.quoteform{margin:12px 0 4px;display:grid;gap:8px}.quoteform textarea{min-height:64px;font-size:13px;line-height:1.7}.quoteformrow{display:flex;gap:8px}.quoteformrow input{flex:1;min-width:0}.summaryactions{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 2px}.summaryactions .link{background:none;border:0;padding:0;cursor:pointer}.tagbar{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 20px}.tagrow{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 6px}.tagchip{border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;padding:7px 13px;font-size:11px;cursor:pointer;line-height:1}.tagchip:hover{border-color:var(--accent);color:var(--accent)}.tagchip.active{border-color:var(--accent);color:var(--accent);font-weight:700}.tagchip span{opacity:.55;margin-left:5px}.booksummary{border-top:1px solid var(--line);padding-top:17px;margin-bottom:4px;line-height:1.85;font-size:13px;color:var(--muted);max-height:150px;overflow:auto;white-space:pre-wrap;word-break:keep-all}.field textarea.summaryfield{min-height:72px;font-size:12px;line-height:1.7}.danger-panel{border-top:1px solid var(--line);padding-top:18px;margin-top:19px}.message{font-size:12px;line-height:1.7;color:#827e75}.spine-status{font-size:8px;opacity:.85}.shelf-label{font-size:10px;letter-spacing:1px;color:#a29a8e;margin:0 0 9px}.modal .actions.row{align-items:center}.metadata-subtitle{margin:0 0 20px;font-size:12px;color:var(--muted)}.btn:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:940px){.mobile-nav{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;bottom:0;left:0;right:0;z-index:8;background:#fbf9f4f5;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 8px max(8px,env(safe-area-inset-bottom))}.mobile-nav button{display:grid;justify-items:center;gap:3px;border:0;background:none;color:#898c82;padding:9px 4px;font-size:11px}.mobile-nav button.active{color:var(--accent);font-weight:700}.mobile-nav .navicon{font-size:19px}.main{padding-bottom:115px}.sidebar{display:none}}
+@media(max-width:620px){.shelf{gap:19px}.shelf-tier{border-width:8px;border-bottom-width:15px;padding:17px 8px 0}.shelf-tier .books{min-height:221px;gap:3px}.spine{width:33px;padding:10px 4px}.spine .title{font-size:10px}.spine .by{font-size:8px}.details-grid{grid-template-columns:1fr}.modal .actions.row{flex-wrap:wrap}.count{display:none}}
+
+</style>
+<style id="themes-and-api">
+:root[data-theme="forest"]{--bg:#e7ece5;--paper:#f6f8f2;--ink:#25352d;--muted:#6d8273;--line:#cfdbce;--accent:#356c54;--wood:#547560}
+:root[data-theme="night"]{--bg:#202725;--paper:#303936;--ink:#ecede5;--muted:#b3bcb2;--line:#505b53;--accent:#9cba9d;--wood:#655040;color-scheme:dark}
+:root[data-theme="rose"]{--bg:#f4e9e5;--paper:#fff8f3;--ink:#483c3b;--muted:#957d79;--line:#e5d3cf;--accent:#a16d76;--wood:#9a6a58}
+/* Keep form fields and controls readable in each appearance. */
+body{transition:background-color .18s,color .18s}.sidebar{border-color:var(--line)}.navitem{color:var(--muted)}.navitem.active{background:var(--line);color:var(--accent)}.stat,.analysis,.modal,.mobile-nav{background:var(--paper);border-color:var(--line);color:var(--ink)}.stat small,.muted,.analysis p,.privacy,.hint,.count,.breadcrumb,.eyebrow,.detailsub{color:var(--muted)}.btn,.search,.sort,.field input,.field textarea,.field select{color:var(--ink);border-color:var(--line);background:var(--paper)}.btn.primary{background:var(--accent);color:var(--paper);border-color:var(--accent)}.field input,.field textarea,.field select,.search,.sort{background:var(--paper)}.tab.active{color:var(--accent);border-color:var(--accent)}.tab{color:var(--muted)}.detailnotes{color:var(--ink);border-color:var(--line)}.edition-info,.detail-info{border-color:var(--line)}.shelf-label,.metadata-subtitle{color:var(--muted)}.shelf-tier{border-color:var(--wood);background:linear-gradient(90deg,var(--line),var(--paper) 15%,var(--line) 100%)}
+.theme-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:18px 0}.theme-option{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:12px;border-radius:9px;text-align:left;cursor:pointer;font-size:12px}.theme-option.chosen{outline:2px solid var(--accent);outline-offset:1px}.theme-swatch{width:42px;height:32px;border-radius:6px;flex-shrink:0;background:linear-gradient(125deg,#f4f0e8 55%,#7b5a42 55%)}.theme-swatch.forest{background:linear-gradient(125deg,#e7ece5 55%,#356c54 55%)}.theme-swatch.night{background:linear-gradient(125deg,#202725 55%,#9cba9d 55%)}.theme-swatch.rose{background:linear-gradient(125deg,#f4e9e5 55%,#a16d76 55%)}.setting-divider{border:0;border-top:1px solid var(--line);margin:28px 0}
+.api-search{margin-bottom:20px}.api-search label{font-size:12px;font-weight:600;display:block;margin-bottom:9px}.api-search-row{display:flex;gap:8px}.api-search-row input{min-width:0;flex:1;border:1px solid var(--line);border-radius:7px;padding:12px;background:var(--paper);color:var(--ink)}.api-search .muted{font-size:11px;line-height:1.6}.api-results{display:grid;gap:7px;max-height:270px;overflow:auto;margin:12px 0}.api-result{display:flex;align-items:center;gap:12px;text-align:left;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;width:100%}.api-result:hover{border-color:var(--accent)}.api-result img,.api-no-cover{width:43px;height:60px;object-fit:contain;flex-shrink:0;border-radius:3px;background:var(--line)}.api-no-cover{display:grid;place-items:center;font-size:11px}.api-result-copy{display:grid;gap:4px;min-width:0;flex:1}.api-result-copy strong{font-size:12px;white-space:normal}.api-result-copy small{color:var(--muted);font-size:10px}.api-result-select{color:var(--accent);font-size:11px}.api-error{color:#bd5b52;font-size:12px}.api-success{color:var(--accent);font-size:12px}.photo-cover{padding:0!important;overflow:hidden;position:relative}.photo-cover img{width:100%;height:100%;object-fit:cover}.cover-fallback{width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:15px;padding:12px;background:var(--color)}
+@media(max-width:620px){.theme-choices{grid-template-columns:1fr}.api-search-row .btn{white-space:nowrap}}
+/* v1.2.4 */
+.shelf-tier .books{overflow-x:clip;overflow-y:visible}
+.edition-info,.detail-info{background:var(--bg)}
+.empty,.empty p{color:var(--muted)}.empty h3{color:var(--ink)}
+:root[data-theme="night"] .field label,:root[data-theme="night"] .edition-info p,:root[data-theme="night"] .hero p.desc,:root[data-theme="night"] .sidefoot,:root[data-theme="night"] .message,:root[data-theme="night"] .sidelabel,:root[data-theme="night"] .hint{color:var(--muted)}
+.banner{margin:0 0 18px;padding:14px 16px;border:1px solid #c98b84;background:var(--paper);color:var(--ink);border-radius:8px;font-size:12px;line-height:1.7}.banner strong{color:#ab6661}.banner .actions{margin-top:10px;justify-content:flex-start}
+.api-work-icon{width:43px;height:60px;display:grid;place-items:center;background:var(--line);border-radius:4px;font-size:23px;flex-shrink:0;color:var(--accent)}
+.api-level{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}.api-heading{font-size:12px;font-weight:700;margin:14px 0 5px}.api-disclaimer{font-size:11px;line-height:1.65;margin-top:8px}.api-results{max-height:340px}
+
+/* v1.3.0: spine personalization and legible titles */
+.spine .title{white-space:normal;overflow:hidden;text-overflow:clip;max-height:172px;max-width:100%;height:auto;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere;text-align:center;font-size:11px;}
+.spine .title.long-title{font-size:9px;letter-spacing:0;line-height:1.3;}
+.spine-motif{height:28px;min-height:28px;display:grid;place-items:center;opacity:.83;color:#f5e5c9;}
+.spine-motif svg{width:22px;height:22px;}
+.color-editor{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.color-editor input[type=color]{width:58px;height:42px;padding:3px;cursor:pointer}.palette{display:flex;gap:6px;flex-wrap:wrap}.palette-color{width:23px;height:23px;background:var(--swatch);border:1px solid #8887;border-radius:50%;padding:0;}
+.motif-preview{display:flex;min-height:46px;min-width:46px;align-items:center;justify-content:center;gap:8px;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:6px}.motif-preview svg{width:34px;height:34px}.motif-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.cover-motif{display:grid;place-items:center;min-height:46px}.cover-motif svg{width:46px;height:46px}
+@media(max-width:620px){.spine .title{font-size:10px;max-height:158px}.spine .title.long-title{font-size:8px}.spine-motif{height:25px;min-height:25px}.spine-motif svg{width:18px;height:18px}}
+/* v2.3.0: 선반 배치는 실제 폭을 재서 나눕니다. 그래도 어긋나면 책을 잘라 숨기지 않고 같은 선반 안에서 다음 줄로 내립니다(정상일 때는 드러나지 않는 안전망). */
+.shelf-tier .books{flex-wrap:wrap;overflow:visible;row-gap:16px}
+/* v2.4.0: 긴 제목 — 제목 칸은 상징과 저자 사이에 남는 높이를 모두 씁니다. 글자 크기·간격은 제목 길이에 맞춰 JS가 정합니다. */
+.spine .title{flex:1 1 0;min-height:0;max-height:none;text-overflow:clip;margin:4px 0}
+/* 저자는 보조 정보라 제목 자리를 조금 더 내줍니다(이전 56px). */
+.spine .by{max-height:40px}
+/* v2.5.0 절충형 책등 — 공통 틀(글꼴·배치·상징 위치·상징 아래 구분선 하나) 안에서 두께·높이·색·음영만 책마다 조금씩 다릅니다. */
+:root{--spine-min:24px;--spine-max:62px;--div-top:44px}
+@media(max-width:940px){:root{--spine-min:24px;--spine-max:58px}}
+@media(max-width:620px){:root{--spine-min:22px;--spine-max:46px;--div-top:38px}}
+.spine{width:var(--w,clamp(39px,4vw,56px));background-color:var(--color);
+ background-image:
+  linear-gradient(rgb(248 235 207/.2),rgb(248 235 207/.2)),
+  linear-gradient(90deg,rgb(255 255 255/var(--sheen,.06)),transparent 24%,transparent 76%,rgb(0 0 0/calc(var(--sheen,.06)*1.5))),
+  repeating-linear-gradient(180deg,rgb(255 255 255/.014) 0 1px,transparent 1px 3px);
+ background-size:calc(100% - 12px) 1px,100% 100%,100% 100%;
+ background-position:center top var(--div-top),0 0,0 0;
+ background-repeat:no-repeat,no-repeat,repeat}
+@media(max-width:620px){.spine{width:var(--w,33px)}}
+/* v2.5.1: 얇은 책에서도 제목·상징이 들어가도록 좌우 여백을 줄이고, 상징은 책 폭에 맞춰 줄어듭니다. */
+.spine{padding-left:4px;padding-right:4px}
+.spine-motif svg{width:min(22px,calc(var(--w,40px) - 8px));height:auto}
+@media(max-width:620px){.spine{padding-left:3px;padding-right:3px}.spine-motif svg{width:min(18px,calc(var(--w,33px) - 6px))}}
+/* v2.6.0 책 꺼내보기 — 짧고 절제된 움직임만 씁니다. */
+.spine{transition:transform .18s ease-out,box-shadow .18s ease-out;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.spine:hover{transform:none;box-shadow:inset 3px 0 3px #ffffff2d,inset -4px 0 3px #130e1328,3px 2px 4px #261b1933}
+@media(hover:hover){.spine:hover{transform:translateY(-8px);box-shadow:inset 3px 0 3px #ffffff2d,4px 8px 10px #261b1938}}
+.spine:focus-visible{transform:translateY(-8px);outline:2px solid var(--accent);outline-offset:3px}
+.spine.pulling{transform:translateY(-18px) scale(1.04);z-index:2;box-shadow:inset 3px 0 3px #ffffff2d,6px 14px 18px #261b1945}
+.overlay.enter{animation:libFade .18s ease-out both}
+.overlay.enter .modal{animation:libRise .22s cubic-bezier(.2,.7,.3,1) both}
+.overlay.enter .previewdetail>.cover{animation:libCover .3s .04s cubic-bezier(.2,.7,.3,1) both}
+@keyframes libFade{from{opacity:0}to{opacity:1}}
+@keyframes libRise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes libCover{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+/* ---------- v2.7.0 책등 디자인 체계 ---------- */
+:root{--div-bot:30px;--gold:rgb(214 191 134/.62);--gold-strong:#d6bf86}
+@media(max-width:620px){:root{--div-bot:24px}}
+.spine{--line:rgb(248 235 207/.2);--sheen-img:linear-gradient(90deg,rgb(255 255 255/var(--sheen,.06)),transparent 24%,transparent 76%,rgb(0 0 0/calc(var(--sheen,.06)*1.5)));--paper:repeating-linear-gradient(180deg,rgb(255 255 255/.014) 0 1px,transparent 1px 3px)}
+.spine.light{color:#2e2a25;--line:rgb(46 42 37/.22)}
+.spine.light .spine-motif{color:#3a342d}
+.cover.light{color:#2e2a25}
+/* A. Classic Serif — 위아래 얇은 장식선, 세리프, 대칭 */
+.spine.t-a{background-image:linear-gradient(var(--line),var(--line)),linear-gradient(var(--line),var(--line)),var(--sheen-img),var(--paper);background-size:calc(100% - 12px) 1px,calc(100% - 12px) 1px,100% 100%,100% 100%;background-position:center top var(--div-top),center bottom var(--div-bot),0 0,0 0;background-repeat:no-repeat,no-repeat,no-repeat,repeat}
+/* B. Minimal Label — 장식 없음, 작은 산세리프 제목을 위쪽에, 작은 상징 */
+.spine.t-b{background-image:var(--sheen-img);background-size:100% 100%;background-repeat:no-repeat}
+.spine.t-b .title{font-family:'DM Sans',system-ui,sans-serif;font-weight:500;text-align:start;margin-top:10px}
+.spine.t-b .spine-motif{opacity:.55}.spine.t-b .spine-motif svg{width:min(14px,calc(var(--w,40px) - 10px))}
+/* C. Framed Edition — 샴페인빛 이중 프레임 */
+.spine.t-c{background-image:var(--sheen-img),var(--paper);background-size:100% 100%,100% 100%;background-repeat:no-repeat,repeat;padding-left:6px;padding-right:6px}
+.spine.t-c::before{content:'';position:absolute;inset:7px 3px;border:1px solid var(--gold);box-shadow:inset 0 0 0 2px var(--color),inset 0 0 0 3px rgb(214 191 134/.3);border-radius:2px;pointer-events:none}
+.spine.t-c.light::before{border-color:rgb(120 96 52/.5);box-shadow:inset 0 0 0 2px var(--color),inset 0 0 0 3px rgb(120 96 52/.22)}
+/* D. Emblem — 큰 상징, 상징과 제목 사이 여백, 장식선 없음 */
+.spine.t-d{background-image:var(--sheen-img),var(--paper);background-size:100% 100%,100% 100%;background-repeat:no-repeat,repeat}
+.spine.t-d .spine-motif{height:46px;min-height:46px}.spine.t-d .spine-motif svg{width:min(30px,calc(var(--w,40px) - 8px))}
+.spine.t-d .title{margin-top:12px}
+/* E. Band — 위쪽 띠 구획(같은 계열, 명도 차이), 산세리프 */
+.spine.t-e{--band:color-mix(in srgb,var(--color) 76%,#000);--band-h:38px;background-image:linear-gradient(var(--line),var(--line)),linear-gradient(var(--line),var(--line)),linear-gradient(var(--band),var(--band)),var(--sheen-img),var(--paper);background-size:100% 1px,100% 1px,100% var(--band-h),100% 100%,100% 100%;background-position:0 7px,0 calc(7px + var(--band-h)),0 7px,0 0,0 0;background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,repeat}
+.spine.t-e.light{--band:color-mix(in srgb,var(--color) 84%,#000)}
+.spine.t-e .title{font-family:'DM Sans',system-ui,sans-serif;font-weight:500;margin-top:8px}
+@media(max-width:620px){.spine.t-e{--band-h:33px}}
+/* F. Heritage — 천 결, 금박 이중선 위아래, 깊은 음영 */
+.spine.t-f{background-image:linear-gradient(var(--gold),var(--gold)),linear-gradient(var(--gold),var(--gold)),linear-gradient(var(--gold),var(--gold)),linear-gradient(var(--gold),var(--gold)),var(--sheen-img),repeating-linear-gradient(45deg,rgb(255 255 255/.03) 0 1px,transparent 1px 3px),repeating-linear-gradient(-45deg,rgb(0 0 0/.06) 0 1px,transparent 1px 3px);background-size:calc(100% - 8px) 1px,calc(100% - 8px) 1px,calc(100% - 8px) 1px,calc(100% - 8px) 1px,100% 100%,auto,auto;background-position:center top 8px,center top 11px,center bottom 8px,center bottom 11px,0 0,0 0,0 0;background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat;box-shadow:inset 3px 0 4px #ffffff22,inset -5px 0 6px #00000048,3px 2px 5px #261b1940}
+.spine.t-f .spine-motif{color:var(--gold-strong);opacity:.9}
+/* 인생책 — 작은 리본, 금박 상징, 얇은 이중선, 조금 더 깊은 음영. 반짝임·발광 없음 */
+.spine.life{box-shadow:inset 3px 0 4px #ffffff26,inset -5px 0 7px #0000004d,4px 3px 7px #261b1952}
+.spine.life .spine-motif{color:var(--gold-strong);opacity:1;transition:color .3s ease,opacity .3s ease}
+.spine.life::after{content:'';position:absolute;left:5px;right:5px;top:calc(var(--div-top) - 4px);height:3px;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);pointer-events:none}
+.spine.life.t-d::after{top:56px}
+.spine.life.t-e::after{top:calc(7px + var(--band-h) + 4px)}
+.spine.life.light .spine-motif{color:#7a5d2c}
+.spine .ribbon{position:absolute;top:0;right:5px;width:6px;height:15px;background:linear-gradient(#c9ad72,#a88a52);clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%);box-shadow:0 1px 1px #0003;pointer-events:none}
+.spine.light .ribbon{background:linear-gradient(#7a2f35,#5e2429)}
+@media(hover:hover){.spine.life:hover .spine-motif{color:#ead7a6}}
+.spine.life:focus-visible .spine-motif{color:#ead7a6}
+.lifemark{font-size:10px;letter-spacing:2px;color:#a2864f;margin:0 0 8px}
+.lifecheck{display:flex;align-items:center;gap:8px;font-weight:400!important;font-size:13px;padding:11px 0}
+.lifecheck input{width:auto}
+.color-editor .muted{font-size:11px}
+.palette{margin-top:10px}
+@media(prefers-reduced-motion:reduce){.spine,.spine:hover,.spine.pulling,.spine:focus-visible{transition:none;transform:none}.overlay.enter,.overlay.enter .modal,.overlay.enter .previewdetail>.cover{animation:none}}
+.spine-tip{position:fixed;z-index:20;left:0;top:0;max-width:min(280px,calc(100vw - 24px));padding:9px 12px;border-radius:7px;background:var(--ink);color:var(--paper);box-shadow:0 8px 22px #0003;pointer-events:none;word-break:keep-all;line-height:1.5}
+.spine-tip strong{display:block;font:500 13px 'Noto Serif KR',serif}
+.spine-tip small{display:block;font-size:11px;opacity:.78;margin-top:2px}
+</style>
+</head>
+<body><div id="fatal-error" hidden style="margin:12px;padding:12px;border:1px solid #b55;color:#9a2828;background:#fff4f2;border-radius:8px"></div><div id="root"></div>
+<script>
+(()=>{
+'use strict';
+const THEME_KEY='my-library-theme-v1', KEY='mnemosyne-library-v1', statuses={want:'읽고 싶은 책',reading:'읽는 중',done:'완독'}, colors=['#2f4a3d','#38503c','#44533f','#5e6e55','#6c7a5e','#a4ae95','#5a2e33','#6b3438','#6e3f36','#8c5545','#9a6650','#c49c88','#26344a','#2f3d4f','#384656','#56657a','#66758a','#a6b0bd','#4a3527','#5a4130','#6a4d36','#8a6a4c','#9c7f5e','#d3c2a2','#3f2d3f','#4d3647','#574250','#786273','#857870','#b9a9b1'];
+let apiResults=[],apiPending=false,apiError='',apiNote='',theme='ivory',apiStage='works',apiActiveWork='',apiQueryText='';
+const apiCache=new Map();let apiCooldownUntil=0;const API_CACHE_MS=30*60*1000;
+function getCachedSearch(key){const item=apiCache.get(key);if(item&&Date.now()-item.time<API_CACHE_MS)return item.books;apiCache.delete(key);return null}
+function cacheSearch(key,items){if(apiCache.size>=30)apiCache.delete(apiCache.keys().next().value);apiCache.set(key,{time:Date.now(),books:items})}
+let books=[],view='library',filter='all',search='',sort='new',dialog=null,editing=null,importCandidate=null,tagFilter='';
+const $=s=>document.querySelector(s);
+window.addEventListener('error',e=>{const el=document.getElementById('fatal-error');if(el){el.hidden=false;el.textContent='앱 실행 오류: '+(e.message||'알 수 없는 오류')+' — 새로고침 후에도 반복되면 이 메시지를 알려주세요.'}});
+window.addEventListener('unhandledrejection',e=>{const el=document.getElementById('fatal-error');if(el){el.hidden=false;el.textContent='비동기 처리 오류: '+(e.reason?.message||String(e.reason))}});
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const validUrl=u=>{if(!u)return true;try{const x=new URL(u);return x.protocol==='https:'&&(['notion.so','www.notion.so'].includes(x.hostname)||x.hostname.endsWith('.notion.site'))}catch{return false}};
+const safeColor=c=>typeof c==='string'&&/^#[0-9a-fA-F]{6}$/.test(c)?c:colors[0];
+const safeCover=u=>{try{let x=new URL(u);return x.protocol==='https:'&&['books.google.com','books.google.co.kr','books.googleusercontent.com','covers.openlibrary.org'].includes(x.hostname)||x.protocol==='https:'&&(x.hostname.endsWith('.googleusercontent.com')||x.hostname.endsWith('.kakaocdn.net')||x.hostname.endsWith('.daumcdn.net'))?x.href:''}catch{return ''}};
+const themeNames={ivory:'아이보리 · 월넛',forest:'세이지 · 포레스트',night:'잉크 · 다크',rose:'로즈 · 샌드'};
+function setTheme(t){if(!themeNames[t])return;theme=t;document.documentElement.dataset.theme=t;try{localStorage.setItem(THEME_KEY,t)}catch{flash('테마 설정을 저장하지 못했습니다.')}}
+function initTheme(){try{const t=localStorage.getItem(THEME_KEY);if(themeNames[t])theme=t}catch{}document.documentElement.dataset.theme=theme}
+const coverHTML=(b,cls='cover')=>safeCover(b.coverUrl)?`<div class="${cls} photo-cover" style="--color:${spineColorOf(b)}"><img src="${esc(safeCover(b.coverUrl))}" alt="${esc(b.title)} 표지" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="cover-fallback" style="display:none"><strong>${esc(b.title)}</strong><small>${esc(b.author||'작가 미상')}</small></div></div>`:`<div class="${cls}${isLightColor(spineColorOf(b))?' light':''}" style="--color:${spineColorOf(b)}"><div class="cover-motif">${spineMotif(b,46)||'✦'}</div><strong>${esc(b.title)}</strong><small>${esc(b.author||'작가 미상')}</small><div>MY LIBRARY</div></div>`;
+
+const id=()=>globalThis.crypto?.randomUUID?.()||('book-'+Date.now()+'-'+Math.random().toString(36).slice(2));
+const cleanDate=v=>typeof v==='string'&&!Number.isNaN(Date.parse(v))?v:new Date().toISOString();
+// 장르 태그는 제목·소개·번역자 정보로 추정합니다. 나중에 태그 단위 추천을 붙일 때 이 결과를 그대로 쓰면 됩니다.
+const GENRE_RULES=[
+ ['SF',['sf','공상과학','우주선','외계','로봇','안드로이드','인공지능','사이보그','디스토피아','가상현실','타임머신','시간여행']],
+ ['추리·미스터리',['추리','미스터리','탐정','살인','범인','연쇄','사건의 진상','수사','트릭','형사']],
+ ['스릴러',['스릴러','서스펜스','쫓기','음모','납치','복수']],
+ ['판타지',['판타지','마법','마법사','마녀','드래곤','용과','요정','기사단','이세계']],
+ ['공포',['공포','호러','괴담','유령','저주','귀신']],
+ ['로맨스',['로맨스','연애','사랑에 빠','첫사랑','연인','애틋']],
+ ['역사',['역사','조선','고려','근대사','왕조','전쟁의','식민','사료','고대']],
+ ['고전',['고전','세계문학','명작','19세기','18세기','불후의']],
+ ['성장',['성장소설','청춘','소년','소녀','사춘기','어른이 되','자아를 찾']],
+ ['가족',['가족','어머니','아버지','자매','형제','할머니','3대']],
+ ['철학',['철학','존재론','윤리','형이상학','사유의','인식론','실존','니체','소크라테스']],
+ ['심리',['심리학','무의식','트라우마','애착','자존감','심리적']],
+ ['과학',['과학','물리학','양자','진화','유전자','뇌과학','우주의 기원','생물학','화학']],
+ ['경제·경영',['경제','경영','투자','주식','마케팅','기업','자본주의','금융','스타트업']],
+ ['자기계발',['자기계발','습관','성공하는','동기부여','목표 달성','생산성','시간 관리']],
+ ['사회',['사회학','정치','불평등','계급','노동','페미니즘','차별','공동체','빈곤']],
+ ['에세이',['에세이','산문집','산문','기록한 글','일상의 기록']],
+ ['시',['시집','시인의','詩','연작시']],
+ ['예술',['미술','회화','건축','음악가','영화사','디자인','사진집']],
+ ['여행',['여행기','기행','순례','배낭','여정을']],
+ ['자연',['자연','생태','숲과','동물의','식물','바다의','환경']],
+ ['전기·회고',['자서전','회고록','평전','일대기','인생을 돌아']]
+];
+function autoTags(b){
+ const text=`${b.workTitle||''} ${b.title||''} ${b.summary||''}`.normalize('NFKC').toLocaleLowerCase();
+ const hits=[];
+ if(text.trim()){
+  for(const [tag,words] of GENRE_RULES){
+   // 긴 낱말일수록 그 장르에만 쓰이는 말이라 가중치를 더 줍니다.
+   let n=0;for(const w of words)if(text.includes(w))n+=w.length>=3?2:1;
+   if(n)hits.push([tag,n]);
+  }
+ }
+ hits.sort((a,b)=>b[1]-a[1]);
+ // 특징적인 낱말이 걸린 장르만 남기고, 한 낱말만 스친 장르는 버립니다.
+ let out=hits.filter(x=>x[1]>=3).slice(0,2).map(x=>x[0]);
+ if(!out.length&&hits.length)out=[hits[0][0]];
+ if(String(b.translator||'').trim()&&!out.includes('번역서'))out.push('번역서');
+ return out;
+}
+// 사용자가 직접 적은 태그가 먼저, 자동 분석 태그가 뒤에 붙습니다.
+function tagsOf(b){
+ const out=[];
+ const ai=Array.isArray(b.aiTags)&&b.aiTags.length?[...b.aiTags,...(String(b.translator||'').trim()?['번역서']:[])]:autoTags(b);
+ for(const t of [...(Array.isArray(b.tags)?b.tags:[]),...ai]){
+  const v=String(t||'').trim();
+  if(v&&!out.includes(v))out.push(v);
+ }
+ return out.slice(0,10);
+}
+const MOTIF_TAGS=new Set(['path','circle','ellipse','line','polyline','polygon','rect']);
+const MOTIF_ATTRS=new Set(['d','cx','cy','r','rx','ry','x','y','x1','y1','x2','y2','width','height','points','transform','stroke-width','stroke-linecap','stroke-linejoin','opacity']);
+// AI가 돌려준 마크업은 신뢰하지 않습니다. 허용된 도형과 속성만 남기고 전부 버립니다.
+// 같은 그림을 매번 다시 검사하지 않도록 결과를 기억합니다(입력이 같으면 결과도 같습니다).
+const motifCleanCache=new Map();
+function sanitizeMotifSvg(raw){
+ const key=String(raw||'');
+ if(motifCleanCache.has(key))return motifCleanCache.get(key);
+ const out=sanitizeMotifSvgRaw(key);
+ if(motifCleanCache.size>2000)motifCleanCache.clear();
+ motifCleanCache.set(key,out);
+ return out;
+}
+function sanitizeMotifSvgRaw(raw){
+ const text=String(raw||'').slice(0,4000).trim();
+ if(!text)return '';
+ if(typeof DOMParser==='undefined')return '';
+ if(/<\s*\/?\s*(script|style|foreignobject|image|use|a|animate|animatetransform|set|handler|iframe|audio|video|text|tspan)\b/i.test(text))return '';
+ if(/\son\w+\s*=/i.test(text))return '';
+ const collect=doc=>{
+  const out=[];
+  for(const el of Array.from(doc.querySelectorAll('*'))){
+   const tag=(el.tagName||'').toLowerCase();
+   if(!MOTIF_TAGS.has(tag))continue;
+   const attrs=[];
+   for(const a of Array.from(el.attributes||[])){
+    const name=(a.name||'').toLowerCase();
+    if(!MOTIF_ATTRS.has(name))continue;
+    const v=String(a.value||'').slice(0,900);
+    if(!v||/[<>"]/.test(v)||/url\(|javascript:|data:|expression/i.test(v))continue;
+    attrs.push(`${name}="${v}"`);
+   }
+   if(!attrs.length)continue;
+   out.push(`<${tag} ${attrs.join(' ')}/>`);
+   if(out.length>=14)break;
+  }
+  return out.join('');
+ };
+ try{
+  const xml=new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">'+text+'</svg>','image/svg+xml');
+  if(!xml.getElementsByTagName('parsererror').length){const got=collect(xml);if(got)return got}
+ }catch{}
+ try{
+  const html=new DOMParser().parseFromString('<svg>'+text+'</svg>','text/html');
+  return collect(html.body||html);
+ }catch{return ''}
+}
+const AI_KEY_STORE='my-library-gemini-key-v1';
+// Google AI Studio 무료 등급에서 쓸 수 있는 모델입니다. 바꾸려면 이 줄만 고치면 됩니다.
+const AI_MODEL='gemini-3.8-flash';
+// 소개 정리처럼 가벼운 일은 가장 빠른 모델로 처리합니다. 이 모델이 막혀 있으면 위의 기본 모델로 자동 전환합니다.
+const AI_FAST_MODEL='gemini-3.5-flash-lite';
+const getAiKey=()=>{try{return(localStorage.getItem(AI_KEY_STORE)||'').trim()}catch{return ''}};
+let aiPending=false;
+function extractSvgInner(text){
+ let t=String(text||'').replace(/```[a-zA-Z]*/g,'').trim();
+ const m=t.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
+ return m?m[1]:t;
+}
+const MOTIF_DRAW_RULES=`출력 규칙:
+- 좌표계는 viewBox "0 0 40 40" 기준이며, 도형은 대략 4~36 범위 안에 들어와야 합니다
+- <svg> 태그는 쓰지 말고 내부 도형 요소만 출력하세요
+- <path>, <circle>, <ellipse>, <line>, <polyline>, <polygon>, <rect>만 사용하세요
+- 요소는 최대 6개이고 모두 자체 닫힘 형태여야 합니다 (<path d="..."/>)
+- fill, stroke, style, class, id 속성은 넣지 마세요. 선 색과 굵기는 바깥에서 지정합니다
+- 글자나 <text>는 절대 쓰지 마세요
+- 설명이나 코드 블록 없이 도형 요소만 출력하세요
+
+출력 예시: <circle cx="20" cy="15" r="7"/><path d="M20 22v13"/>`;
+// 상징이 정해져 있으면 그 사물을 그리는 데만 집중시키고, 없으면 예전처럼 직접 고르게 합니다.
+function motifPrompt(title,author,summary,idea){
+ if(idea){
+  const [thing,why]=String(idea).split(/\s*[—–-]\s*/);
+  return `책등에 새길 아주 단순한 선 아이콘(line icon)을 SVG로 그려 주세요.
+
+그릴 사물: ${thing}
+이 사물을 고른 이유: ${why||'(없음)'}
+책: ${title}${author?` — ${author}`:''}
+
+그릴 사물을 한눈에 알아볼 수 있게, 그 사물의 가장 특징적인 윤곽만 선 몇 개로 그리세요. 다른 사물을 덧붙이지 말고 장식도 넣지 마세요. 좌우 대칭이 아니어도 되지만 화면 가운데에 놓이게 하세요.
+
+${MOTIF_DRAW_RULES}`;
+ }
+ return `다음 책의 핵심 주제를 나타내는, 아주 단순한 선 아이콘(line icon)을 SVG로 그려 주세요.
+
+책 제목: ${title}
+저자: ${author||'(미상)'}
+책 소개: ${summary||'(제공되지 않음)'}
+
+이 책을 읽은 사람이 보면 "아, 그 책"이라고 알아볼 만한 상징적인 사물이나 형상 하나를 고르세요. 책 표지를 베끼지 말고, 작품의 내용에서 나온 상징이어야 합니다.
+
+${MOTIF_DRAW_RULES}`;
+}
+const MOTIF_IDEA_RULES=`[motifIdea 규칙 — 책등에 새길 상징]
+- 작은 선 아이콘으로 그릴 사물 하나와 고른 이유를 "사물 — 이유" 형식, 30자 이내로 씁니다. 예: "도끼 — 라스콜니코프의 범행", "알 — 새는 알을 깨고 나온다", "청새치 — 노인이 홀로 맞선 거대한 물고기"
+- 사물은 선 몇 개로 그릴 수 있는 구체적인 것 하나입니다. 사람 얼굴, 글자, 넓은 풍경, 추상 개념은 피합니다
+- 그 작품을 읽은 사람이 "아, 그 책" 할 만큼 작품 안에서 중요한 사물을 고릅니다. 제목에 나온 낱말을 그대로 그리는 것은 마땅한 것이 없을 때만 합니다
+- 결말이나 반전을 드러내는 사물은 고르지 않습니다`;
+function ideaPrompt(title,author,summary){
+ return `아래 책의 책등에 새길 상징을 정해 JSON 하나만 출력하세요.
+
+제목: ${title}
+저자: ${author||'(미상)'}
+소개: ${summary||'(없음)'}
+
+[출력 형식]
+{"motifIdea":"사물 — 이유"}
+
+${MOTIF_IDEA_RULES}`;
+}
+function cleanIdea(v){
+ const t=String(v||'').replace(/\s+/g,' ').trim().replace(/^["'“‘「『]+|["'”’」』]+$/g,'').trim().slice(0,60);
+ return t&&!t.includes('?')&&!/[<>]/.test(t)?t:'';
+}
+// ---------- Gemini 무료 한도 (v2.5.2) ----------
+// 하루 한도를 다 쓴 모델은 초기화 시각까지 요청을 아예 보내지 않습니다. 앱을 다시 열어도 그 시각 전에는 조용히 쉽니다.
+// 이 기록은 별도 항목에만 저장되며 책 데이터·백업과는 관계없습니다.
+const AI_PAUSE_KEY='my-library-ai-pause-v1';
+const AI_FEATURE_NAME=m=>m===AI_MODEL?'상징 그리기':m===AI_FAST_MODEL?'소개 정리':m;
+function readPause(){try{const v=JSON.parse(localStorage.getItem(AI_PAUSE_KEY)||'{}');return v&&typeof v==='object'?v:{}}catch{return {}}}
+function pausedUntil(model){const t=Number(readPause()[model])||0;return t>Date.now()?t:0}
+function setPause(model,until){try{const p=readPause();for(const k of Object.keys(p))if(!(Number(p[k])>Date.now()))delete p[k];p[model]=until;localStorage.setItem(AI_PAUSE_KEY,JSON.stringify(p))}catch{}}
+function clearPause(){try{localStorage.removeItem(AI_PAUSE_KEY)}catch{}}
+// 하루 한도는 미국 태평양 시간 자정에 초기화됩니다. 여유 5분을 더합니다.
+function nextQuotaReset(){
+ try{
+  const now=new Date();
+  const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(now).map(x=>[x.type,x.value]));
+  const offset=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second)-Math.floor(now.getTime()/1000)*1000;
+  return Date.UTC(+p.year,+p.month-1,+p.day+1,0,0,0)-offset+5*60*1000;
+ }catch{return Date.now()+6*3600*1000}
+}
+const fmtWhen=t=>new Date(t).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'});
+const dailyMsg=(model,until)=>`오늘 Gemini 무료 한도(${AI_FEATURE_NAME(model)})를 다 썼어요. ${fmtWhen(until)} 이후에 다시 쓸 수 있어요.`;
+// 429 응답이 하루 한도인지 분당 한도인지 구분합니다.
+function quotaInfo(body){
+ const e=body?.error||{},msg=String(e.message||''),det=Array.isArray(e.details)?e.details:[];
+ const ids=det.flatMap(d=>Array.isArray(d?.violations)?d.violations.map(v=>`${v?.quotaId||''} ${v?.quotaMetric||''}`):[]).join(' ');
+ const daily=/per ?day|daily/i.test(ids+' '+msg);
+ let retryMs=0;for(const d of det){const m=String(d?.retryDelay||'').match(/^([\d.]+)s$/);if(m)retryMs=Math.ceil(parseFloat(m[1])*1000)}
+ return {daily,retryMs};
+}
+// Gemini 공용 호출. 상징 그리기와 책 소개 정리가 같이 씁니다.
+async function callGemini(prompt,{json=false,maxTokens=2048,timeoutMs=120000,model=AI_MODEL,thinking='low'}={}){
+ const key=getAiKey();
+ if(!key)throw Error('설정 → AI 기능에서 Gemini API 키를 먼저 저장하세요.');
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
+ const base={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:json?0.4:1,maxOutputTokens:maxTokens}};
+ const extra={...base,generationConfig:{...base.generationConfig,thinkingConfig:{thinkingLevel:thinking},...(json?{responseMimeType:'application/json'}:{})}};
+ let useModel=model;
+ if(pausedUntil(useModel)&&useModel!==AI_MODEL&&!pausedUntil(AI_MODEL))useModel=AI_MODEL;
+ {const pu=pausedUntil(useModel);if(pu){clearTimeout(timer);const e=Error(dailyMsg(useModel,pu));e.status=429;e.daily=true;e.until=pu;e.paused=true;throw e}}
+ const send=body=>fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(useModel)}:generateContent`,{
+  method:'POST',signal:controller.signal,
+  headers:{'Content-Type':'application/json','x-goog-api-key':key},
+  body:JSON.stringify(body)
+ });
+ try{
+  // Gemini 3 계열은 사고 수준 기본값이 high라 느립니다. low로 낮추고, 모델이 그 설정을 모르면 빼고 다시 보냅니다.
+  let r=await send(extra);
+  // 빠른 모델을 이 키로 쓸 수 없으면(없는 모델·무료 미지원) 기본 모델로 한 번 바꿔 보냅니다.
+  if((r.status===404||r.status===403||r.status===400)&&useModel!==AI_MODEL){
+   let why='';try{why=(await r.clone().json())?.error?.message||''}catch{}
+   if(r.status===404||/not found|not supported|is not available|permission|free tier|limit: 0/i.test(why)){useModel=AI_MODEL;r=await send({...extra,generationConfig:{...extra.generationConfig,thinkingConfig:{thinkingLevel:'low'}}})}
+  }
+  if(r.status===400){
+   let why='';try{why=(await r.clone().json())?.error?.message||''}catch{}
+   const cfgErr=/thinking|unknown name|invalid json payload|response_?mime/i;
+   if(cfgErr.test(why)){
+    // minimal을 모르는 모델이면 low로 한 번 더 보냅니다. 설정을 통째로 빼면 기본값(high)이 되어 아주 느려지므로 마지막 수단으로만 씁니다.
+    if(thinking!=='low'&&/thinking/i.test(why)){
+     r=await send({...extra,generationConfig:{...extra.generationConfig,thinkingConfig:{thinkingLevel:'low'}}});
+     if(r.status===400){let w2='';try{w2=(await r.clone().json())?.error?.message||''}catch{}if(cfgErr.test(w2))r=await send(base)}
+    }else r=await send(base);
+   }
+  }
+  // 빠른 모델이 하루 한도에 닿았으면 그 사실을 적어 두고, 기본 모델이 남아 있으면 한 번 바꿔 보냅니다.
+  if(r.status===429&&useModel!==AI_MODEL&&!pausedUntil(AI_MODEL)){
+   let b0=null;try{b0=await r.clone().json()}catch{}
+   if(quotaInfo(b0).daily){setPause(useModel,nextQuotaReset());useModel=AI_MODEL;r=await send({...extra,generationConfig:{...extra.generationConfig,thinkingConfig:{thinkingLevel:'low'}}})}
+  }
+  if(!r.ok){
+   let body=null;try{body=await r.json()}catch{}
+   const detail=String(body?.error?.message||'');
+   if(r.status===429){
+    const q=quotaInfo(body);
+    if(q.daily){const until=nextQuotaReset();setPause(useModel,until);const e=Error(dailyMsg(useModel,until));e.status=429;e.daily=true;e.until=until;e.fresh=true;throw e}
+    const e=Error('요청이 잠깐 몰렸어요(분당 한도). 잠시 후 다시 시도하세요.');e.status=429;e.retryMs=q.retryMs||60000;throw e;
+   }
+   const e=Error(
+    r.status===400&&/API key|API_KEY/i.test(detail)?'API 키가 올바르지 않습니다. 키를 다시 확인하세요.':
+    r.status===403?'키가 거부되었습니다(403). 키의 사용 제한 설정을 확인하세요.':
+    'HTTP '+r.status+(detail?' — '+detail.slice(0,120):''));
+   e.status=r.status;throw e;
+  }
+  const data=await r.json();
+  if(data.promptFeedback?.blockReason)throw Error('요청이 안전 필터에 걸렸습니다.');
+  const cand=data.candidates?.[0];
+  const text=(cand?.content?.parts||[]).filter(x=>x&&!x.thought).map(x=>x.text||'').join('');
+  if(!text.trim())throw Error(cand?.finishReason==='MAX_TOKENS'?'응답이 중간에 잘렸습니다. 한 번 더 시도해 보세요.':'빈 응답을 받았습니다. 한 번 더 시도해 보세요.');
+  return {text,finish:cand?.finishReason||''};
+ }catch(err){
+  if(err.name==='AbortError')throw Error(`응답이 ${Math.round(timeoutMs/1000)}초 안에 오지 않았습니다. 잠시 후 다시 시도해 보세요.`);
+  if(err instanceof TypeError&&/fetch|network/i.test(err.message||''))throw Error('브라우저가 요청을 보내지 못했습니다(네트워크 또는 보안 차단).');
+  throw err;
+ }finally{clearTimeout(timer)}
+}
+function ensureCustomOption(sel){
+ if(sel&&![...sel.options].some(o=>o.value==='custom')){const opt=document.createElement('option');opt.value='custom';opt.textContent=motifNames.custom;sel.insertBefore(opt,sel.options[1]||null)}
+}
+async function generateMotifWithAI(){
+ if(aiPending)return;
+ if(!getAiKey()){flash('설정 → AI 기능에서 Gemini API 키를 먼저 저장하세요.');return}
+ const title=($('#workTitle')?.value||$('#title')?.value||'').trim();
+ if(!title){flash('먼저 책 제목을 입력하거나 검색으로 불러오세요.');return}
+ const author=($('#author')?.value||'').trim(),summary=($('#aiSummary')?.value||$('#summary')?.value||'').trim();
+ const stored=editing?books.find(x=>x.id===editing):null;
+ aiPending=true;
+ // 이미 이 상징으로 그렸는데 또 누르면, 다른 상징을 새로 고릅니다.
+ if($('#customMotif')?.value&&$('#motifDrawnFor')?.value&&$('#motifDrawnFor').value===$('#motifIdea')?.value){const f=$('#motifIdea');if(f)f.value=''}
+ updateMotifPreview();
+ try{
+  // 1단계: 가벼운 모델이 상징을 말로 정합니다. 이미 정해 둔 상징이 있으면 그대로 씁니다.
+  let idea=cleanIdea($('#motifIdea')?.value||'');
+  if(!idea){
+   const r=await callGemini(ideaPrompt(title,author,summary),{json:true,model:AI_FAST_MODEL,thinking:'minimal',maxTokens:400});
+   try{idea=cleanIdea(jsonFrom(r.text).motifIdea)}catch{}
+   if(!idea)throw Error('상징을 정하지 못했습니다. 한 번 더 시도해 보세요.');
+   const f=$('#motifIdea');if(f)f.value=idea;
+  }
+  const sel=$('#motif');ensureCustomOption(sel);if(sel)sel.value='custom';
+  if(stored){
+   // 2단계(저장된 책): 그리기는 뒤의 큐에 맡깁니다. 이 창을 닫아도 계속 그립니다.
+   books=books.map(x=>x.id===stored.id?normalize({...x,motifIdea:idea,motifDrawnFor:'',motif:'custom'}):x);
+   persist(books);
+   const df=$('#motifDrawnFor');if(df)df.value='';
+   formInit={...formInit,customMotif:$('#customMotif')?.value||'',motifIdea:idea,motifDrawnFor:''};
+   aiPending=false;
+   queueDraw([stored.id],{front:true});
+   const now=books.find(x=>x.id===stored.id);
+   flash(now&&now.motifDrawnFor===idea?`「${idea}」 상징을 붙였어요.`:`「${idea}」 상징을 뒤에서 그리고 있어요. 창을 닫아도 이어서 그립니다.`);
+   return;
+  }
+  // 2단계(아직 저장하지 않은 새 책): 이 화면에서 바로 그립니다. 내장 아이콘이 있으면 호출하지 않습니다.
+  updateMotifPreview();
+  const inner=instantMotif({id:'',motifIdea:idea})||await drawMotif(title,author,summary,idea);
+  const field=$('#customMotif');if(field)field.value=inner;
+  const drawnFor=$('#motifDrawnFor');if(drawnFor)drawnFor.value=idea;
+  flash('상징을 만들었어요. 마음에 들지 않으면 다시 눌러 보세요.');
+ }catch(err){
+  console.error('[나의 서재] 상징 생성 실패',err);
+  flash('상징 생성 실패: '+err.message);
+ }finally{aiPending=false;updateMotifPreview()}
+}
+
+// ---------- 책 소개 정리 (요약 · 태그) ----------
+// 태그는 이 목록 안에서만 고릅니다. 나중에 태그 단위 추천을 붙일 때 이름이 흔들리지 않도록 고정해 둡니다.
+const TAG_VOCAB={
+ 장르:['SF','추리·미스터리','스릴러','판타지','공포','로맨스','역사','고전','성장','가족','철학','심리','과학','경제·경영','자기계발','사회','에세이','시','예술','여행','자연','전기·회고','종교','교육','요리','건강','만화·그래픽노블'],
+ 지역:['한국문학','일본문학','중국문학','영미문학','프랑스문학','독일어권문학','러시아문학','스페인어권문학','이탈리아문학','동유럽문학'],
+ 형식:['장편소설','단편집','희곡','논픽션','인문교양']
+};
+const TAG_ALL=new Set([...Object.values(TAG_VOCAB).flat(),'번역서']);
+let aiBusy=new Set(),batchRunning=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ANALYSIS_RULES=()=>`[summary 규칙 — 읽고 싶어지게 쓰는 짧은 소개]
+- 3~4문장, 200~260자로 씁니다. 담백하지만 다음 문장이 궁금해지게 씁니다
+- 이 순서를 따릅니다
+  1) 첫 문장은 독자를 붙잡는 한 줄입니다. 작가나 작품의 무게를 보여 주는 사실 하나로 엽니다. 예: 노벨문학상·부커상·퓰리처상 같은 주요 수상, 널리 알려진 인물이 아꼈거나 영향을 받았다고 공개적으로 밝힌 일, 영화·드라마로 옮겨진 일, 한 시대나 장르를 바꿨다고 평가받는 일
+  2) 이어서 이야기가 시작되는 상황만 씁니다. 주인공이 누구이고 어디서 무엇을 마주하는지까지만 씁니다
+  3) 마지막 문장은 이 책이 붙드는 긴장이나 주제를 평서문으로 짚습니다. 예: "그 선택의 무게가 소설 전체를 끌고 간다." 답이나 결말은 주지 않습니다
+- 첫 문장의 사실은 널리 알려져 확실한 것만 씁니다. 수상명·연도·인물을 조금이라도 확신하지 못하면 그 사실은 쓰지 말고, 작품이 다루는 주제의 매력으로 첫 문장을 엽니다. 없는 수상이나 지어낸 일화는 절대 넣지 않습니다
+- 무명이거나 잘 모르는 책이면 첫 문장을 사실 대신 이야기의 가장 흥미로운 지점으로 엽니다
+- "필독서", "전 세계가 열광한", "역대급", "강력 추천" 같은 광고 문구, 판매 부수, 전집 번호, 판본·번역 자랑, 옮긴이 약력은 쓰지 않습니다
+
+[문체 — 반드시 지킵니다]
+- 모든 문장을 "~다."로 끝나는 한다체 평서문으로 씁니다. 예: 시작한다, 그린다, 남는다, 사람이다
+- 물음표(?)는 한 번도 쓰지 않습니다. 의문문으로 끝나는 문장이 하나도 없어야 합니다
+- "~까", "~요", "~습니다", "~죠", "~네" 로 끝내지 않습니다
+
+[스포일러 금지 — 가장 중요한 규칙]
+- 이야기 초반에 드러나는 설정까지만 씁니다
+- 결말, 반전, 범인이나 정체, 누가 죽거나 살아남는지, 관계가 어떻게 끝나는지, 중반 이후의 사건은 암시조차 하지 않습니다
+- "결국", "마침내", "끝내", "비극적 결말", "충격적인 진실" 처럼 전개를 짐작하게 하는 표현도 쓰지 않습니다
+- 제공된 소개에 스포일러가 들어 있어도 옮기지 않습니다
+- 판단이 서지 않는 내용은 빼는 쪽을 택합니다
+
+${MOTIF_IDEA_RULES}
+
+[출처 규칙]
+- 제공된 소개는 중간에 잘려 있습니다. 이 작품을 확실히 아는 경우에만 당신의 지식으로 보완하고, 모르는 책이면 제공된 내용만으로 쓰며 지어내지 않습니다
+
+[tags 규칙]
+- 아래 목록에서만 1~4개 고릅니다. 목록에 없는 말은 쓰지 않습니다
+- 장르: ${TAG_VOCAB.장르.join(', ')}
+- 지역(문학 작품일 때만): ${TAG_VOCAB.지역.join(', ')}
+- 형식: ${TAG_VOCAB.형식.join(', ')}
+`;
+const bookBlock=b=>`제목: ${b.workTitle||b.title}
+판본 제목: ${b.title}
+저자: ${b.author||'(미상)'}
+번역자: ${b.translator||'(없음)'}
+출판사: ${b.publisher||'(미상)'}
+출판사 제공 소개(앞부분만 잘려 있음): ${b.summary||'(없음)'}`;
+function analysisPrompt(b){
+ return `당신은 서점의 책 큐레이터입니다. 아래 책 정보를 읽고 JSON 하나만 출력하세요.
+
+[책 정보]
+${bookBlock(b)}
+
+[출력 형식]
+{"summary":"...","tags":["..."],"motifIdea":"사물 — 이유"}
+
+${ANALYSIS_RULES()}`;
+}
+function analysisPromptMany(list){
+ return `당신은 서점의 책 큐레이터입니다. 아래 ${list.length}권을 각각 정리해 JSON 하나만 출력하세요.
+
+${list.map((b,i)=>`[책 ${i+1}]\n${bookBlock(b)}`).join('\n\n')}
+
+[출력 형식]
+{"items":[{"n":1,"summary":"...","tags":["..."],"motifIdea":"사물 — 이유"}, ...]}
+- 책마다 하나씩, n에 책 번호를 넣어 모두 ${list.length}개를 출력합니다
+
+${ANALYSIS_RULES()}`;
+}
+// 문체 검사: 모든 문장이 "~다."로 끝나야 하고 물음표가 없어야 합니다.
+function splitSentences(t){return (String(t).match(/[^.!?。]+[.!?。]+["”’」』]?|[^.!?。]+$/g)||[]).map(x=>x.trim()).filter(Boolean)}
+function styleCheck(summary){
+ let sents=splitSentences(summary);
+ // 물음표 문장은, 남는 문장이 두 개 이상이면 걸러 냅니다.
+ const kept=sents.filter(x=>!/\?["”’」』]?$/.test(x));
+ if(kept.length>=2)sents=kept;
+ const text=sents.join(' ');
+ const ok=!text.includes('?')&&sents.length>0&&sents.every(x=>/다[.!]["”’」』]?$/.test(x));
+ return {text,ok};
+}
+function cleanAnalysis(o){
+ const raw=String(o?.summary||'').replace(/\s+/g,' ').trim().slice(0,400);
+ const tags=[...new Set((Array.isArray(o?.tags)?o.tags:[]).map(x=>String(x||'').trim()).filter(x=>TAG_ALL.has(x)))].slice(0,4);
+ if(!raw)return null;
+ const st=styleCheck(raw);
+ return {summary:st.text,tags,motifIdea:cleanIdea(o?.motifIdea),styleOk:st.ok};
+}
+function jsonFrom(text){
+ const t=String(text||'').replace(/```[a-zA-Z]*/g,'').trim();
+ const a=t.indexOf('{'),z=t.lastIndexOf('}');
+ if(a<0||z<=a)throw Error('정리 결과를 해석하지 못했습니다. 한 번 더 시도해 보세요.');
+ try{return JSON.parse(t.slice(a,z+1))}catch{throw Error('정리 결과를 해석하지 못했습니다. 한 번 더 시도해 보세요.')}
+}
+function parseAnalysis(text){
+ const r=cleanAnalysis(jsonFrom(text));
+ if(!r)throw Error('요약이 비어 있습니다. 한 번 더 시도해 보세요.');
+ return r;
+}
+// 여러 권 응답은 번호로 짝을 맞춥니다. 빠지거나 망가진 책은 null로 남겨 따로 다시 정리합니다.
+function parseAnalysisMany(text,count){
+ const o=jsonFrom(text),items=Array.isArray(o.items)?o.items:Array.isArray(o)?o:[];
+ const out=Array(count).fill(null);
+ items.forEach((it,i)=>{const n=Number(it?.n)||i+1;if(n>=1&&n<=count&&!out[n-1])out[n-1]=cleanAnalysis(it)});
+ return out;
+}
+// 카카오에서 이 책의 소개를 다시 찾아옵니다(ISBN 우선).
+async function fetchKakaoSummary(b){
+ const key=getApiKey();
+ if(!key)throw Error('설정에서 카카오 REST API 키를 먼저 저장하세요.');
+ const p=new URLSearchParams({query:b.isbn||`${b.workTitle||b.title} ${cleanAuthor(b.author)}`.trim(),size:'10'});
+ if(b.isbn)p.set('target','isbn');
+ const data=await fetchJson('https://dapi.kakao.com/v3/search/book?'+p,{Authorization:'KakaoAK '+key});
+ const hit=mapKakao(data).find(x=>x.summary);
+ if(!hit)throw Error('카카오에서 이 책의 소개를 찾지 못했습니다.');
+ return hit;
+}
+// 입력 중인 화면을 뒤에서 다시 그리면 적던 글이 날아가므로, 그럴 때는 저장만 하고 화면은 그대로 둡니다.
+function softRender(){
+ if(dialog==='edit')return;
+ if(dialog==='detail'&&($('#newQuote')?.value||'').trim())return;
+ render();
+}
+// 상징을 그려야 하는 책: 상징이 정해져 있고, 아직 그 상징으로 그리지 않았고, 사용자가 특정 상징을 직접 고르지 않은 책
+const needsDrawing=b=>b&&b.status==='done'&&b.motifIdea&&b.motifDrawnFor!==b.motifIdea&&(b.motif==='auto'||b.motif==='custom');
+// 상징 사물 이름 → 내장 아이콘. 이름이 맞으면 AI를 부르지 않고 바로 씁니다.
+// 뜻이 둘 이상인 낱말(눈, 비, 창, 초)은 일부러 넣지 않았습니다.
+const BUILTIN_MOTIF_NAMES={도끼:'axe',손도끼:'axe',알:'egg',새알:'egg',달걀:'egg',돛단배:'boat',배:'boat',범선:'boat',돛배:'boat',조각배:'boat',물고기:'fish',생선:'fish',청새치:'fish',연어:'fish',하트:'heart',심장:'heart',마음:'heart',고래:'whale',흰고래:'whale',태양:'sun',해:'sun',달:'moon',초승달:'moon',보름달:'moon',꽃:'flower',꽃송이:'flower',장미:'rose',장미꽃:'rose',별:'star',잎:'leaf',잎사귀:'leaf',나뭇잎:'leaf',낙엽:'leaf',나무:'tree',산:'mountain',파도:'wave',물결:'wave',새:'bird',갈매기:'bird',나비:'butterfly',고양이:'cat',열쇠:'key',문:'door',창문:'window',시계:'clock',회중시계:'clock',모래시계:'hourglass',나침반:'compass',촛불:'lamp',양초:'lamp',등불:'lamp',램프:'lamp',깃펜:'feather',깃털:'feather',펜:'feather',편지:'letter',편지봉투:'letter',봉투:'letter',병:'bottle',유리병:'bottle',술병:'bottle',약병:'bottle',거울:'mirror',가면:'mask',눈동자:'eye',왕관:'crown',다리:'bridge',미로:'labyrinth',미궁:'labyrinth',빗방울:'rain',비구름:'rain',눈송이:'snow',눈꽃:'snow',기차:'train',열차:'train',증기기관차:'train',도시:'city',빌딩:'city',책:'book',펼친책:'book',사슬:'chain',쇠사슬:'chain'};
+const ideaThing=idea=>String(idea||'').split(/\s*[—–-]\s*/)[0].trim();
+const thingKey=t=>String(t||'').normalize('NFKC').replace(/\s+/g,'');
+function builtinKindFor(idea){
+ const thing=ideaThing(idea).normalize('NFKC');if(!thing)return '';
+ const words=thing.split(/\s+/).filter(Boolean);
+ // "녹슨 도끼"처럼 꾸밈말이 붙어도 마지막 낱말로 찾습니다.
+ return BUILTIN_MOTIF_NAMES[thingKey(thing)]||BUILTIN_MOTIF_NAMES[words[words.length-1]]||'';
+}
+// AI 없이 바로 쓸 수 있는 그림: 내장 아이콘, 또는 다른 책에서 같은 사물로 이미 그린 그림
+function instantMotif(b){
+ if(!b||!b.motifIdea)return '';
+ const kind=builtinKindFor(b.motifIdea);
+ if(kind){const inner=sanitizeMotifSvg(extractSvgInner(motifSvg(kind)));if(inner)return inner}
+ const key=thingKey(ideaThing(b.motifIdea));
+ const twin=key&&books.find(x=>x.id!==b.id&&x.customMotif&&x.motifDrawnFor&&thingKey(ideaThing(x.motifDrawnFor))===key);
+ return twin?twin.customMotif:'';
+}
+// 여러 권의 상징을 한 요청으로 그립니다. 무료 한도는 요청 횟수 기준이라 5권을 묶으면 요청이 1/5로 줍니다.
+const DRAW_BATCH=5;
+function motifPromptMany(list){
+ return `책등에 새길 아주 단순한 선 아이콘(line icon)을 책마다 하나씩 SVG로 그려 주세요.
+
+${list.map((b,i)=>{const [thing,why]=String(b.motifIdea||'').split(/\s*[—–-]\s*/);return `[${i+1}] 그릴 사물: ${thing} / 고른 이유: ${why||'(없음)'} / 책: ${b.workTitle||b.title}`}).join('\n')}
+
+각 사물을 한눈에 알아볼 수 있게, 그 사물의 가장 특징적인 윤곽만 선 몇 개로 그리세요. 다른 사물이나 장식은 덧붙이지 말고 화면 가운데에 놓이게 하세요.
+
+[출력 형식] 책 번호 줄을 쓰고, 다음 줄에 그 책의 도형 요소만 씁니다. 모두 ${list.length}개입니다.
+### 1
+<circle cx="20" cy="15" r="7"/><path d="M20 22v13"/>
+### 2
+...
+
+${MOTIF_DRAW_RULES}`;
+}
+function parseDrawMany(text,count){
+ const out=Array(count).fill('');
+ const parts=String(text||'').replace(/```[a-zA-Z]*/g,'').split(/^[ \t]*#{2,3}[ \t]*\[?(\d+)\]?[ \t]*$/m);
+ for(let i=1;i<parts.length;i+=2){const n=Number(parts[i]);if(n>=1&&n<=count&&!out[n-1])out[n-1]=sanitizeMotifSvg(extractSvgInner(parts[i+1]||''))}
+ return out;
+}
+// 그림 한 장 받기. 먼저 가볍게(minimal) 그려 보고, 그림이 망가졌을 때만 한 번 더 깊게(low) 그립니다.
+async function drawMotif(title,author,summary,idea){
+ const prompt=motifPrompt(title,author,summary,idea);
+ let lastMsg='받은 그림을 해석하지 못했습니다. 한 번 더 시도해 보세요.';
+ for(const [thinking,maxTokens] of [['minimal',1024],['low',2048]]){
+  try{
+   const {text}=await callGemini(prompt,{model:AI_MODEL,thinking,maxTokens,timeoutMs:60000});
+   const inner=sanitizeMotifSvg(extractSvgInner(text));
+   if(inner)return inner;
+  }catch(err){
+   // 한도·키 문제는 다시 해도 소용없으니 바로 넘깁니다. 빈 응답·잘린 응답만 한 단계 올려 다시 그립니다.
+   if(err.status||/API 키|거부|안전 필터|초 안에/.test(err.message||''))throw err;
+   lastMsg=err.message||lastMsg;
+  }
+ }
+ throw Error(lastMsg);
+}
+// 그린 결과를 책에 붙입니다. 그 책의 수정 화면이 열려 있으면 화면의 숨은 칸도 맞춰 둡니다.
+function setDrawn(bid,idea,inner){
+ books=books.map(x=>x.id===bid&&x.motifIdea===idea?normalize({...x,customMotif:inner,motifDrawnFor:idea}):x);
+ syncEditForm(bid);
+}
+function syncEditForm(bid){
+ if(dialog!=='edit'||editing!==bid)return;
+ const b=books.find(x=>x.id===bid);if(!b)return;
+ const set=(k,v)=>{const f=document.getElementById(k);if(f)f.value=v};
+ set('customMotif',b.customMotif);set('motifIdea',b.motifIdea);set('motifDrawnFor',b.motifDrawnFor);
+ formInit={...formInit,customMotif:b.customMotif,motifIdea:b.motifIdea,motifDrawnFor:b.motifDrawnFor};
+ if(b.customMotif)ensureCustomOption($('#motif'));
+ updateMotifPreview();
+}
+let drawQueue=[],drawing=false,drawnCount=0,drawRetryTimer=0,drawLimitHits=0;
+// 지금 그리고 있는 책들(묶음으로 그리므로 여러 권일 수 있음)
+const drawingNow=new Set();
+// 묶음에서 그림이 빠진 책은 다음에 한 권씩 따로 그립니다.
+const drawSolo=new Set();
+// 정해진 시각에 큐를 다시 깨웁니다(창이 열려 있는 동안). 큐에 남은 책만 이어서 그리고, 새 책을 더 넣지는 않습니다.
+function resumeDrawAt(t){
+ clearTimeout(drawRetryTimer);
+ drawRetryTimer=setTimeout(()=>{drawRetryTimer=0;if(drawQueue.length)runDrawQueue()},Math.min(Math.max(1000,t-Date.now()),2147483000));
+}
+// "다시 그리기"를 누른 책은 내장 아이콘을 건너뛰고 AI가 새로 그립니다.
+const forceDraw=new Set();
+// instantOnly: AI 요청 없이 붙일 수 있는 그림(내장 아이콘·같은 사물 재사용)만 붙이고 큐에는 넣지 않습니다.
+function queueDraw(ids,{front=false,force=false,instantOnly=false}={}){
+ let quick=0;
+ for(const bid of ids){
+  if(force)forceDraw.add(bid);
+  const b=books.find(x=>x.id===bid);
+  if(!needsDrawing(b))continue;
+  // 바로 쓸 수 있는 그림은 큐에 넣지 않고 그 자리에서 붙입니다(키가 없어도 동작).
+  if(!forceDraw.has(bid)){const inner=instantMotif(b);if(inner){setDrawn(bid,b.motifIdea,inner);quick++;continue}}
+  if(instantOnly||!getAiKey())continue;
+  drawQueue=drawQueue.filter(x=>x!==bid);
+  front?drawQueue.unshift(bid):drawQueue.push(bid);
+ }
+ if(quick){persist(books);softRender()}
+ if(drawQueue.length&&!drawing)runDrawQueue();
+}
+// AI로 그려야 할 남은 책 수(내장 아이콘으로 바로 붙는 책 제외)
+const pendingDrawCount=()=>books.filter(b=>needsDrawing(b)&&(forceDraw.has(b.id)||!instantMotif(b))).length;
+async function runDrawQueue(){
+ if(drawing)return;
+ clearTimeout(drawRetryTimer);drawRetryTimer=0;
+ drawing=true;drawnCount=0;softRender();
+ try{
+  while(drawQueue.length){
+   // 소개 일괄 정리가 도는 동안에는 같은 무료 한도를 나눠 쓰지 않도록 기다립니다.
+   while(batchRunning)await sleep(1500);
+   // 앞에서부터 최대 5권을 고릅니다. 바로 붙일 수 있는 그림은 여기서 붙이고, 따로 그릴 책은 혼자 보냅니다.
+   const group=[];
+   for(const bid of [...drawQueue]){
+    if(group.length>=DRAW_BATCH)break;
+    const b=books.find(x=>x.id===bid);
+    if(!needsDrawing(b)){drawQueue=drawQueue.filter(x=>x!==bid);forceDraw.delete(bid);drawSolo.delete(bid);continue}
+    if(!forceDraw.has(bid)){const inner=instantMotif(b);if(inner){drawQueue=drawQueue.filter(x=>x!==bid);setDrawn(bid,b.motifIdea,inner);persist(books);softRender();continue}}
+    if(drawSolo.has(bid)){if(!group.length)group.push(b);break}
+    group.push(b);
+   }
+   if(!group.length)continue;
+   const ideas=group.map(b=>b.motifIdea);
+   group.forEach(b=>drawingNow.add(b.id));softRender();
+   try{
+    // 그리는 일은 공간 감각이 필요해 기본 모델에 맡깁니다. 뒤에서 돌아가니 기다릴 필요는 없습니다.
+    let results;
+    if(group.length===1){const b=group[0];results=[await drawMotif(b.workTitle||b.title,b.author,b.aiSummary||b.summary,ideas[0])]}
+    else{const {text}=await callGemini(motifPromptMany(group),{model:AI_MODEL,thinking:'minimal',maxTokens:700*group.length,timeoutMs:90000});results=parseDrawMany(text,group.length)}
+    group.forEach((b,k)=>{
+     if(results[k]){drawQueue=drawQueue.filter(x=>x!==b.id);forceDraw.delete(b.id);drawSolo.delete(b.id);setDrawn(b.id,ideas[k],results[k]);drawnCount++}
+     else drawSolo.add(b.id);
+    });
+    persist(books);drawLimitHits=0;
+   }catch(err){
+    if(!err.paused)console.error('[나의 서재] 상징 그리기 실패',err);
+    if(err.status===429){
+     // 책들을 큐에 둔 채 쉽니다. 뒤에서 하는 일이라 알림은 하루 한도를 처음 알게 된 순간 한 번만 띄웁니다.
+     if(err.daily){resumeDrawAt(err.until);if(err.fresh)flash(`${err.message} 남은 상징은 그때 이어서 그려요.`);break}
+     drawLimitHits++;
+     if(drawLimitHits<=5)resumeDrawAt(Date.now()+(err.retryMs||60000));
+     break;
+    }
+    if(/API 키|거부/.test(err.message||''))break;
+    // 묶음이 통째로 실패하면 한 권씩 다시 보내고, 한 권짜리가 실패하면 그 책은 건너뜁니다(다시 펼치면 다시 시도).
+    if(group.length>1)group.forEach(b=>drawSolo.add(b.id));
+    else{drawQueue=drawQueue.filter(x=>x!==group[0].id);drawSolo.delete(group[0].id)}
+   }finally{drawingNow.clear()}
+   softRender();
+   await sleep(600);
+  }
+ }finally{
+  drawing=false;drawingNow.clear();softRender();
+  if(drawnCount&&!batchRunning&&!drawRetryTimer)flash(`상징 ${drawnCount}개를 그려 두었어요.`);
+ }
+}
+async function analyzeBook(bookId,{quiet=false,draw=true}={}){
+ if(aiBusy.has(bookId))return false;
+ let b=books.find(x=>x.id===bookId);if(!b)return false;
+ if(!getAiKey()){if(!quiet)flash('설정 → AI 기능에서 Gemini API 키를 먼저 저장하세요.');return false}
+ aiBusy.add(bookId);quiet?softRender():render();
+ try{
+  if(!b.summary&&getApiKey()){
+   try{const hit=await fetchKakaoSummary(b);b={...b,summary:hit.summary,translator:b.translator||hit.translator}}catch{}
+  }
+  let r=null;
+  for(let attempt=0;attempt<2;attempt++){
+   const extra=attempt?'\n\n[다시 요청] 직전 답에 의문문이나 다른 어미가 섞였습니다. 모든 문장을 "~다."로 끝내고 물음표를 쓰지 마세요.':'';
+   const {text}=await callGemini(analysisPrompt(b)+extra,{json:true,maxTokens:2048,model:AI_FAST_MODEL,thinking:'minimal'});
+   const got=parseAnalysis(text);
+   if(!r||got.styleOk)r=got;
+   if(r.styleOk)break;
+  }
+  aiBusy.delete(bookId);
+  const next=books.map(x=>x.id===bookId?normalize({...x,summary:b.summary,translator:b.translator,aiSummary:r.summary,aiTags:r.tags,motifIdea:r.motifIdea||x.motifIdea,aiAt:new Date().toISOString()}):x);
+  if(quiet){books=next;persist(books);softRender()}else commit(next,'책 소개를 정리했어요.');
+  if(needsDrawing(books.find(x=>x.id===bookId)))queueDraw([bookId],{front:!quiet,instantOnly:!draw});
+  return true;
+ }catch(err){
+  aiBusy.delete(bookId);quiet?softRender():render();
+  console.error('[나의 서재] 소개 정리 실패',err);
+  if(!quiet)flash('정리 실패: '+(err.status&&!err.message?whyFailed(err):err.message));
+  throw err;
+ }
+}
+// 아직 정리하지 않은 책을 5권씩 묶어 한 번에 정리합니다. 묶음 사이에는 무료 한도를 넘지 않도록 잠깐 쉽니다.
+const BATCH_SIZE=5;
+async function analyzeAll(redo=false){
+ if(batchRunning)return;
+ if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');return}
+ const todo=books.filter(b=>b.status==='done'&&(redo||!b.aiSummary)).map(b=>b.id);
+ if(!todo.length){flash('정리할 책이 없어요. 모든 책이 정리돼 있습니다.');return}
+ batchRunning=true;softRender();
+ let ok=0,fail=0;
+ const t0=Date.now();
+ try{
+  // 소개가 빈 책은 카카오에서 먼저 받아 옵니다(카카오는 빠르고 한도가 넉넉합니다).
+  if(getApiKey()){
+   const empty=todo.map(id=>books.find(x=>x.id===id)).filter(b=>b&&!b.summary);
+   for(let i=0;i<empty.length;i++){
+    flash(`카카오에서 소개 불러오는 중… ${i+1} / ${empty.length}`);
+    try{const hit=await fetchKakaoSummary(empty[i]);books=books.map(x=>x.id===empty[i].id?normalize({...x,summary:hit.summary,translator:x.translator||hit.translator}):x)}catch{}
+    await sleep(150);
+   }
+   persist(books);
+  }
+  for(let i=0;i<todo.length;i+=BATCH_SIZE){
+   const ids=todo.slice(i,i+BATCH_SIZE),group=ids.map(id=>books.find(x=>x.id===id)).filter(Boolean);
+   if(!group.length)continue;
+   flash(`책 소개 정리 중… ${Math.min(i+group.length,todo.length)} / ${todo.length}`);
+   group.forEach(b=>aiBusy.add(b.id));softRender();
+   let results=Array(group.length).fill(null);
+   try{
+    const res=await callGemini(analysisPromptMany(group),{json:true,maxTokens:1500*group.length,model:AI_FAST_MODEL,thinking:'minimal'});
+    results=parseAnalysisMany(res.text,group.length).map(x=>x&&x.styleOk?x:null);
+   }catch(err){
+    group.forEach(b=>aiBusy.delete(b.id));softRender();
+    if(err.status===429||/한도|API 키|거부/.test(err.message||'')){flash(`${ok}권 정리 후 멈췄어요: ${err.message}`);return}
+    console.error('[나의 서재] 묶음 정리 실패',err);
+   }
+   group.forEach(b=>aiBusy.delete(b.id));
+   const now=new Date().toISOString();
+   books=books.map(x=>{const k=group.findIndex(g=>g.id===x.id);return k>=0&&results[k]?normalize({...x,aiSummary:results[k].summary,aiTags:results[k].tags,motifIdea:results[k].motifIdea||x.motifIdea,aiAt:now}):x});
+   persist(books);softRender();
+   ok+=results.filter(Boolean).length;
+   queueDraw(group.map(g=>g.id).filter(id=>needsDrawing(books.find(x=>x.id===id))),{instantOnly:true});
+   // 묶음에서 빠진 책은 한 권씩 다시 시도합니다.
+   for(let k=0;k<group.length;k++){
+    if(results[k])continue;
+    await sleep(800);
+    try{await analyzeBook(group[k].id,{quiet:true,draw:false});ok++}
+    catch(err){fail++;if(err.status===429||/한도|API 키|거부/.test(err.message||'')){flash(`${ok}권 정리 후 멈췄어요: ${err.message}`);return}}
+   }
+   if(i+BATCH_SIZE<todo.length)await sleep(2500);
+  }
+  const sec=Math.round((Date.now()-t0)/1000);
+  flash(`${ok}권 정리 완료 (${sec}초)${fail?`, ${fail}권 실패 — 책 상세에서 다시 시도할 수 있어요`:''}.${drawing?' 상징은 뒤에서 계속 그리고 있어요.':''}`);
+ }finally{batchRunning=false;softRender()}
+}
+// 카카오 소개는 문장 중간에서 잘려 옵니다. 표시할 때는 마지막 완결된 문장까지만 보여 줍니다.
+function tidyRawSummary(s){
+ const t=String(s||'').trim();
+ if(!t||/[.!?。”"」』…]$/.test(t))return t;
+ const cut=Math.max(t.lastIndexOf('. '),t.lastIndexOf('다. '),t.lastIndexOf('? '),t.lastIndexOf('! '));
+ return cut>60?t.slice(0,cut+1)+' …':t+'…';
+}
+const motifNames={auto:'자동 추천 (제목·소개 기반)',custom:'AI가 만든 상징',axe:'도끼',egg:'알과 새',boat:'돛단배',fish:'물고기',heart:'마음',whale:'고래',sun:'태양',moon:'달',flower:'꽃',rose:'장미',star:'별',leaf:'잎사귀',tree:'나무',mountain:'산',wave:'파도',bird:'새',butterfly:'나비',cat:'고양이',key:'열쇠',door:'문',window:'창문',clock:'시계',hourglass:'모래시계',compass:'나침반',lamp:'촛불',feather:'깃펜',letter:'편지',bottle:'유리병',mirror:'거울',mask:'가면',eye:'눈(응시)',crown:'왕관',bridge:'다리',labyrinth:'미로',rain:'비',snow:'눈',train:'기차',city:'도시',book:'펼친 책',chain:'사슬',none:'표시하지 않음'};
+// 상징 추천은 외부 호출 없이 제목과 책 소개의 낱말로 고릅니다. AI 생성은 사용자가 직접 요청할 때만 동작합니다.
+const motifKeywords=[
+ ['boat',['항해','뱃사람','선원','표류','난파','돛','어부','바다로']],
+ ['whale',['고래','포경']],
+ ['fish',['물고기','어항','연어','낚시']],
+ ['wave',['바다','파도','해변','섬으로','해협','밀물']],
+ ['bird',['새들','날개','비상','갈매기','까마귀','참새','둥지']],
+ ['butterfly',['나비','번데기','날갯짓']],
+ ['cat',['고양이','길냥']],
+ ['tree',['나무','숲속','숲을','숲의','정원사','가지에']],
+ ['leaf',['이파리','낙엽','잎사귀','초록']],
+ ['mountain',['산을','산속','산정','등반','봉우리','고원']],
+ ['rose',['장미','꽃다발']],
+ ['flower',['꽃밭','화원','들꽃','꽃잎']],
+ ['key',['열쇠','자물쇠','잠긴','비밀의 방']],
+ ['door',['문을 열','문턱','현관','출입구','문 너머']],
+ ['window',['창문','창가','창밖']],
+ ['clock',['시계','정오','자정','시간을','시간이']],
+ ['hourglass',['모래시계','유한한 시간','덧없']],
+ ['compass',['나침반','여행기','방랑','순례','탐험']],
+ ['lamp',['촛불','등불','램프','불빛','어둠 속']],
+ ['feather',['작가','소설가','시인','글쓰기','문학적','원고','일기']],
+ ['letter',['편지','서간','서신','우편']],
+ ['bottle',['술집','포도주','위스키','유리병','약병']],
+ ['mirror',['거울','분신','자아','정체성','또 다른 나']],
+ ['mask',['가면','연극','배우','무대','위선','가장무도회']],
+ ['crown',['왕국','왕자','여왕','왕위','귀족','궁정','제국']],
+ ['bridge',['다리를 건','교각','연결']],
+ ['labyrinth',['미로','미궁','뒤얽힌','출구 없']],
+ ['rain',['장마','빗속','빗소리','소나기']],
+ ['snow',['눈보라','설원','겨울의','겨울을','얼어붙']],
+ ['train',['기차','열차','철도','역에서']],
+ ['city',['도시','서울','뉴욕','아파트','거리를','빌딩']],
+ ['book',['도서관','책방','서점','독서','읽는 행위']],
+ ['chain',['감옥','수감','속박','굴레','노예']],
+ ['heart',['사랑','연인','마음을','그리움','이별']],
+ ['moon',['달빛','보름달','밤하늘']],
+ ['sun',['태양','햇빛','뙤약볕','한낮']],
+ ['star',['별들','별빛','우주','행성']],
+ ['egg',['성장','알을','깨어나','자아를 찾']]
+];
+function detectedMotif(b){
+ const t=titleKey(cleanDisplayTitle(baseWorkTitle(b.workTitle||b.title)));
+ // 널리 알려진 작품은 제목만으로 확정합니다.
+ if(t.includes('죄와벌'))return 'axe';
+ if(t.includes('데미안'))return 'egg';
+ if(t.includes('노인과바다')||t.includes('theoldmanandthesea'))return 'boat';
+ if(t==='마음'||t==='kokoro')return 'heart';
+ if(t.includes('모비딕')||t.includes('mobydick'))return 'whale';
+ if(t.includes('어린왕자'))return 'star';
+ if(t.includes('이방인'))return 'sun';
+ if(t.includes('위대한개츠비')||t.includes('greatgatsby'))return 'star';
+ if(t.includes('변신')||t.includes('metamorphosis'))return 'butterfly';
+ if(t.includes('안나카레니나'))return 'train';
+ if(t.includes('1984')||t.includes('동물농장'))return 'eye';
+ if(t.includes('호밀밭'))return 'leaf';
+ if(t.includes('설국'))return 'snow';
+ if(t.includes('그리고아무도없었다')||t.includes('셜록'))return 'key';
+ if(t.includes('시간')&&t.includes('잃어버린'))return 'clock';
+ // 그다음은 제목과 책 소개의 낱말로 점수를 매깁니다.
+ const text=`${b.workTitle||''} ${b.title||''} ${b.summary||''}`.normalize('NFKC').toLocaleLowerCase();
+ if(text.trim()){
+  let best='',score=0;
+  for(const [kind,words] of motifKeywords){
+   let n=0;
+   for(const w of words)if(text.includes(w))n+=w.length>=3?2:1;
+   if(n>score){score=n;best=kind}
+  }
+  if(best)return best;
+ }
+ // 마지막으로 제목 자체의 단순한 낱말을 봅니다.
+ if(t.includes('꽃')||t.includes('화원'))return 'flower';
+ if(t.includes('달'))return 'moon';
+ if(t.includes('숲')||t.includes('나무'))return 'leaf';
+ return 'none';
+}
+function motifSvg(kind,size=23){
+ const common=`viewBox="0 0 40 40" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"`;
+ const paths={
+  boat:'<path d="M20 5v27M20 8 7 26h13ZM23 13l11 14H23ZM5 32q15 8 30 0"/>',
+  fish:'<path d="M5 20q13-14 24 0-11 14-24 0Zm24 0 7-9v18ZM12 19h.1"/>',
+  heart:'<path d="M20 33 8 21C0 11 13 4 20 13c7-9 20-2 12 8Z"/>',
+  whale:'<path d="M6 23q10-16 27-5l4-4-1 14-7-4Q17 35 6 23Zm5-3v-6m-3 3 3-3 3 3"/>',
+  sun:'<circle cx="20" cy="20" r="8"/><path d="M20 3v6m0 22v6M3 20h6m22 0h6M8 8l4 4m16 16 4 4M32 8l-4 4M12 28l-4 4"/>',
+  axe:'<path d="M10 33 27 7M22 8c5-3 10-2 13 1l-7 9-8-4"/>',
+  egg:'<path d="M23 7c-7 0-12 10-12 18a12 12 0 0 0 24 0c0-8-5-18-12-18Z" transform="translate(-3 0) scale(.9 1)"/><path d="m16 23 4-3 3 3 4-4"/>',
+  moon:'<path d="M29 31A15 15 0 0 1 13 8a14 14 0 1 0 16 23Z"/>',
+  flower:'<circle cx="20" cy="20" r="4"/><path d="M20 16c-9-14-15-2-4 4-14-9-15 6 0 4-9 12 5 17 4 0 2 15 16 10 4 0 14 3 12-13 0-4 12-7 5-18-4-4Z"/>',
+  star:'<path d="m20 5 4 11 11 4-11 4-4 11-4-11-11-4 11-4Z"/>',
+  leaf:'<path d="M33 8C15 7 8 16 10 27c8 8 24-1 23-19ZM10 33c7-12 12-15 19-20"/>',
+  rose:'<circle cx="20" cy="13" r="8"/><path d="M20 13a4 4 0 0 1 4 4M20 21v14m0-7-7-4m7 1 7-5"/>',
+  tree:'<path d="M20 35V22m0-17 9 12h-6l7 9H10l7-9h-6Z"/>',
+  mountain:'<path d="m3 32 12-19 7 11 4-6 11 14Zm9-8 3-2"/>',
+  wave:'<path d="M4 14q6-6 12 0t12 0 8-4M4 22q6-6 12 0t12 0 8-4M4 30q6-6 12 0t12 0 8-4"/>',
+  bird:'<path d="M5 18c5-7 10-7 15 1 5-8 10-8 15-1"/><path d="M13 23v4m14-4v4"/>',
+  butterfly:'<path d="M20 11v19m0-17C14 4 5 7 6 15c-3 6 5 13 14 5Zm0 0c6-9 15-6 14 2 3 6-5 13-14 5Z"/>',
+  cat:'<path d="M9 18 7 6l8 5a14 14 0 0 1 10 0l8-5-2 12"/><path d="M31 19a11 11 0 1 1-22 0"/><path d="M15 21h.1m10 0h.1M20 26l-2-2m2 2 2-2"/>',
+  key:'<circle cx="13" cy="14" r="7"/><path d="m18 19 15 15m-5-1 4 4m-7-7 4 4"/>',
+  door:'<path d="M11 5h18v30H11z"/><path d="M24 21h.1"/>',
+  window:'<path d="M8 6h24v27H8z"/><path d="M20 6v27M8 20h24"/>',
+  clock:'<circle cx="20" cy="20" r="14"/><path d="M20 11v10l7 4"/>',
+  hourglass:'<path d="M11 4h18M11 36h18M13 4v6l7 10 7-10V4M13 36v-6l7-10 7 10v6"/>',
+  compass:'<circle cx="20" cy="20" r="14"/><path d="m27 13-5 11-11 5 5-11Z"/>',
+  lamp:'<path d="M14 19h12v16H14z"/><path d="M20 19v-6M20 4c4 4 2 8 0 8s-4-4 0-8Z"/>',
+  feather:'<path d="M7 34 32 8"/><path d="M32 8c-15 0-21 7-20 19 12 1 20-6 20-19Z"/>',
+  letter:'<path d="M5 9h30v22H5z"/><path d="m5 9 15 13L35 9"/>',
+  bottle:'<path d="M17 4h6v8l4 6v17H13V18l4-6Z"/><path d="M13 25h14"/>',
+  mirror:'<ellipse cx="20" cy="16" rx="10" ry="12"/><path d="M20 28v8m-6 0h12"/>',
+  mask:'<path d="M7 9h26c0 15-6 23-13 23S7 24 7 9Z"/><path d="M14 18h4m4 0h4m-9 8c3 2 5 2 8 0"/>',
+  crown:'<path d="m6 30 2-19 8 8 4-12 4 12 8-8 2 19Z"/><path d="M8 34h24"/>',
+  bridge:'<path d="M3 24q17-17 34 0"/><path d="M3 24v9m34-9v9M12 20v13m16-13v13M20 17v16"/>',
+  labyrinth:'<path d="M35 20a15 15 0 1 0-15 15"/><path d="M29 20a9 9 0 1 0-9 9"/><path d="M23 20a3 3 0 1 0-3 3"/>',
+  rain:'<path d="M12 19a8 8 0 0 1 16-3 6 6 0 0 1 1 11H14a7 7 0 0 1-2-8Z"/><path d="m14 32-2 5m9-5-2 5m9-5-2 5"/>',
+  snow:'<path d="M20 4v32M6 12l28 16M34 12 6 28"/><path d="m16 8 4 4 4-4m-8 24 4-4 4 4"/>',
+  train:'<path d="M11 5h18v21H11z"/><path d="M11 14h18"/><circle cx="16" cy="31" r="3"/><circle cx="24" cy="31" r="3"/><path d="m8 36 4-5m20 5-4-5"/>',
+  city:'<path d="M5 34V16h9v18M14 34V7h11v27M25 34V21h10v13"/><path d="M9 21h.1m10-8h.1m10 13h.1"/>',
+  book:'<path d="M5 8h11a4 4 0 0 1 4 4 4 4 0 0 1 4-4h11v23H24a4 4 0 0 0-4 3 4 4 0 0 0-4-3H5Z"/><path d="M20 12v23"/>',
+  chain:'<rect x="4" y="15" width="15" height="11" rx="5.5"/><rect x="21" y="15" width="15" height="11" rx="5.5"/><path d="M17 20.5h6"/>',
+  eye:'<path d="M4 20s7-9 16-9 16 9 16 9-7 9-16 9S4 20 4 20Z"/><circle cx="20" cy="20" r="4"/>'
+ };
+ return paths[kind]?`<svg ${common}>${paths[kind]}</svg>`:'';
+}
+// 저장된 AI 상징은 이미 살균된 내부 마크업이지만, 그릴 때 한 번 더 통과시킵니다.
+function customMotifSvg(b,size=23){
+ const inner=sanitizeMotifSvg(b.customMotif||'');
+ if(!inner)return '';
+ return `<svg viewBox="0 0 40 40" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+}
+function spineMotif(b,size=23){
+ if(b.motif==='custom'||(b.motif==='auto'&&b.customMotif)){const c=customMotifSvg(b,size);if(c)return c}
+ const kind=b.motif&&b.motif!=='auto'&&b.motif!=='custom'?b.motif:detectedMotif(b);
+ return motifSvg(kind,size);
+}
+function normalize(b,i=0){return {id:String(b.id||id()),title:String(b.title||'').trim().slice(0,150),author:String(b.author||'').slice(0,120),status:statuses[b.status]?b.status:'want',rating:Math.max(0,Math.min(5,Number(b.rating)||0)),notes:String(b.notes||'').slice(0,100000),notionUrl:validUrl(b.notionUrl)?String(b.notionUrl||''):'',color:/^#[0-9a-fA-F]{6}$/.test(String(b.color||''))?String(b.color):colors[i%colors.length],createdAt:cleanDate(b.createdAt),workTitle:String(b.workTitle||b.title||'').trim().slice(0,150),publisher:String(b.publisher||'').slice(0,120),translator:String(b.translator||'').slice(0,120),isbn:String(b.isbn||'').slice(0,30),coverUrl:safeCover(b.coverUrl),googleBooksId:String(b.googleBooksId||'').slice(0,90),editionTitle:String(b.editionTitle||'').slice(0,150),summary:String(b.summary||'').replace(/\s+/g,' ').slice(0,1200),customMotif:sanitizeMotifSvg(b.customMotif||''),tags:(Array.isArray(b.tags)?b.tags:[]).map(t=>String(t||'').trim().slice(0,20)).filter(Boolean).slice(0,10),aiSummary:String(b.aiSummary||'').replace(/\s+/g,' ').trim().slice(0,400),quotes:(Array.isArray(b.quotes)?b.quotes:[]).map(q=>({id:String(q?.id||id()),text:String(q?.text||'').trim().slice(0,600),page:String(q?.page||'').trim().slice(0,20),createdAt:cleanDate(q?.createdAt)})).filter(q=>q.text).slice(0,200),aiTags:(Array.isArray(b.aiTags)?b.aiTags:[]).map(t=>String(t||'').trim()).filter(t=>TAG_ALL.has(t)).slice(0,6),aiAt:String(b.aiAt||'').slice(0,40),motifIdea:cleanIdea(b.motifIdea),motifDrawnFor:String(b.motifDrawnFor||'').slice(0,60),pages:Math.max(0,Math.min(9999,Math.round(Number(b.pages)||0))),spineType:SPINE_TYPES[b.spineType]?b.spineType:'auto',lifeBook:b.lifeBook===true,colorMode:b.colorMode==='auto'?'auto':'custom',spineTitle:String(b.spineTitle||'').replace(/\s+/g,' ').trim().slice(0,60),motif:motifNames[b.motif]?b.motif:'auto'};}
+let loadProblem=false,storageProblem=false,rawCorrupt='';
+function load(){
+  let raw;
+  try{raw=localStorage.getItem(KEY)}catch(e){storageProblem=true;books=[];flash('이 브라우저에서 저장소 접근이 차단되었습니다. http(s) 웹주소에서 실행하거나 브라우저 저장 설정을 확인하세요.');return}
+  if(raw===null){books=[];return}
+  try{const v=JSON.parse(raw);if(!Array.isArray(v))throw Error('저장 데이터 형식 오류');books=v.filter(b=>b&&typeof b.title==='string'&&b.title.trim()).map(normalize)}
+  catch(e){books=[];loadProblem=true;rawCorrupt=raw;flash('기존 저장 데이터에 오류가 있습니다. 복구 전 덮어쓰기를 중단했습니다.')}
+}
+function persist(candidate){
+  try{
+    if(loadProblem)throw Error('기존 데이터가 손상되어 덮어쓰기를 차단했습니다.');
+    if(storageProblem)throw Error('저장소 접근이 차단되었습니다.');
+    localStorage.setItem(KEY,JSON.stringify(candidate));
+    if(localStorage.getItem(KEY)!==JSON.stringify(candidate))throw Error('저장 후 검증에 실패했습니다.');
+    return true;
+  }catch(e){flash('저장 실패: '+e.message);return false}
+}
+function commit(candidate,success){if(!persist(candidate))return false;books=candidate;render();if(success)flash(success);return true}
+function flash(t){document.querySelector('.toast')?.remove();let d=document.createElement('div');d.className='toast';d.textContent=t;d.setAttribute('role','status');document.body.append(d);setTimeout(()=>d.remove(),4000)}
+function hash(s){let h=0;for(let c of s||'')h=((h<<5)-h)+c.charCodeAt(0)|0;return h}
+function tab(name,label){return `<button type="button" class="tab ${filter===name?'active':''}" data-filter="${name}">${label}</button>`}
+// ---------- 책장 배치 (v2.3.0) ----------
+// 선반 안쪽 폭·책등 폭·간격은 CSS 숫자를 복사해 두지 않고, 화면에 그려진 실제 크기를 재서 씁니다.
+// 책을 권수가 아니라 "폭의 합"으로 나누므로, 나중에 책마다 두께가 달라져도 spineWidthOf()만 고치면 됩니다.
+let shelfMetrics=null,shelfObserver=null,observedShelf=null,shelfFrame=0,shelfMetricKey='',shelfBurst=[];
+function emptyShelfHTML(){return `<div class="shelf-tier"><div class="books"><div class="empty"><div class="icon">✧</div><h3>${books.length?'표시할 책이 없습니다':'첫 번째 책을 기다리고 있어요'}</h3><p>${books.length?'검색어나 필터를 변경해 보세요.':'당신만의 서재를 한 권씩 채워 보세요.'}</p><button class="btn" data-action="add">+ 책 추가하기</button></div></div></div>`}
+function spineHTML(b,m){return `<button class="spine ${spineClass(b)}" type="button" data-book="${esc(b.id)}" style="--color:${spineColorOf(b)};--height:${185+(Math.abs(hash(b.id))%56)}px;${m?`--w:${spineWidthOf(b,m)}px;`:''}--sheen:${(.05+(Math.abs(hash(b.id+'|s'))%5)/100).toFixed(2)}" aria-label="${esc((b.workTitle||b.title)+(b.author?', '+b.author:''))}"><span class="spine-motif">${spineMotif(b)}</span><span class="title" data-max="${titleMaxOf(b)}" data-full="${esc(spineText(b))}">${esc(spineText(b))}</span><span class="spine-status">${b.status==='done'?'●':b.status==='reading'?'◐':'○'}</span>${b.lifeBook?'<span class="ribbon" aria-hidden="true"></span>':''}</button>`}
+function tiersHTML(groups,m){return groups.map((group,i)=>`<div><p class="shelf-label">SHELF ${String(i+1).padStart(2,'0')}</p><div class="shelf-tier"><div class="books">${group.map(b=>spineHTML(b,m)).join('')}</div></div></div>`).join('')}
+// 보이지 않는 시험용 선반을 잠깐 넣어 크기를 잽니다. 같은 순간에 지우므로 화면에는 나타나지 않습니다.
+function measureShelf(shelf){
+ const probe=document.createElement('div');
+ probe.className='shelf-tier';probe.style.visibility='hidden';probe.setAttribute('aria-hidden','true');
+ probe.innerHTML='<div class="books"><button class="spine" type="button" tabindex="-1"></button></div>';
+ shelf.append(probe);
+ const row=probe.firstElementChild,sp=row.firstElementChild;
+ const rs=getComputedStyle(row),base=sp.getBoundingClientRect().width;
+ const m={inner:row.getBoundingClientRect().width,spine:base,gap:parseFloat(rs.columnGap)||0,min:parseFloat(rs.getPropertyValue('--spine-min'))||base,max:parseFloat(rs.getPropertyValue('--spine-max'))||base};
+ probe.remove();
+ return m.inner>0&&m.spine>0?m:null;
+}
+// ---------- 책등 디자인 체계 (v2.7.0) ----------
+// 여섯 가지 유형이 공통 틀(세로 제목·상징 위치·여백)을 나누어 쓰고, 유형마다 장식·글꼴·질감만 다릅니다.
+// 자동 유형과 자동 색은 책 ID로 정해서 새로고침해도 바뀌지 않고, 사용자가 고른 값이 늘 먼저입니다.
+const SPINE_TYPES={auto:'자동 추천',A:'Classic Serif — 고전 양장본',B:'Minimal Label — 미니멀',C:'Framed Edition — 프레임 소장본',D:'Emblem — 상징 중심',E:'Band — 띠 구획',F:'Heritage — 천장정 장서'};
+const TYPE_WEIGHTS=[['A',30],['B',18],['C',15],['D',12],['E',15],['F',10]];
+const SPINE_FAMILIES={
+ forest:{dark:['#2f4a3d','#38503c','#44533f'],mid:['#5e6e55','#6c7a5e'],light:['#a4ae95']},
+ wine:{dark:['#5a2e33','#6b3438','#6e3f36'],mid:['#8c5545','#9a6650'],light:['#c49c88']},
+ ink:{dark:['#26344a','#2f3d4f','#384656'],mid:['#56657a','#66758a'],light:['#a6b0bd']},
+ leather:{dark:['#4a3527','#5a4130','#6a4d36'],mid:['#8a6a4c','#9c7f5e'],light:['#d3c2a2']},
+ plum:{dark:['#3f2d3f','#4d3647','#574250'],mid:['#786273','#857870'],light:['#b9a9b1']}
+};
+// 유형마다 어울리는 색 계열과 명도 배합(어두운·중간·밝은 %)
+const TYPE_COLOR={A:{fam:['forest','wine','ink','leather'],mix:[60,30,10]},B:{fam:['leather','forest','ink','plum'],mix:[25,45,30]},C:{fam:['forest','wine','ink','leather','plum'],mix:[60,30,10]},D:{fam:['forest','wine','ink','leather','plum'],mix:[60,30,10]},E:{fam:['forest','wine','ink','leather','plum'],mix:[55,35,10]},F:{fam:['forest','wine','ink','leather','plum'],mix:[100,0,0]}};
+const hpos=(b,salt)=>Math.abs(hash(String(b.id)+'|'+salt));
+function autoTypeOf(b){
+ // 인생책은 Heritage나 Emblem을 먼저 권합니다.
+ if(b.lifeBook)return hpos(b,'life')%10<6?'F':'D';
+ let r=hpos(b,'t')%100;for(const [t,w] of TYPE_WEIGHTS){if(r<w)return t;r-=w}return 'A';
+}
+const typeOf=b=>b.spineType&&b.spineType!=='auto'&&SPINE_TYPES[b.spineType]?b.spineType:autoTypeOf(b);
+function autoColorOf(b){
+ const rule=TYPE_COLOR[typeOf(b)]||TYPE_COLOR.A,h=hpos(b,'c');
+ const fam=SPINE_FAMILIES[rule.fam[h%rule.fam.length]],r=(h>>5)%100;
+ const tier=r<rule.mix[0]?fam.dark:r<rule.mix[0]+rule.mix[1]?fam.mid:fam.light;
+ return tier[(h>>11)%tier.length];
+}
+const spineColorOf=b=>b.colorMode==='auto'?autoColorOf(b):safeColor(b.color);
+function isLightColor(hex){const v=parseInt(String(hex).slice(1),16),r=v>>16&255,g=v>>8&255,bl=v&255;return (0.2126*r+0.7152*g+0.0722*bl)/255>0.5}
+function spineClass(b){const t=typeOf(b);return `t-${t.toLowerCase()}${b.lifeBook?' life':''}${isLightColor(spineColorOf(b))?' light':''}`}
+// Minimal은 작은 제목이 특징이라 제목 크기 상한을 낮춥니다.
+const titleMaxOf=b=>typeOf(b)==='B'?11:12;
+// ---------- 긴 제목 (v2.4.0) ----------
+// 책등에 보일 글: 사용자가 정한 책등 표시명이 있으면 그것, 없으면 작품명. 원래 제목 데이터는 건드리지 않습니다.
+const spineText=b=>b.spineTitle||b.workTitle||b.title;
+// [글자 크기 px, 글자 간격 px]. 위에서부터 한 줄에 들어가는 가장 큰 크기를 고릅니다.
+const TITLE_TIERS=[[12,1.5],[11,1],[10,.5],[9,0]];
+const CJK_RE=/[ᄀ-ᇿ⺀-鿿가-힯豈-﫿︰-﹏＀-￯]/;
+// 세로쓰기에서 한 글자가 차지하는 길이(글자 크기 대비). 한글·한자는 1, 옆으로 눕는 영문·숫자는 그보다 짧습니다.
+function glyphEm(ch){return /\s/.test(ch)?.33:CJK_RE.test(ch)?1:/[A-Za-z0-9]/.test(ch)?.62:/\p{Extended_Pictographic}/u.test(ch)?1.1:.8}
+function titleRun(text,f,ls){let n=0;for(const ch of text)n+=glyphEm(ch)*f+ls;return n}
+// 화면에 보일 글만 끝을 줄임표로 줄입니다. 저장된 제목은 그대로입니다.
+function cutTitle(text,cap,f,ls){
+ let out='',len=0;
+ for(const ch of text){const w=glyphEm(ch)*f+ls;if(len+w>cap-f)return out.trimEnd()+'…';out+=ch;len+=w}
+ return out;
+}
+function setTitle(x,f,ls,cols,text){
+ const st=x.el.style;
+ st.fontSize=f+'px';st.letterSpacing=ls+'px';st.lineHeight=cols>1?'1.25':'1.2';st.whiteSpace=cols>1?'normal':'nowrap';
+ x.el.textContent=text;x.f=f;x.ls=ls;x.cols=cols;
+}
+function chooseTitle(x){
+ // 실제 책등처럼 제목은 한 줄로만 씁니다. 들어가는 가장 큰 크기를 고르고, 9px로도 길면 끝을 줄임표로 줄입니다.
+ // 글꼴에 따라 세로쓰기 글자가 반 글자쯤 밀려 그려지기도 해서, 글자 한 개 크기만큼 여유를 남깁니다.
+ const max=Number(x.el.dataset.max)||12;
+ for(const [f,ls] of TITLE_TIERS)if(f<=max&&titleRun(x.text,f,ls)<=x.A-f){x.cap=x.A-f;return setTitle(x,f,ls,1,x.text)}
+ x.cap=x.A-9;
+ setTitle(x,9,0,1,cutTitle(x.text,x.cap,9,0));
+}
+function fitSpineTitles(root){
+ const els=[...root.querySelectorAll('.spine .title[data-full]')];if(!els.length)return;
+ // 읽기를 한꺼번에, 쓰기를 한꺼번에 해서 책이 500권이어도 화면 계산이 몇 번만 일어나게 합니다.
+ const cs=getComputedStyle(els[0].parentElement),padX=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
+ const boxes=els.map(el=>({el,A:el.clientHeight,W:el.parentElement.clientWidth-padX,text:el.dataset.full||''}));
+ for(const x of boxes)if(x.A>0&&x.W>0)chooseTitle(x);
+ // 추정이 빗나가 넘친 제목만 조금 더 줄입니다.
+ for(let round=0;round<3;round++){
+  // 글자가 차지한 실제 영역까지 재서, 글꼴이 예상보다 길게 그려져도 잘리지 않게 합니다.
+  const over=boxes.filter(x=>{if(!x.f)return false;const el=x.el;if(el.scrollHeight>el.clientHeight+1)return true;const rg=document.createRange();rg.selectNodeContents(el);return rg.getBoundingClientRect().height>el.clientHeight+.5});
+  if(!over.length)break;
+  for(const x of over){x.cap*=.85;setTitle(x,x.f,x.ls,x.cols,cutTitle(x.text,x.cap,x.f,x.ls))}
+ }
+}
+// 마우스를 올리거나 키보드로 고르면 정식 제목과 저자를 작게 보여 줍니다(터치 화면에서는 책을 열어 확인).
+let spineTip=null;
+function hideSpineTip(){if(spineTip)spineTip.hidden=true}
+function showSpineTip(el){
+ const b=books.find(x=>x.id===el.dataset.book);if(!b)return;
+ if(!spineTip){spineTip=document.createElement('div');spineTip.className='spine-tip';spineTip.setAttribute('role','tooltip');document.body.append(spineTip)}
+ spineTip.innerHTML=`<strong>${esc(b.workTitle||b.title)}</strong><small>${esc(cleanAuthor(b.author)||'작가 미상')}</small>`;
+ spineTip.hidden=false;
+ const r=el.getBoundingClientRect(),t=spineTip.getBoundingClientRect();
+ let left=r.left+r.width/2-t.width/2;left=Math.max(8,Math.min(left,innerWidth-t.width-8));
+ let top=r.top-t.height-22;if(top<8)top=r.bottom+8;
+ spineTip.style.left=left+'px';spineTip.style.top=top+'px';
+}
+document.addEventListener('pointerover',e=>{if(e.pointerType!=='mouse')return;const s=e.target.closest?.('.spine[data-book]');if(s)showSpineTip(s)});
+document.addEventListener('pointerout',e=>{const s=e.target.closest?.('.spine[data-book]');if(s&&!s.contains(e.relatedTarget))hideSpineTip()});
+document.addEventListener('focusin',e=>{const s=e.target.closest?.('.spine[data-book]');if(s&&s.matches(':focus-visible'))showSpineTip(s)});
+document.addEventListener('focusout',e=>{if(e.target.closest?.('.spine[data-book]'))hideSpineTip()});
+document.addEventListener('click',hideSpineTip,true);
+window.addEventListener('scroll',hideSpineTip,{passive:true});
+// 웹 글꼴이 늦게 도착하면 글자 폭이 조금 달라지므로 제목만 한 번 더 맞춥니다.
+const refitTitles=()=>{const sh=$('.shelf');if(sh)fitSpineTitles(sh)};
+document.fonts?.ready?.then(refitTitles).catch(()=>{});
+document.fonts?.addEventListener?.('loadingdone',refitTitles);
+// 책 한 권이 선반에서 차지하는 폭. 지금은 모든 책이 같은 폭입니다.
+// 두께 비율 0~1. 쪽수를 알면 80쪽→가장 얇게, 1000쪽→가장 두껍게(로그 눈금). 모르면 책 ID로 정한 0.15~0.85 사이의 고정값입니다.
+// 이 두께는 장식이라 화면 어디에도 쪽수처럼 표시하지 않습니다. 다시 그려도 바뀌지 않습니다.
+function thicknessOf(b){
+ if(b.pages>0)return Math.max(0,Math.min(1,(Math.log(b.pages)-Math.log(80))/(Math.log(1000)-Math.log(80))));
+ return .15+(Math.abs(hash(b.id+'|w'))%71)/100;
+}
+function spineWidthOf(b,m){return Math.round((m.min+thicknessOf(b)*(m.max-m.min))*2)/2}
+function packShelves(list,m){
+ const room=m.inner-0.5; // 소수점 계산 오차 여유
+ const groups=[];let cur=[],used=0;
+ for(const b of list){
+  const w=spineWidthOf(b,m),need=cur.length?used+m.gap+w:w;
+  if(cur.length&&need>room){groups.push(cur);cur=[b];used=w}else{cur.push(b);used=need}
+ }
+ if(cur.length)groups.push(cur);
+ return groups;
+}
+// force=false(선반 크기 변화로 불릴 때)는 잰 값이 그대로면 다시 그리지 않습니다.
+function layoutShelf(force=true){
+ const shelf=$('.shelf');if(!shelf)return;
+ watchShelf(shelf);
+ const m=measureShelf(shelf)||shelfMetrics;
+ const key=m?[m.inner,m.spine,m.gap].map(x=>x.toFixed(1)).join('|'):'';
+ if(!force&&key===shelfMetricKey)return;
+ shelfMetricKey=key;
+ const shown=getShown();
+ if(!shown.length){shelf.innerHTML=emptyShelfHTML();return}
+ if(m)shelfMetrics=m;
+ // 잴 수 없을 때(화면이 숨겨진 경우 등)는 한 선반에 모두 두고 줄바꿈 안전망에 맡깁니다.
+ hideSpineTip();
+ shelf.innerHTML=tiersHTML(m?packShelves(shown,m):[shown],m);
+ fitSpineTitles(shelf);
+}
+function scheduleShelf(){
+ if(shelfFrame)return;
+ shelfFrame=requestAnimationFrame(()=>{
+  shelfFrame=0;
+  // 스크롤바가 생겼다 사라지며 크기가 계속 흔들리는 드문 경우를 막습니다.
+  const now=Date.now();shelfBurst=shelfBurst.filter(t=>now-t<1000);
+  if(shelfBurst.length>=8)return;
+  shelfBurst.push(now);
+  layoutShelf(false);
+ });
+}
+function watchShelf(shelf){
+ if(!('ResizeObserver' in window)||observedShelf===shelf)return;
+ if(!shelfObserver)shelfObserver=new ResizeObserver(scheduleShelf);
+ shelfObserver.disconnect();shelfObserver.observe(shelf);observedShelf=shelf;
+}
+
+function tagBar(){
+ const counts=new Map();
+ for(const b of books)if(b.status==='done')for(const t of tagsOf(b))counts.set(t,(counts.get(t)||0)+1);
+ if(!counts.size)return '';
+ const list=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'ko')).slice(0,16);
+ return `<div class="tagbar">${tagFilter?`<button type="button" class="tagchip active" data-tag="">× 전체 보기</button>`:''}${list.map(([t,n])=>`<button type="button" class="tagchip ${tagFilter===t?'active':''}" data-tag="${esc(t)}">${esc(t)}<span>${n}</span></button>`).join('')}</div>`;
+}
+function bannerHTML(){
+ if(loadProblem)return `<div class="banner" role="alert"><strong>저장된 서재 데이터를 읽지 못했습니다.</strong><br>원본은 지워지지 않았고, 지금은 저장이 잠겨 있습니다. 먼저 원본을 내려받아 보관한 뒤 '새 서재로 시작'을 누르면, 원본을 브라우저의 별도 항목에 남겨 둔 채 빈 서재로 시작합니다. 백업 JSON이 있다면 시작한 뒤 복원하세요.<div class="actions"><button class="btn" data-action="raw-download">원본 내려받기</button><button class="btn danger" data-action="raw-reset">새 서재로 시작</button></div></div>`;
+ if(storageProblem)return `<div class="banner" role="alert"><strong>이 브라우저에서 저장소를 쓸 수 없습니다.</strong><br>지금 입력한 내용은 저장되지 않습니다. http(s) 주소로 열거나 브라우저의 사이트 데이터 설정을 확인하세요.</div>`;
+ return '';
+}
+function getShown(){return books.filter(b=>b.status==='done'&&(!tagFilter||tagsOf(b).includes(tagFilter))&&(`${b.title} ${b.author||''} ${b.workTitle||''} ${b.spineTitle||''} ${b.publisher||''} ${b.summary||''} ${b.aiSummary||''} ${(b.quotes||[]).map(q=>q.text).join(' ')} ${b.notes||''}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()))).sort((a,b)=>sort==='title'?a.title.localeCompare(b.title,'ko'):sort==='rating'?b.rating-a.rating:new Date(b.createdAt)-new Date(a.createdAt))}
+function updateShelf(){const shelf=$('.shelf');if(!shelf)return;const shown=getShown();layoutShelf(true);const c=$('.sectionbottom span:last-child');if(c)c.textContent=shown.length+'권 표시 중'}
+function render(){const shown=getShown();const done=books.filter(b=>b.status==='done'),rated=done.filter(b=>b.rating>0),average=rated.length?(rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1):'—';
+$('#root').innerHTML=`<div class="app"><aside class="sidebar"><div class="brand">나의 서재<small>MY LIBRARY</small></div><div class="sidegroup"><div class="sidelabel">COLLECTION</div><button class="navitem ${view==='library'?'active':''}" data-view="library">▤ &nbsp; 나의 서재</button><button class="navitem ${view==='insights'?'active':''}" data-view="insights">◈ &nbsp; 독서 통계</button></div><div class="sidegroup"><div class="sidelabel">DATA</div><button class="navitem ${view==='settings'?'active':''}" data-view="settings">⚙ &nbsp; 설정 및 데이터</button></div><p class="sidefoot">A quiet place for<br>the books and thoughts<br>you want to keep.</p></aside><main class="main">${bannerHTML()}<div class="topbar"><div class="mobilebrand">나의 서재.</div><div class="breadcrumb">MY LIBRARY &nbsp; / &nbsp; ${view==='library'?'COLLECTION':view==='insights'?'INSIGHTS':'SETTINGS'}</div><div class="topbuttons">${view==='library'?'<button class="btn" data-action="export">↓ 백업</button><button class="btn primary" data-action="add">+ 책 추가</button>':'<button class="btn" data-view="library">서재로 돌아가기</button>'}</div></div><section class="hero"><div><div class="eyebrow">A PERSONAL COLLECTION</div><h1>${view==='library'?'나의 서재':view==='insights'?'독서 기록의 풍경':'설정 및 데이터'}</h1><p class="desc">${view==='library'?'읽은 책이 머무르고, 사유가 쌓이는 공간.':view==='insights'?'당신의 독서 기록을 돌아봅니다.':'서재의 분위기를 꾸미고 기록을 관리하세요.'}</p></div><div class="count">${done.length} COMPLETED WORKS</div></section><section class="stats"><div class="stat"><small>완독 작품</small><strong>${done.length}</strong></div><div class="stat"><small>모은 문장</small><strong>${done.reduce((s,b)=>s+(b.quotes||[]).length,0)}</strong></div><div class="stat"><small>기록한 감상</small><strong>${done.filter(b=>b.notes?.trim()).length}</strong></div><div class="stat"><small>평균 평점</small><strong>${average}</strong></div></section>${view==='library'?`<section class="toolbar"><div class="tabs"><span class="tab active">완독한 작품</span></div><div class="searchrow"><input class="search" id="search" aria-label="책 검색" placeholder="책 · 작가 · 작품 검색" value="${esc(search)}"><select class="sort" id="sort" aria-label="정렬"><option value="new" ${sort==='new'?'selected':''}>최근 추가순</option><option value="title" ${sort==='title'?'selected':''}>제목순</option><option value="rating" ${sort==='rating'?'selected':''}>평점순</option></select></div></section>${tagBar()}<div class="shelf"></div><div class="sectionbottom"><span>MY LIBRARY COLLECTION</span><span>${shown.length}권 표시 중</span></div><p class="hint">기존에 저장한 읽는 중·읽고 싶은 책은 삭제되지 않고 JSON 백업에 유지되지만 서재에는 완독 도서만 표시됩니다. 책등을 클릭하면 정보, 평점, 독서 기록을 확인할 수 있어요.</p>`:view==='insights'?`<div class="analysis"><div class="eyebrow">READING OVERVIEW</div><h3>당신의 독서 현황</h3><p>완독 ${done.length}권 · 읽는 중 ${books.filter(b=>b.status==='reading').length}권 · 읽고 싶은 책 ${books.filter(b=>b.status==='want').length}권</p><p>평점을 매긴 완독 도서 ${rated.length}권 · 평균 평점 ${average}</p><p>독서 기록이 있는 책 ${books.filter(b=>b.notes?.trim()).length}권 · Notion 링크가 연결된 책 ${books.filter(b=>b.notionUrl).length}권</p></div>`:`<div class="analysis"><div class="eyebrow">APPEARANCE</div><h3>서재의 색감</h3><p>테마를 선택하면 바로 적용되며 이 브라우저에 기억됩니다.</p><div class="theme-choices">${Object.entries(themeNames).map(([key,label])=>`<button type="button" class="theme-option ${theme===key?'chosen':''}" data-theme="${key}" aria-pressed="${theme===key}"><span class="theme-swatch ${key}"></span><span>${label}</span></button>`).join('')}</div><p class="message">새로 추가하는 책은 여섯 가지 책등 디자인과 30색 팔레트에서 자동으로 어울리는 모습을 갖습니다. 예전에 추가한 책은 원래 색을 지키고 있어요.</p><div class="actions" style="justify-content:flex-start"><button class="btn" data-action="recolor-all">책등 색을 새 팔레트로 다시 배합 (${books.filter(x=>x.colorMode!=='auto').length}권)</button></div><hr class="setting-divider"><div class="eyebrow">BOOK SEARCH</div><h3>도서 검색 연결</h3><p>카카오 책 검색(Daum)을 사용합니다. 제목 중심 검색과 통합 검색을 결합해 연관 작품을 보여주고, 판본을 고르면 출판사·번역자·ISBN·표지가 함께 입력됩니다.</p><p>키 발급: developers.kakao.com 로그인 → 내 애플리케이션 → 앱 추가 → 요약 정보의 <strong>REST API 키</strong> 복사 (Admin 키 아님). 책 검색은 별도 동의항목 신청이 필요 없습니다.</p><div class="field"><label for="gb-key">카카오 REST API 키 (필수)</label><input id="gb-key" type="password" autocomplete="off" placeholder="32자리 REST API 키" value="${esc(getApiKey())}"></div><div class="actions" style="justify-content:flex-start"><button class="btn" data-action="save-key">키 저장</button></div><p class="message">키는 이 브라우저에만 저장되며 백업 파일에는 들어가지 않습니다. 공용 PC에서는 키를 넣지 마세요. 카카오 REST 키는 리퍼러 제한이 없으므로, 이 파일을 웹에 공개 배포할 계획이라면 키를 서버(프록시)에 숨기는 방식을 권합니다.</p><hr class="setting-divider"><div class="eyebrow">AI · GEMINI</div><h3>AI 기능</h3><p>Gemini로 두 가지를 합니다. 하나, 카카오 책 소개에서 홍보 문구를 걷어내고 짧은 소개와 장르 태그로 정리합니다. 둘, 책등과 표지에 새길 작은 상징을 그립니다. 키가 없어도 자동 상징 추천과 규칙 기반 태그는 그대로 동작합니다.</p><p>키 발급: aistudio.google.com/api-keys → API 키 만들기. 무료 등급이 있어 카드 등록 없이 받을 수 있습니다. 새로 만든 키는 <strong>AQ.Ab</strong> 로 시작하며(예전 형식은 AIza), 둘 다 사용할 수 있습니다. 구글 클라우드 콘솔에서 만든 키는 서비스 계정 바인딩을 요구하니 AI Studio에서 받으세요.</p><div class="field"><label for="ai-key">Gemini API 키 (선택)</label><input id="ai-key" type="password" autocomplete="off" placeholder="AQ.Ab... 또는 AIza..." value="${esc(getAiKey())}"></div><div class="actions" style="justify-content:flex-start"><button class="btn" data-action="save-ai-key">키 저장</button><button class="btn primary" data-action="analyze-all" ${batchRunning?'disabled':''}>${batchRunning?'정리하는 중…':`✦ 아직 정리 안 된 책 정리하기 (${books.filter(b=>b.status==='done'&&!b.aiSummary).length}권)`}</button><button class="btn" data-action="reanalyze-all" ${batchRunning?'disabled':''}>↻ 전체 다시 정리 (${books.filter(b=>b.status==='done').length}권)</button><button class="btn" data-action="draw-all" ${drawing||!pendingDrawCount()?'disabled':''}>${drawing?'상징 그리는 중…':`✦ 남은 상징 그리기 (${pendingDrawCount()}권)`}</button></div>${[AI_MODEL,AI_FAST_MODEL].filter(pausedUntil).length?`<p class="message"><strong>오늘 무료 한도를 다 쓴 기능:</strong> ${[AI_MODEL,AI_FAST_MODEL].filter(pausedUntil).map(m=>`${AI_FEATURE_NAME(m)}(${esc(fmtWhen(pausedUntil(m)))}까지 쉼)`).join(' · ')}. 그 전까지는 요청을 보내지 않고, 시간이 지나면 이어서 합니다.</p>`:''}<p class="muted">새로 추가하는 책은 저장할 때 자동으로 정리됩니다. 한꺼번에 정리할 때는 5권씩 묶어 한 번에 보내고, 묶음 사이에 잠깐 쉬어 갑니다. 정리할 때 상징도 함께 정해지고, 내장 아이콘에 있는 사물(도끼·고래·열쇠 등)은 바로 붙습니다. 나머지 상징 그림은 AI 한도를 아끼려고 책을 펼쳐 볼 때 그리거나, '남은 상징 그리기'를 누르면 5권씩 묶어 한꺼번에 그립니다. 그리기 전까지는 제목·소개로 고른 기본 아이콘이 보입니다. 한도에 닿으면 멈추고, 남은 책은 다시 누르면 이어서 정리합니다.</p><p class="message">키는 이 브라우저에만 저장되고 백업 파일에는 들어가지 않습니다. 공용 PC에서는 넣지 마세요. 생성된 상징은 책 정보에 저장되므로 같은 책을 다시 호출하지 않습니다. 무료 등급에는 분당·일일 호출 한도가 있어, 한도를 넘으면 잠시 뒤 다시 시도하면 됩니다.</p><hr class="setting-divider"><div class="eyebrow">BACKUP & RESTORE</div><h3>나의 기록을 안전하게</h3><p>이 앱은 브라우저의 로컬 저장소에만 데이터를 보관합니다. 다른 기기에서는 자동 동기화되지 않습니다.</p><p>백업을 내려받아 보관하고, 필요할 때 JSON 파일을 가져와 복원하세요. 복원 전 기존 기록을 백업할 수 있습니다.</p><div class="actions" style="justify-content:flex-start"><button class="btn primary" data-action="export">↓ JSON 백업</button><button class="btn" data-action="import">↑ JSON 복원</button></div><p class="message">이전 Mnemosyne 백업 파일도 불러올 수 있습니다. 가져오기 시 전체 교체 또는 중복 ID를 제외한 병합 중 선택할 수 있습니다.</p></div>`}<input type="file" id="importer" accept="application/json,.json" hidden></main></div><nav class="mobile-nav" aria-label="모바일 메뉴"><button data-view="library" class="${view==='library'?'active':''}"><span class="navicon">▤</span>서재</button><button data-view="insights" class="${view==='insights'?'active':''}"><span class="navicon">◈</span>통계</button><button data-view="settings" class="${view==='settings'?'active':''}"><span class="navicon">⚙</span>설정</button></nav><div id="dialog"></div>`;
+$('#search')?.addEventListener('input',e=>{search=e.target.value;updateShelf()});$('#sort')?.addEventListener('change',e=>{sort=e.target.value;render()});$('#importer').addEventListener('change',handleImport);layoutShelf(true);showDialog()}
+// 등장 효과는 창을 새로 열 때 한 번만 붙입니다. 같은 창을 다시 그릴 때(평점 저장 등)는 움직이지 않습니다.
+let dialogEnter=false,lastSpine='',pulling=false;
+const reduceMotion=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+function showDialog(){showDialogInner();if(dialogEnter){dialogEnter=false;$('#dialog .overlay')?.classList.add('enter')}}
+function showDialogInner(){const node=$('#dialog');if(!node||!dialog)return;const b=editing?books.find(x=>x.id===editing):null;
+if(dialog==='edit'){node.innerHTML=`<div class="overlay"><div class="modal"><button class="close" data-action="close" aria-label="닫기">×</button><div class="eyebrow">${b?'EDIT BOOK':'ADD TO COLLECTION'}</div><h2>${b?'책 정보 수정':'새로운 책 추가'}</h2><form id="bookform"><div class="edition-info api-search"><div class="eyebrow">BOOK SEARCH</div><label for="apiQuery">도서 정보 자동 검색</label><div class="api-search-row"><input id="apiQuery" type="search" maxlength="120" placeholder="예: 죄와 벌 도스토예프스키" autocomplete="off"><button type="button" class="btn primary" data-action="api-search">검색</button></div><p class="muted">완독한 작품만 서재에 기록합니다. 작품을 먼저 고른 뒤 판본을 선택하면 제목, 저자, 출판사, 번역자, ISBN과 표지가 입력됩니다. 검색 결과가 부정확할 수 있어요.</p><div id="api-results" aria-live="polite"></div></div><div class="field"><label for="title">책 제목 / 판본 표시명 *</label><input id="title" name="title" maxlength="150" required value="${esc(b?.title||'')}" placeholder="예: 죄와 벌"></div><div class="field"><label for="author">저자</label><input id="author" name="author" maxlength="120" value="${esc(b?.author||'')}" placeholder="예: 표도르 도스토예프스키"></div><div class="edition-info"><div class="eyebrow">WORK & EDITION</div><p>작품은 공통된 원작, 판본은 출판사·번역자가 다른 책을 뜻합니다. 검색으로 채워진 정보도 직접 고칠 수 있습니다.</p><div class="field"><label for="workTitle">작품명</label><input id="workTitle" name="workTitle" maxlength="150" value="${esc(b?.workTitle||b?.title||'')}" placeholder="예: 죄와 벌 (미입력 시 책 제목과 동일)"></div><div class="fieldgrid"><div class="field"><label for="publisher">출판사</label><input id="publisher" name="publisher" maxlength="120" value="${esc(b?.publisher||'')}" placeholder="예: 민음사"></div><div class="field"><label for="translator">번역자</label><input id="translator" name="translator" maxlength="120" value="${esc(b?.translator||'')}" placeholder="예: 홍길동"></div></div><div class="field"><label for="summary">책 소개</label><textarea id="summary" name="summary" class="summaryfield" maxlength="1200" placeholder="검색하면 자동으로 채워집니다. 직접 적어도 되고, 비워 둬도 됩니다.">${esc(b?.summary||'')}</textarea><p class="muted">카카오가 주는 원문입니다(앞부분만 옵니다). 상징 추천과 AI 정리의 재료로 쓰입니다.</p></div><div class="field"><label for="aiSummary">짧은 소개 (AI 정리)</label><textarea id="aiSummary" name="aiSummary" class="summaryfield" maxlength="400" placeholder="상세보기의 ✦ AI로 소개 정리하기를 누르면 채워집니다. 직접 써도 됩니다.">${esc(b?.aiSummary||'')}</textarea></div><div class="field"><label for="tags">태그</label><input id="tags" name="tags" maxlength="200" value="${esc((b?.tags||[]).join(', '))}" placeholder="쉼표로 구분. 예: 다시 읽고 싶은, 밑줄 많음"><p class="muted">비워 두면 책 소개를 분석해 장르 태그가 자동으로 붙습니다${b?`. 현재 자동 분석 결과: ${autoTags(b).join(' · ')||'없음'}`:''}.</p></div><div class="fieldgrid"><div class="field"><label for="isbn">ISBN (선택)</label><input id="isbn" name="isbn" maxlength="30" value="${esc(b?.isbn||'')}" placeholder="ISBN"></div><div class="field"><label for="pages">쪽수 (선택)</label><input id="pages" name="pages" type="number" min="0" max="9999" inputmode="numeric" value="${b?.pages||''}" placeholder="예: 520"></div></div><p class="muted">쪽수를 적으면 책등 두께에 반영됩니다. 비워 두면 보통 두께 안에서 책마다 조금씩 다르게 보입니다.</p><div class="field"><label for="coverUrl">표지 이미지 URL (선택)</label><input id="coverUrl" name="coverUrl" type="url" value="${esc(b?.coverUrl||'')}" placeholder="검색으로 자동 입력됩니다"><input type="hidden" id="editionTitle" name="editionTitle" value="${esc(b?.editionTitle||'')}"><input type="hidden" id="googleBooksId" name="googleBooksId" value="${esc(b?.googleBooksId||'')}"><input type="hidden" id="customMotif" name="customMotif" value="${esc(b?.customMotif||'')}"><input type="hidden" id="motifIdea" name="motifIdea" value="${esc(b?.motifIdea||'')}"><input type="hidden" id="motifDrawnFor" name="motifDrawnFor" value="${esc(b?.motifDrawnFor||'')}"></div></div><div class="edition-info"><div class="eyebrow">BOOKSHELF DESIGN</div><p>책등 색과 작품 상징은 서재에만 적용되며 독서 기록과 별개로 보관돼요.</p><div class="field"><label for="spineTitle">책등 표시명 (선택)</label><input id="spineTitle" name="spineTitle" maxlength="60" value="${esc(b?.spineTitle||'')}" placeholder="비워 두면 작품명을 그대로 씁니다"><p class="muted">제목이 길 때 책등에만 짧게 보여 줄 이름입니다. 작품명·판본명 같은 원래 정보는 바뀌지 않고, 마우스를 올리거나 책을 열면 정식 제목이 보입니다.</p></div><div class="fieldgrid"><div class="field"><label for="spineType">책등 디자인</label><select id="spineType" name="spineType">${Object.entries(SPINE_TYPES).map(([k,l])=>`<option value="${k}" ${(b?.spineType||'auto')===k?'selected':''}>${k==='auto'&&b?`자동 추천 (지금: ${esc(SPINE_TYPES[autoTypeOf(b)].split(' — ')[0])})`:esc(l)}</option>`).join('')}</select></div><div class="field"><label>인생책</label><label class="lifecheck"><input type="checkbox" id="lifeBook" name="lifeBook" ${b?.lifeBook?'checked':''}> 인생책으로 간직하기</label></div></div><p class="muted">인생책에는 작은 리본과 금박 상징이 새겨집니다. 책등 디자인을 직접 고른 책은 인생책이어도 그 디자인을 그대로 둡니다.</p><div class="field"><label for="bookColor">책등 색상</label><input type="hidden" id="colorMode" name="colorMode" value="${b?b.colorMode:'auto'}"><div class="color-editor"><input type="color" id="bookColor" name="bookColor" value="${b?spineColorOf(b):colors[0]}"><button type="button" class="btn" data-action="auto-color">자동 배색</button><span class="muted" id="colorModeNote">${!b||b.colorMode==='auto'?'자동 배색 중':'직접 고른 색'}</span></div><div class="palette">${colors.map(c=>`<button type="button" class="palette-color" data-color="${c}" style="--swatch:${c}" title="${c}" aria-label="책등 색상 ${c}"></button>`).join('')}</div></div><div class="field"><label for="motif">책등·표지에 새길 상징</label><select id="motif" name="motif">${Object.entries(motifNames).filter(([key])=>key!=='custom'||b?.customMotif).map(([key,label])=>`<option value="${key}" ${(b?.motif||'auto')===key?'selected':''}>${label}</option>`).join('')}</select><div class="motif-row"><div class="motif-preview" id="motifPreview"></div><button type="button" class="btn" data-action="ai-motif">✦ AI로 상징 만들기</button></div><p class="muted">자동 추천은 제목과 책 소개의 낱말로 고릅니다. AI 생성은 설정에 Gemini API 키를 넣었을 때만 동작하며, 만들어진 상징은 이 책에 저장돼 다시 호출하지 않습니다.</p></div></div><div class="fieldgrid"><div class="field"><label>독서 상태</label><input value="완독" disabled><input type="hidden" name="status" value="done"></div><div class="field"><label for="rating">평점</label><select id="rating" name="rating">${[0,1,2,3,4,5].map(x=>`<option value="${x}" ${Number(b?.rating||0)===x?'selected':''}>${x===0?'평가하지 않음':`${x} / 5`}</option>`).join('')}</select></div></div><div class="field"><label for="notes">독서 기록 · 메모</label><textarea id="notes" name="notes" placeholder="읽고 느낀 점, 기억하고 싶은 문장...">${esc(b?.notes||'')}</textarea></div><div class="field"><label for="notionUrl">Notion 기록 페이지 링크 (선택)</label><input id="notionUrl" name="notionUrl" type="url" placeholder="https://www.notion.so/..." value="${esc(b?.notionUrl||'')}"></div><div class="actions"><button type="button" class="btn" data-action="close">취소</button><button type="submit" class="btn primary">${b?'변경사항 저장':'서재에 추가'}</button></div></form><p class="privacy">기록은 현재 브라우저에 저장됩니다. 정기적으로 JSON 백업을 내려받으세요.</p></div></div>`;$('#bookform').addEventListener('submit',handleSave);formSnapshot=formState();formInit=readFormInit();$('#motif')?.addEventListener('change',updateMotifPreview);$('#title')?.addEventListener('input',updateMotifPreview);$('#workTitle')?.addEventListener('input',updateMotifPreview);updateMotifPreview();$('#apiQuery').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchKakaoBooks()}});return}
+if(dialog==='detail'&&b){node.innerHTML=`<div class="overlay"><div class="modal wide"><button class="close" data-action="close" aria-label="닫기">×</button><div class="eyebrow">MY LIBRARY / BOOK DETAIL</div><div class="previewdetail">${coverHTML(b)}<div>${b.lifeBook?'<div class="lifemark">MY TREASURED BOOK · 인생책</div>':''}<h2 class="detailtitle">${esc(cleanDisplayTitle(b.workTitle||b.title))}</h2><div class="muted">${esc(cleanAuthor(b.author)||'작가 미상')}</div><div class="detailsub">독서 상태</div><span class="btn">완독</span><div class="detailsub">나의 평점</div><div class="rating">${[1,2,3,4,5].map(n=>`<button class="star ${Number(b.rating)>=n?'selected':''}" data-rate="${n}" aria-label="${n}점">★</button>`).join('')}</div><p><button type="button" class="link" data-action="toggle-life">${b.lifeBook?'인생책에서 내리기':'인생책으로 간직하기'}</button></p></div></div><div class="eyebrow">BOOK INFORMATION</div><div class="details-grid"><div class="detail-info"><div class="detailsub">작품</div><strong>${esc(b.workTitle||b.title)}</strong></div><div class="detail-info"><div class="detailsub">출판사</div><strong>${esc(b.publisher||'미등록')}</strong></div><div class="detail-info"><div class="detailsub">번역자</div><strong>${esc(b.translator||'미등록')}</strong></div><div class="detail-info"><div class="detailsub">원본 판본명</div><strong>${esc(b.editionTitle||b.title)}</strong></div><div class="detail-info"><div class="detailsub">ISBN</div><strong>${esc(b.isbn||'미등록')}</strong></div>${b.spineTitle?`<div class="detail-info"><div class="detailsub">책등 표시명</div><strong>${esc(b.spineTitle)}</strong></div>`:''}${b.pages?`<div class="detail-info"><div class="detailsub">쪽수</div><strong>${b.pages}쪽</strong></div>`:''}</div><div class="detailsub">책 소개</div>${aiBusy.has(b.id)?`<div class="booksummary"><span class="muted">✦ Gemini가 소개를 정리하는 중…</span></div>`:b.aiSummary?`<p class="aisummary">${esc(b.aiSummary)}</p>`:b.summary?`<div class="booksummary rawsummary clamp">${esc(tidyRawSummary(b.summary))}</div>`:`<div class="booksummary"><span class="muted">아직 소개가 없습니다.</span></div>`}${b.aiSummary&&b.summary&&!aiBusy.has(b.id)?`<div class="booksummary rawsummary" hidden>${esc(tidyRawSummary(b.summary))}</div>`:''}<div class="summaryactions">${aiBusy.has(b.id)?'':`<button type="button" class="link" data-action="ai-analyze">${b.aiSummary?'↻ 다시 정리':'✦ AI로 소개 정리하기'}</button>`}${!b.summary?`<button type="button" class="link" data-action="fetch-summary">카카오에서 소개 불러오기</button>`:''}${b.summary&&!aiBusy.has(b.id)?`<button type="button" class="link" data-action="toggle-raw">${b.aiSummary?'출판사 소개 원문':'펼치기'}</button>`:''}</div>${b.motifIdea||drawQueue.includes(b.id)?`<div class="detailsub">상징</div><div class="motifline"><span class="motifmini">${spineMotif(b,28)||''}</span><span>${drawingNow.has(b.id)?`<span class="muted">「${esc(b.motifIdea)}」 그리는 중…</span>`:drawQueue.includes(b.id)?`<span class="muted">「${esc(b.motifIdea)}」 ${pausedUntil(AI_MODEL)?`— 오늘 AI 한도를 다 써서 ${esc(fmtWhen(pausedUntil(AI_MODEL)))} 이후에 그려요`:'그릴 차례를 기다리는 중…'}</span>`:esc(b.motifIdea||'')}</span>${b.motifIdea&&!drawQueue.includes(b.id)&&(b.motif==='auto'||b.motif==='custom')?`<button type="button" class="link" data-action="redraw-motif">↻ 다시 그리기</button>`:''}</div>`:''}<div class="detailsub">태그</div><div class="tagrow">${tagsOf(b).map(t=>`<button type="button" class="tagchip" data-tag="${esc(t)}">${esc(t)}</button>`).join('')||'<span class="muted">태그가 없습니다. AI로 정리하면 장르 태그가 붙고, 정보 수정에서 직접 넣을 수도 있어요.</span>'}</div><div class="detailsub">모은 문장${(b.quotes||[]).length?` <span class="muted">${b.quotes.length}</span>`:''}</div>${(b.quotes||[]).map(q=>`<blockquote class="bookquote"><p>${esc(q.text)}</p><div class="quotemeta">${q.page?`<span>${esc(q.page)}쪽</span>`:''}<button type="button" class="quotedel" data-action="del-quote" data-qid="${esc(q.id)}" aria-label="문장 삭제">삭제</button></div></blockquote>`).join('')}<div class="quoteform"><textarea id="newQuote" maxlength="600" placeholder="마음에 남은 문장을 적어 두세요"></textarea><div class="quoteformrow"><input id="newQuotePage" maxlength="20" inputmode="numeric" placeholder="쪽 (선택)"><button type="button" class="btn" data-action="add-quote">문장 추가</button></div></div><div class="detailsub">나의 독서 기록</div><div class="detailnotes">${b.notes?.trim()?esc(b.notes):'<span class="muted">아직 기록이 없어요. 책을 수정해 감상을 남겨보세요.</span>'}</div>${b.notionUrl?`<p><a class="link" target="_blank" rel="noopener noreferrer" href="${esc(b.notionUrl)}">Notion에서 기록 열기 ↗</a></p>`:''}<div class="actions row danger-panel"><button type="button" class="btn danger" data-action="delete">책 삭제</button><div><button type="button" class="btn" data-action="close">닫기</button> <button type="button" class="btn primary" data-action="edit">정보 수정</button></div></div></div></div>`;return}
+if(dialog==='restore'&&importCandidate){node.innerHTML=`<div class="overlay"><div class="modal"><button class="close" data-action="close" aria-label="닫기">×</button><div class="eyebrow">RESTORE PREVIEW</div><h2>백업 복원</h2><p class="metadata-subtitle">현재 서재 ${books.length}권 · 백업 파일 ${importCandidate.length}권</p><div class="analysis"><h3>복원 방법을 선택하세요</h3><p><strong>병합</strong> — 같은 ID의 책은 기존 데이터를 유지하고 새 책만 추가합니다.</p><p><strong>전체 교체</strong> — 현재 목록을 백업 파일 목록으로 대체합니다. 기존 기록을 먼저 백업하세요.</p></div><div class="actions"><button class="btn" data-action="close">취소</button><button class="btn" data-action="merge">병합</button><button class="btn danger" data-action="replace">전체 교체</button></div></div></div>`}
+}
+
+function titleKey(s){return String(s||'').normalize('NFKC').toLocaleLowerCase('ko').replace(/[《》〈〉『』「」“”"'‘’]/g,'').replace(/[\s.,·:：!?！？()\[\]{}\-–—_]/g,'')}
+// Remove only edition markers in titles; never drop arbitrary trailing digits in unrelated works.
+function baseWorkTitle(s){
+ let t=String(s||'').normalize('NFKC').trim();
+ t=t.replace(/^\s*[\[【(（](?:세계문학(?:전집)?|문학전집|고전문학|양장본|문고판)[^\]】)）]*[\]】)）]\s*/i,'');
+ t=t.replace(/\s*[\[【(（][^\]】)）]*(?:완역|무삭제|개정|합본|세트|특별|양장|전집|상권|하권|제?[12]권)[^\]】)）]*[\]】)）]\s*$/gi,'');
+ t=t.replace(/\s*[:：\-–—]\s*(?:상|하|[12]|제?[12]권|합본(?:판)?|전[12]권|세트|완역본|개정판)\s*$/i,'');
+ t=t.replace(/\s*(?:\(?(?:제?[12]권|[12]권|[12]부|상권|하권|상|하|합본(?:판)?|전[12]권|세트|전권|완역본)\)?)\s*$/i,'');
+ // Common volume suffix with no whitespace (죄와벌1, 죄와 벌2).
+ t=t.replace(/(?<=[가-힣])\s*[12]\s*$/,'');
+ return t.trim()||String(s||'').trim();
+}
+function authorKey(s){
+ const a=cleanAuthor(s).normalize('NFKC').toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+ if(/도스토|достоев|dostoev|dostoyev|dostoiev|dostoeff/.test(a))return '도스토예프스키';
+ return a;
+}
+// 작품 검색 단계의 표시만 정제합니다. 원본 판본명은 editionTitle로 보존합니다.
+function cleanDisplayTitle(raw){
+ let t=String(raw||'').normalize('NFKC').trim();
+ t=t.replace(/\s*[\(（\[【][^\)）\]】]*[\)）\]】]\s*/g,' ').trim();
+ t=t.replace(/\s*(?:[:：\-–—]\s*)?(?:합본(?:판)?|세트|양장(?:본)?|개정(?:판)?|완역(?:본)?|상권|하권|[12]권|제?[12]권|전[12]권|상|하)\s*$/i,'').trim();
+ t=t.replace(/(?<=[가-힣])\s*[12]\s*$/,'').trim();
+ return t||String(raw||'').trim();
+}
+function cleanAuthor(raw){
+ let a=String(raw||'').normalize('NFKC').trim();
+ a=a.split(/\s*(?:,|;|；|\/|\||·|\n|＆|&)\s*/)[0];
+ a=a.replace(/\s*\([^)]*(?:지음|옮김|엮음|그림|편저|편집|해설)[^)]*\)/g,'');
+ a=a.replace(/\s*(?:지은이|글쓴이|엮은이|그린이|옮긴이|역자|저자|지음|저\.?|글|원작|엮음|편저|편집|번역|옮김|그림|해설)\s*$/gi,'').trim();
+ a=a.replace(/^(?:지은이|저자|글쓴이)\s*[:：]\s*/,'').trim();
+ const k=a.toLocaleLowerCase().replace(/[^\p{L}]/gu,'');
+ const aliases=[[/도스토|dostoev|dostoyev|dostoiev|достоев/,'표도르 도스토예프스키'],[/나쓰메소세키|나츠메소세키|natsumesoseki|夏目漱石/,'나쓰메 소세키'],[/헤밍웨이|hemingway/,'어니스트 헤밍웨이'],[/헤르만헤세|hermannhesse/,'헤르만 헤세'],[/알베르카뮈|albertcamus/,'알베르 카뮈']];
+ for(const [re,name] of aliases)if(re.test(k))return name;
+ return a;
+}
+function canonicalWork(b){
+ let t=cleanDisplayTitle(baseWorkTitle(b.title)),k=titleKey(t),a=authorKey(cleanAuthor(b.author));
+ // Named literary work aliases: only use the known author or an explicitly matching search query.
+ if((/^죄와?벌$/.test(k)||/^죄와벌(?:전집)?$/.test(k)) && (a==='도스토예프스키'||!a)){
+  return {key:'죄와벌',title:'죄와 벌',author:'표도르 도스토예프스키',authorKey:'도스토예프스키'};
+ }
+ return {key:k,title:t,author:cleanAuthor(b.author),authorKey:a};
+}
+function groupWorks(items){
+ const groups=[];
+ for(let i=0;i<items.length;i++){
+  const b=items[i],c=canonicalWork(b);
+  let g=groups.find(g=>g.key===c.key&&(g.authorKey===c.authorKey||!g.authorKey||!c.authorKey));
+  if(!g){g={key:c.key,id:c.key+'|'+c.authorKey,authorKey:c.authorKey,title:c.title,author:c.author,indices:[]};groups.push(g)}
+  g.indices.push(i);
+  if(!g.author&&c.author)g.author=c.author;
+ }
+ const q=titleKey(cleanDisplayTitle(baseWorkTitle(apiQueryText)));
+ groups.sort((a,b)=>Number(b.key===q)-Number(a.key===q)||Number(b.key.startsWith(q))-Number(a.key.startsWith(q)));
+ return groups;
+}
+function editionButton(b,i){return `<button type="button" class="api-result" data-api-pick="${i}">${b.coverUrl?`<img src="${esc(b.coverUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:'<span class="api-no-cover">책</span>'}<span class="api-result-copy"><strong>${esc(cleanDisplayTitle(baseWorkTitle(b.title)))}</strong><small>${esc(cleanAuthor(b.author)||'저자 미상')}</small><small>${esc([b.publisher,b.isbn].filter(Boolean).join(' · ')||'서지 정보 없음')}</small></span><span class="api-result-select">선택</span></button>`}
+function rankedWorks(){
+ const q=titleKey(cleanDisplayTitle(baseWorkTitle(apiQueryText)));
+ const authorWords=cleanAuthor(apiQueryText).toLocaleLowerCase();
+ const groups=groupWorks(apiResults);
+ function score(g){
+   const k=g.key;let n=0;
+   if(k===q)n+=140;
+   else if(k.startsWith(q))n+=95;
+   else if(k.includes(q))n+=70;
+   else if(q.includes(k)&&k.length>1)n+=35;
+   const words=apiQueryText.normalize('NFKC').toLocaleLowerCase().split(/\s+/).filter(x=>x.length>=2);
+   for(const word of words){const w=titleKey(word);if(w&&k.includes(w))n+=12;if(word&&g.author.toLocaleLowerCase().includes(word))n+=25}
+   if(q.length<=2&&k!==q)n-=Math.min(35,Math.max(0,k.length-q.length)*3);
+   // API relevance order is a tie-breaker, not a hard filter.
+   n+=Math.max(0,12-Math.min(...g.indices)*0.35);
+   return n;
+ }
+ return groups.sort((a,b)=>score(b)-score(a));
+}
+function showApiResults(){
+ const node=$('#api-results');if(!node)return;
+ if(apiPending){node.innerHTML='<p class="muted">카카오 책 검색에서 찾는 중…</p>';return}
+ if(apiError){node.innerHTML=`<p class="api-error">${esc(apiError)}</p>`;return}
+ if(!apiResults.length){node.innerHTML='<p class="muted">검색 결과가 없습니다. 직접 입력하거나 다른 검색어를 사용해 보세요.</p>';return}
+ const groups=rankedWorks();
+ let content=apiNote?`<p class="muted">${esc(apiNote)}</p>`:'';
+ if(apiStage==='editions'){
+   const group=groups.find(g=>g.id===apiActiveWork);
+   if(!group){apiStage='works';apiActiveWork='';showApiResults();return}
+   content+=`<div class="api-level"><button type="button" class="btn" data-api-back="1">← 작품 목록</button><span class="muted">${esc(group.title)} · 판본 ${group.indices.length}개</span></div><div class="api-results">${group.indices.map(i=>editionButton(apiResults[i],i)).join('')}</div><p class="api-disclaimer muted">카카오 책 검색에서 조회된 판본만 표시합니다.</p>`;
+ }else{
+   content+=`<p class="api-heading">연관 작품 ${groups.length}개 · 작품 선택 후 판본 선택</p><div class="api-results">${groups.map((g,i)=>`<button type="button" class="api-result" data-api-work="${i}"><span class="api-work-icon">▤</span><span class="api-result-copy"><strong>${esc(g.title)}</strong><small>${esc(cleanAuthor(g.author)||'저자 미상')}</small></span><span class="api-result-select">›</span></button>`).join('')}</div><p class="api-disclaimer muted">동명 작품은 저자별로 구분하며, 1·2권이나 합본 등 같은 작품의 판본만 통합합니다.</p>`;
+ }
+ node.innerHTML=content;
+}
+const API_KEY_STORE='my-library-kakao-key-v1';
+const getApiKey=()=>{try{return(localStorage.getItem(API_KEY_STORE)||'').trim()}catch{return ''}};
+async function fetchJson(url,headers){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+ try{const r=await fetch(url,{signal:controller.signal,headers});if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e}return await r.json()}
+ catch(err){if(err.name==='AbortError'){const e=new Error('시간 초과');e.status='timeout';throw e}throw err}
+ finally{clearTimeout(timer)}
+}
+function whyFailed(err){
+ if(err.status==='timeout')return '응답 시간 초과';
+ if(err.status===429)return '일일 쿼터 초과(429) — 내일 다시 시도하거나 직접 입력하세요';
+ if(err.status===401)return '키 인증 실패(401) — REST API 키를 다시 확인하세요';
+ if(err.status===403)return '접근 거부(403) — 앱 상태 또는 쿼터를 확인하세요';
+ if(err.status===400)return '요청 거부(400) — 검색어나 키 형식을 확인하세요';
+ if(err.status)return 'HTTP '+err.status;
+ return '네트워크 오류(차단되었거나 연결 없음)';
+}
+// 카카오 책 검색 응답을 내부 형식으로 변환합니다. isbn은 "ISBN10 ISBN13" 형태로 오므로 13자리를 우선 사용합니다.
+function mapKakao(json){
+ return (json.documents||[]).map(d=>{
+  const parts=String(d.isbn||'').split(/\s+/).filter(Boolean);
+  const isbn=parts.find(x=>x.replace(/[^0-9Xx]/g,'').length===13)||parts[0]||'';
+  return {
+   title:String(d.title||'').slice(0,150),
+   author:(d.authors||[]).join(', ').slice(0,120),
+   translator:(d.translators||[]).join(', ').slice(0,120),
+   publisher:String(d.publisher||'').slice(0,120),
+   summary:String(d.contents||'').replace(/\s+/g,' ').slice(0,1200),
+   isbn:String(isbn).slice(0,30),
+   coverUrl:safeCover(String(d.thumbnail||'').replace(/^http:/,'https:')),
+   googleBooksId:''
+  };
+ }).filter(b=>b.title);
+}
+async function searchKakaoBooks(){
+ const query=$('#apiQuery')?.value.trim();
+ if(!query){flash('검색할 제목이나 저자를 입력하세요.');return}
+ if(apiPending)return;
+ const restKey=getApiKey();
+ apiStage='works';apiActiveWork='';apiQueryText=query;apiError='';apiNote='';
+ if(!restKey){apiError='설정 → 도서 검색 연결에서 카카오 REST API 키를 먼저 저장해 주세요.';showApiResults();return}
+ const key=query.normalize('NFKC').toLocaleLowerCase().replace(/\s+/g,' ');
+ const cached=getCachedSearch(key);
+ if(cached){apiResults=cached;showApiResults();return}
+ if(Date.now()<apiCooldownUntil){apiError='카카오 검색 요청 한도에 도달했습니다. 잠시 후 다시 시도하거나 직접 입력하세요.';showApiResults();return}
+ apiPending=true;apiResults=[];showApiResults();
+ try{
+  // dapi는 인증 외의 헤더가 섞이면 preflight에서 차단되므로 Authorization만 보냅니다.
+  const headers={Authorization:'KakaoAK '+restKey};
+  // 제목 중심 검색과 통합 검색을 결합해 연관 작품 후보를 넓게 확보합니다.
+  const searches=['title',''];
+  const all=[];const seen=new Set();const errors=[];
+  for(const target of searches){
+   try{
+    const p=new URLSearchParams({query,size:'50',sort:'accuracy'});
+    if(target)p.set('target',target);
+    const data=await fetchJson('https://dapi.kakao.com/v3/search/book?'+p,headers);
+    for(const book of mapKakao(data)){
+      const identity=book.isbn||book.title+'|'+book.author+'|'+book.publisher;
+      if(!seen.has(identity)){seen.add(identity);all.push(book)}
+    }
+   }catch(err){errors.push(whyFailed(err));if(err.status===429){apiCooldownUntil=Date.now()+60000;break}}
+   // If we already have abundant candidates, avoid unnecessary requests.
+   if(all.length>=45)break;
+  }
+  if(!all.length&&errors.length)throw Error('카카오 도서 검색 실패: '+errors.join(' / ')+'. REST API 키와 네트워크를 확인하세요.');
+  apiResults=all;
+  apiNote=errors.length&&all.length?'일부 검색 요청이 실패했지만 수집된 결과를 표시합니다.':'';
+  if(all.length)cacheSearch(key,all);
+ }catch(err){apiError=err.message||'검색에 실패했습니다.'}
+ finally{apiPending=false;showApiResults()}
+}
+function applyBookResult(index){const b=apiResults[index];if(!b)return;for(const [name,value] of Object.entries({title:canonicalWork(b).title,workTitle:canonicalWork(b).title,author:canonicalWork(b).author||cleanAuthor(b.author),publisher:b.publisher,isbn:b.isbn,coverUrl:b.coverUrl,googleBooksId:b.googleBooksId,editionTitle:b.title,summary:b.summary||''})){const node=document.getElementById(name);if(node)node.value=value}{const tr=document.getElementById('translator');if(tr)tr.value=b.translator||''}apiResults=[];const results=$('#api-results');if(results)results.innerHTML='<p class="api-success">도서 정보를 입력했어요. 판본과 작품명을 확인한 뒤 저장하세요.</p>';updateMotifPreview();flash('도서 정보를 불러왔어요.');}
+
+function updateMotifPreview(){
+ const box=$('#motifPreview');if(!box)return;
+  const ideaNow=cleanIdea($('#motifIdea')?.value||'');
+ if(aiPending||(editing&&(drawingNow.has(editing)||drawQueue.includes(editing)))){box.innerHTML=`<span class="muted">${ideaNow?`「${esc(ideaNow)}」 그리는 중…`:'AI가 상징을 고르는 중…'}</span>`;return}
+ const b={title:$('#title')?.value||'',workTitle:$('#workTitle')?.value||'',summary:$('#summary')?.value||'',motif:$('#motif')?.value||'auto',customMotif:$('#customMotif')?.value||''};
+ box.innerHTML=(spineMotif(b,34)||'<span class="muted">상징 없이 깔끔한 책등</span>')+(ideaNow&&b.customMotif&&(b.motif==='auto'||b.motif==='custom')?`<span class="motifidea">${esc(ideaNow)}</span>`:'');
+}
+// 소개가 비어 있는 책을 상세보기에서 바로 채웁니다.
+async function fetchSummaryForCurrent(){
+ const b=books.find(x=>x.id===editing);if(!b)return;
+ flash('책 소개를 불러오는 중…');
+ try{
+  const hit=await fetchKakaoSummary(b);
+  commit(books.map(x=>x.id===b.id?normalize({...x,summary:hit.summary,translator:x.translator||hit.translator}):x),'책 소개를 불러왔어요.');
+ }catch(err){flash('불러오기 실패: '+(err.status?whyFailed(err):err.message))}
+}
+function close(){dialog=null;editing=null;importCandidate=null;render();const back=lastSpine;lastSpine='';if(back){const el=[...document.querySelectorAll('.spine[data-book]')].find(x=>x.dataset.book===back);el?.focus({preventScroll:true})}}
+function handleSave(e){e.preventDefault();const fd=new FormData(e.target),title=String(fd.get('title')||'').trim(),url=String(fd.get('notionUrl')||'').trim();if(!title)return;if(!validUrl(url)){alert('Notion 링크는 notion.so, www.notion.so 또는 *.notion.site 주소를 사용해 주세요.');return}const cu=String(fd.get('coverUrl')||'').trim();if(cu&&!safeCover(cu)){alert('표지 이미지 주소는 카카오 책 검색이 제공하는 이미지 주소만 지원합니다. 다른 주소는 저장되지 않으니, 칸을 비우고 저장해 주세요.');return}const old=books.find(b=>b.id===editing),keepM=!!old&&fd.get('customMotif')===formInit.customMotif&&fd.get('motifIdea')===formInit.motifIdea&&fd.get('motifDrawnFor')===formInit.motifDrawnFor,keepS=!!old&&fd.get('summary')===formInit.summary&&fd.get('aiSummary')===formInit.aiSummary,b=normalize({id:old?.id||id(),title,author:fd.get('author'),status:fd.get('status'),rating:fd.get('rating'),notes:fd.get('notes'),notionUrl:url,color:fd.get('bookColor')||old?.color||colors[books.length%colors.length],createdAt:old?.createdAt||new Date().toISOString(),workTitle:fd.get('workTitle')||title,publisher:fd.get('publisher'),translator:fd.get('translator'),isbn:fd.get('isbn'),coverUrl:fd.get('coverUrl'),googleBooksId:fd.get('googleBooksId'),editionTitle:fd.get('editionTitle'),summary:keepS?old.summary:fd.get('summary'),aiSummary:keepS?old.aiSummary:fd.get('aiSummary'),quotes:old?.quotes||[],aiTags:old?.aiTags||[],aiAt:old?.aiAt||'',customMotif:keepM?old.customMotif:fd.get('customMotif'),motifIdea:keepM?old.motifIdea:fd.get('motifIdea'),motifDrawnFor:keepM?old.motifDrawnFor:fd.get('motifDrawnFor'),tags:String(fd.get('tags')||'').split(/[,、·]/).map(t=>t.trim()).filter(Boolean).slice(0,10),spineTitle:fd.get('spineTitle'),pages:fd.get('pages'),spineType:fd.get('spineType'),lifeBook:fd.get('lifeBook')==='on',colorMode:fd.get('colorMode'),motif:fd.get('motif')||'auto'});const duplicate=!old?books.find(x=>x.status==='done'&&titleKey(baseWorkTitle(x.workTitle||x.title))===titleKey(baseWorkTitle(b.workTitle||b.title))&&(!authorKey(x.author)||!authorKey(b.author)||authorKey(x.author)===authorKey(b.author))):null;if(duplicate){flash('이미 서재에 기록한 작품입니다. 기존 책을 열어 수정하세요.');return}if(b.colorMode==='auto')b.color=autoColorOf(b);const next=old?books.map(x=>x.id===editing?b:x):[...books,b];if(commit(next,old?'책 정보를 수정했어요.':'새 책을 추가했어요.')){close();if(!old&&getAiKey())setTimeout(()=>analyzeBook(b.id,{quiet:true}).then(()=>flash(`「${b.title}」 소개를 정리했어요.`)).catch(err=>flash('소개 자동 정리 실패: '+err.message)),300)}}
+function exportData(){try{const blob=new Blob([JSON.stringify({app:'Mnemosyne',version:2,displayName:'나의 서재',exportedAt:new Date().toISOString(),books},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='my-library-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);flash('백업 다운로드를 요청했어요. 다운로드 폴더를 확인하세요.')}catch{flash('백업 파일을 만들지 못했습니다.')}}
+async function handleImport(e){const f=e.target.files[0];if(!f)return;try{if(f.size>10*1024*1024)throw Error('파일 크기가 10MB를 초과합니다.');const obj=JSON.parse(await f.text());if(!obj||obj.app!=='Mnemosyne'||!Array.isArray(obj.books)||obj.books.length>10000)throw Error('지원되지 않는 백업 파일입니다.');if(obj.books.some(b=>!b||typeof b.title!=='string'||!b.title.trim()))throw Error('백업 파일에 올바르지 않은 책이 있습니다.');const arr=obj.books.map(normalize);if(new Set(arr.map(b=>b.id)).size!==arr.length)throw Error('백업에 중복된 책 ID가 있습니다.');importCandidate=arr;dialog='restore';dialogEnter=true;showDialog()}catch(err){alert(err.message||'백업 파일을 읽을 수 없습니다.')}finally{e.target.value=''}}
+function restore(mode){if(!importCandidate)return;const merged=mode==='merge'?[...books,...importCandidate.filter(b=>!books.some(old=>old.id===b.id))]:importCandidate;if(mode==='replace'){if(!confirm('현재 서재를 완전히 교체합니다. 기존 데이터의 JSON 백업을 먼저 받았나요?'))return;exportData();if(!confirm('기존 데이터를 모두 교체할까요? 내려받은 백업 파일을 확인한 후 진행하는 것을 권장합니다.'))return;}if(commit(merged,`${merged.length}권의 서재 데이터를 저장했어요.`))close()}
+let downTarget=null,formSnapshot='';document.addEventListener('pointerdown',e=>{downTarget=e.target},true);
+const formState=()=>{const f=$('#bookform');return f?JSON.stringify([...new FormData(f)].filter(([k])=>!['customMotif','motifIdea','motifDrawnFor'].includes(k))):''};
+// 수정 화면을 연 순간의 값. 사용자가 손대지 않은 칸은 저장할 때 뒤에서 갱신된 최신값을 씁니다.
+let formInit={};
+function readFormInit(){const v=k=>document.getElementById(k)?.value??'';return {customMotif:v('customMotif'),motifIdea:v('motifIdea'),motifDrawnFor:v('motifDrawnFor'),summary:v('summary'),aiSummary:v('aiSummary')}}
+function requestClose(){if(dialog==='edit'&&formSnapshot&&formState()!==formSnapshot&&!confirm('작성 중인 내용이 저장되지 않습니다. 닫을까요?'))return;close()}
+document.addEventListener('click',e=>{const tagButton=e.target.closest('[data-tag]');if(tagButton){tagFilter=tagButton.dataset.tag||'';if(dialog){dialog=null;editing=null}view='library';render();return}const paletteButton=e.target.closest('button[data-color]');if(paletteButton){const input=$('#bookColor');if(input)input.value=paletteButton.dataset.color;setColorMode('custom');return}const themeButton=e.target.closest('button[data-theme]');if(themeButton){setTheme(themeButton.dataset.theme);render();return}const back=e.target.closest('[data-api-back]');if(back){apiStage='works';apiActiveWork='';showApiResults();return}const workButton=e.target.closest('[data-api-work]');if(workButton){const group=rankedWorks()[Number(workButton.dataset.apiWork)];if(group){apiStage='editions';apiActiveWork=group.id;showApiResults()}return}const picked=e.target.closest('[data-api-pick]');if(picked){applyBookResult(Number(picked.dataset.apiPick));return}const nav=e.target.closest('[data-view]');if(nav){view=nav.dataset.view;render();return}const t=e.target.closest('[data-filter]');if(t){filter=t.dataset.filter;render();return}const b=e.target.closest('[data-book]');if(b){if(pulling)return;const bid=b.dataset.book;const go=()=>{pulling=false;editing=bid;dialog='detail';dialogEnter=true;lastSpine=bid;render();queueDraw([editing],{front:true})};if(reduceMotion()){go();return}pulling=true;b.classList.add('pulling');setTimeout(go,170);return}const r=e.target.closest('[data-rate]');if(r){const old=books.find(x=>x.id===editing);if(old){const n=Number(r.dataset.rate);commit(books.map(x=>x.id===editing?{...x,rating:x.rating===n?0:n}:x),'평점을 저장했어요.')}return}const a=e.target.closest('[data-action]');if(!a){if(e.target.classList?.contains('overlay')&&downTarget===e.target)requestClose();return}switch(a.dataset.action){case'api-search':searchKakaoBooks();break;case'ai-motif':generateMotifWithAI();break;case'fetch-summary':fetchSummaryForCurrent();break;case'ai-analyze':if(editing)analyzeBook(editing).catch(()=>{});break;case'analyze-all':analyzeAll();break;case'toggle-life':{const bk=books.find(x=>x.id===editing);if(!bk)break;commit(books.map(x=>x.id===editing?normalize({...x,lifeBook:!x.lifeBook}):x),bk.lifeBook?'인생책에서 내렸어요.':'인생책으로 간직했어요.');break}case'auto-color':{setColorMode('auto');previewAutoColor();break}case'recolor-all':{const n=books.filter(x=>x.colorMode!=='auto').length;if(!n){flash('모든 책이 이미 자동 배색이에요.');break}if(!confirm(`책 ${n}권의 책등 색을 새 팔레트로 자동 배합합니다. 직접 고른 색도 바뀝니다. 먼저 JSON 백업을 받아 두길 권해요. 계속할까요?`))break;commit(books.map(x=>normalize({...x,colorMode:'auto',color:autoColorOf(x)})),`${n}권을 새 팔레트로 배합했어요.`);break}case'draw-all':{if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');break}const ids=books.filter(needsDrawing).map(b=>b.id);queueDraw(ids);flash(drawQueue.length?`상징 ${drawQueue.length}권을 5권씩 묶어 그리고 있어요.`:'남은 상징이 없어요.');render();break}case'redraw-motif':{const bk=books.find(x=>x.id===editing);if(!bk)break;if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');break}books=books.map(x=>x.id===editing?normalize({...x,motifDrawnFor:''}):x);persist(books);queueDraw([editing],{front:true,force:true});flash('상징을 다시 그리고 있어요.');render();break}case'add-quote':{const t=($('#newQuote')?.value||'').trim(),pg=($('#newQuotePage')?.value||'').trim();if(!t){flash('추가할 문장을 적어 주세요.');break}const bk=books.find(x=>x.id===editing);if(!bk)break;commit(books.map(x=>x.id===editing?normalize({...x,quotes:[...(x.quotes||[]),{id:id(),text:t,page:pg,createdAt:new Date().toISOString()}]}):x),'문장을 모았어요.');break}case'del-quote':{const qid=e.target.closest('[data-qid]')?.dataset.qid;if(!qid||!confirm('이 문장을 지울까요?'))break;commit(books.map(x=>x.id===editing?normalize({...x,quotes:(x.quotes||[]).filter(q=>q.id!==qid)}):x),'문장을 지웠어요.');break}case'reanalyze-all':if(confirm('이미 정리된 책까지 모두 새 기준으로 다시 정리할까요? 직접 고친 짧은 소개도 덮어씁니다. 모은 문장은 그대로 둡니다.'))analyzeAll(true);break;case'toggle-raw':{const el=document.querySelector('.rawsummary');if(el){if(el.hidden){el.hidden=false;el.classList.remove('clamp')}else if(el.classList.contains('clamp'))el.classList.remove('clamp');else if(document.querySelector('.aisummary'))el.hidden=true;else el.classList.add('clamp')}break}case'add':editing=null;dialog='edit';dialogEnter=true;apiResults=[];apiError='';apiStage='works';apiActiveWork='';render();break;case'close':requestClose();break;case'edit':dialog='edit';apiResults=[];apiError='';apiStage='works';apiActiveWork='';render();break;case'delete':if(confirm('이 책을 서재에서 삭제할까요?')){if(commit(books.filter(b=>b.id!==editing),'책을 삭제했어요.'))close()}break;case'export':exportData();break;
+case'save-key':{const gv=($('#gb-key')?.value||'').trim(),okf=/^[0-9a-fA-F]{32}$/;if(gv&&!okf.test(gv)){flash('카카오 REST API 키는 32자리 영문/숫자입니다. 다시 확인해 주세요.');break}try{gv?localStorage.setItem(API_KEY_STORE,gv):localStorage.removeItem(API_KEY_STORE);apiCooldownUntil=0;apiCache.clear();flash(gv?'카카오 REST API 키를 저장했어요.':'저장된 키를 삭제했어요.')}catch{flash('키를 저장하지 못했습니다.')}break}
+case'save-ai-key':{const av=($('#ai-key')?.value||'').trim(),okf=/^(?:AQ\.[A-Za-z0-9_\-]{20,220}|AIza[A-Za-z0-9_\-]{25,50})$/;if(av&&!okf.test(av)){flash('Gemini API 키는 AQ. 또는 AIza 로 시작합니다. 다시 확인해 주세요.');break}try{av?localStorage.setItem(AI_KEY_STORE,av):localStorage.removeItem(AI_KEY_STORE);clearPause();flash(av?'Gemini API 키를 저장했어요.':'저장된 키를 삭제했어요.')}catch{flash('키를 저장하지 못했습니다.')}break}
+case'raw-download':{try{const blob=new Blob([rawCorrupt],{type:'text/plain'}),u=URL.createObjectURL(blob),a2=document.createElement('a');a2.href=u;a2.download='mnemosyne-corrupt-raw-'+new Date().toISOString().slice(0,10)+'.txt';document.body.append(a2);a2.click();a2.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)}catch{flash('원본을 내려받지 못했습니다.')}break}
+case'raw-reset':{if(!confirm('원본을 별도 항목에 보관한 뒤 빈 서재로 시작합니다. 계속할까요?'))break;try{localStorage.setItem(KEY+'-corrupt-'+Date.now(),rawCorrupt);loadProblem=false;rawCorrupt='';books=[];render();flash('새 서재로 시작합니다. 원본은 브라우저에 보관되어 있어요.')}catch(err){flash('원본을 보관하지 못해 초기화를 중단했습니다: '+err.message)}break}case'import':$('#importer')?.click();break;case'merge':restore('merge');break;case'replace':restore('replace');break;}});
+document.addEventListener('input',e=>{if(['title','workTitle','summary'].includes(e.target.id))updateMotifPreview();if(e.target.id==='bookColor')setColorMode('custom')});
+// 색 방식 표시. '자동 배색'을 누르면 유형·인생책 선택에 맞는 자동 색으로 돌아갑니다(저장하면 확정).
+function setColorMode(mode){const f=$('#colorMode');if(f)f.value=mode;const n=$('#colorModeNote');if(n)n.textContent=mode==='auto'?'자동 배색 중':'직접 고른 색'}
+function previewAutoColor(){if($('#colorMode')?.value!=='auto')return;const c=$('#bookColor');if(!c)return;c.value=autoColorOf({id:editing||'new-book',spineType:$('#spineType')?.value||'auto',lifeBook:!!$('#lifeBook')?.checked})}
+document.addEventListener('change',e=>{if(e.target.id==='spineType'||e.target.id==='lifeBook')previewAutoColor()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog)requestClose()});if(!('ResizeObserver' in window))window.addEventListener('resize',scheduleShelf);window.addEventListener('storage',e=>{if(e.key===KEY&&!dialog){load();render()}});document.addEventListener('change',e=>{if(e.target.id!=='quick-status')return;const v=e.target.value;if(!statuses[v]||!editing)return;commit(books.map(x=>x.id===editing?{...x,status:v}:x),'독서 상태를 저장했어요.')});initTheme();load();render();
+// 지난번에 다 못 그린 상징이 있으면 잠시 뒤 이어서 그립니다.
+setTimeout(()=>{const ids=books.filter(needsDrawing).map(b=>b.id);if(ids.length)queueDraw(ids,{instantOnly:true})},2500);
+})();
+</script></body></html>
