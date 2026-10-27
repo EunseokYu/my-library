@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f0e8">
-<title>나의 서재 v2.12.0</title>
+<title>나의 서재 v2.13.0</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
 :root{--bg:#f4f0e8;--paper:#fbf9f4;--ink:#2e322f;--muted:#8b8b82;--line:#e2ded5;--accent:#496456;--wood:#7b5a42}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.app{max-width:1460px;margin:auto;min-height:100vh;display:grid;grid-template-columns:240px minmax(0,1fr)}.sidebar{border-right:1px solid var(--line);padding:36px 22px;display:flex;flex-direction:column;gap:42px;min-height:100vh}.brand{font-family:'Noto Serif KR',serif;font-size:21px;letter-spacing:-1px}.brand small{display:block;font:10px 'DM Sans',sans-serif;letter-spacing:2.2px;color:var(--muted);margin-top:11px}.sidegroup{display:grid;gap:8px}.sidelabel{font-size:10px;text-transform:uppercase;color:#aaa59c;letter-spacing:2px;padding:0 14px;margin-bottom:12px}.navitem{border:0;background:transparent;text-align:left;padding:13px 14px;border-radius:9px;color:#777b72;display:flex;gap:12px;align-items:center;font-size:13px}.navitem.active{background:#e6e7dc;color:var(--accent);font-weight:700}.navitem svg{width:17px;height:17px}.sidefoot{margin-top:auto;color:#a3a098;font-size:11px;line-height:1.8;padding:12px 14px}.main{min-width:0;padding:39px clamp(24px,5vw,84px) 65px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px}.breadcrumb{font-size:12px;color:var(--muted)}.topbuttons{display:flex;gap:10px}.btn{padding:11px 16px;background:transparent;border:1px solid var(--line);border-radius:7px;color:var(--ink);font-size:12px;font-weight:600}.btn.primary{background:var(--accent);color:white;border-color:var(--accent)}.btn:hover{filter:brightness(.96)}.eyebrow{font-size:10px;letter-spacing:2.5px;color:#9a9a8b;text-transform:uppercase;margin:0 0 13px}.hero{display:flex;align-items:end;justify-content:space-between;gap:26px;padding:64px 0 34px}.hero h1{font-family:'Noto Serif KR',serif;font-size:clamp(29px,4vw,47px);font-weight:500;letter-spacing:-2px;margin:0 0 14px}.hero p.desc{margin:0;color:#84867e;font-size:13px;line-height:1.8}.count{font-size:13px;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:12px 0 34px}.stat{background:var(--paper);border:1px solid #e9e5dc;border-radius:10px;padding:21px 23px}.stat small{display:block;color:#888b82;font-size:11px;margin-bottom:10px}.stat strong{font-family:'Noto Serif KR',serif;font-size:30px;font-weight:500}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:13px;margin:30px 0 20px;flex-wrap:wrap}.tabs{display:flex;gap:20px;overflow-x:auto}.tab{background:none;border:none;color:#9a9b94;padding:10px 0;font-size:12px;white-space:nowrap;border-bottom:2px solid transparent}.tab.active{border-color:var(--accent);color:var(--accent);font-weight:700}.searchrow{display:flex;gap:8px;align-items:center}.search{border:1px solid var(--line);background:#fbf9f4;padding:12px 14px;width:180px;border-radius:6px;font-size:12px;min-width:0}.sort{border:1px solid var(--line);background:#fbf9f4;border-radius:6px;padding:11px;color:#75796f;font-size:12px}.shelf{position:relative;background:linear-gradient(90deg,#e8dfce,#f0e9dc 10%,#e9e1d3 95%,#e0d5c3);border:14px solid #8b684d;border-bottom-width:20px;border-radius:3px;min-height:355px;padding:35px 25px 0;box-shadow:inset 0 7px 12px #51371c18,0 20px 35px #40352213}.shelf:after{content:"";position:absolute;height:16px;bottom:-7px;left:-13px;right:-13px;background:linear-gradient(#ab8768,#775238);box-shadow:0 5px 6px #4e39202a}.books{display:flex;align-items:flex-end;gap:5px;min-height:270px;flex-wrap:wrap;position:relative;z-index:1}.spine{width:clamp(39px,4vw,56px);height:var(--height);max-height:255px;border:0;border-radius:3px 5px 1px 1px;display:flex;align-items:center;justify-content:space-between;flex-direction:column;padding:13px 7px;background:var(--color);color:#f8ebcf;box-shadow:inset 3px 0 3px #ffffff2d,inset -4px 0 3px #130e1328,3px 2px 4px #261b1933;transition:transform .17s,box-shadow .17s;position:relative}.spine:hover{transform:translateY(-14px);box-shadow:inset 3px 0 3px #ffffff2d,4px 6px 9px #261b1938}.spine .symbol{font-size:11px;opacity:.7}.spine .title{writing-mode:vertical-rl;font:500 12px 'Noto Serif KR',serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-height:145px;letter-spacing:1.5px}.spine .by{writing-mode:vertical-rl;font-size:9px;opacity:.7;overflow:hidden;white-space:nowrap;max-height:56px}.empty{width:100%;align-self:center;text-align:center;padding:50px 5px;color:#978e7f}.empty .icon{font:36px 'Noto Serif KR',serif;color:#aa947b}.empty h3{font-family:'Noto Serif KR',serif;color:#574c40;font-weight:500}.empty p{font-size:12px;line-height:1.7}.sectionbottom{display:flex;align-items:center;justify-content:space-between;padding-top:19px;color:#aaa69b;font-size:11px}.hint{font-size:11px;color:#9b978d}.overlay{position:fixed;inset:0;z-index:10;background:#171c19a3;display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto}.modal{position:relative;width:min(100%,530px);max-height:calc(100vh - 35px);overflow:auto;background:var(--paper);border-radius:12px;padding:34px;box-shadow:0 30px 80px #151d152c}.modal.wide{width:min(100%,730px)}.close{position:absolute;right:22px;top:21px;border:0;background:transparent;font-size:24px;color:#73766d}.modal h2{font:500 27px 'Noto Serif KR',serif;margin:0 0 25px}.field{display:flex;flex-direction:column;gap:8px;margin-bottom:17px}.field label{font-size:12px;color:#666d62;font-weight:600}.field input,.field select,.field textarea{border:1px solid #dddcd2;background:#fff;border-radius:7px;padding:12px;color:var(--ink);width:100%;font-size:13px}.field textarea{min-height:95px;resize:vertical;line-height:1.6}.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:24px}.previewdetail{display:grid;grid-template-columns:155px 1fr;gap:27px;margin-bottom:26px}.cover{min-height:230px;padding:20px;color:#f8ebd1;background:var(--color);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;box-shadow:6px 8px 14px #2a23232d;border-radius:2px 6px 6px 2px}.cover strong{font:500 20px 'Noto Serif KR',serif;word-break:keep-all}.cover small{font-size:11px;opacity:.8}.detailtitle{font:500 27px 'Noto Serif KR',serif;margin:0 0 9px}.muted{color:#8e9187;font-size:12px;line-height:1.7}.rating{display:flex;gap:6px}.star{border:0;background:none;font-size:25px;color:#d1cec4;padding:0}.star.selected{color:#bd965e}.detailsub{font-size:11px;color:#81877a;margin:18px 0 9px}.detailnotes{border-top:1px solid var(--line);padding-top:19px;line-height:1.8;font-size:13px;white-space:pre-wrap;color:#596258}.link{color:var(--accent);font-size:12px;text-decoration:underline;text-underline-offset:3px}.danger{color:#ab6661}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);z-index:30;background:#36483d;color:white;padding:12px 18px;border-radius:7px;font-size:12px;box-shadow:0 8px 22px #0002}.privacy{font-size:11px;color:#98998e;line-height:1.8;margin-top:18px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.mobilebrand{display:none}.analysis{background:#fbf9f4;border:1px solid var(--line);border-radius:10px;padding:28px;line-height:1.9}.analysis h3{font:500 22px 'Noto Serif KR',serif;margin:0 0 15px}.analysis p{font-size:13px;color:#7d8178}.hidden{display:none!important}@media(max-width:940px){.app{grid-template-columns:1fr}.sidebar{display:none}.mobilebrand{display:block;font:600 16px 'Noto Serif KR',serif}.main{padding:26px 23px 50px}.hero{padding-top:49px}}@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.hero{align-items:start}.hero h1{font-size:32px}.searchrow{width:100%}.search{flex:1}.toolbar{align-items:stretch}.shelf{padding:22px 11px 0;border-width:9px;border-bottom-width:17px}.spine{width:38px}.fieldgrid,.previewdetail{grid-template-columns:1fr}.previewdetail{justify-items:start}.cover{width:135px;min-height:190px}.modal{padding:25px}.topbuttons{gap:6px}.btn{padding:10px 11px}.breadcrumb{display:none}}
@@ -124,6 +124,7 @@ body{transition:background-color .18s,color .18s}.sidebar{border-color:var(--lin
 .spine-tip strong{display:block;font:500 13px 'Noto Serif KR',serif}
 .spine-tip small{display:block;font-size:11px;opacity:.78;margin-top:2px}
 .syncstatus{background:none;border:0;padding:0;margin-left:8px;color:var(--muted);font:inherit;letter-spacing:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.syncstatus:empty{display:none}.syncstatus:hover{color:var(--accent)}
+.api-work-row{display:flex;gap:6px;align-items:stretch}.api-work-row .api-result{flex:1;min-width:0}.api-bind{flex:none;border:0;background:none;color:var(--muted);padding:0 4px;font-size:11px;cursor:pointer;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}.api-bind:hover{color:var(--accent)}@media(max-width:620px){.api-bind{width:44px;padding:0;font-size:10px;line-height:1.35;white-space:normal;word-break:keep-all}}
 </style>
 </head>
 <body><div id="fatal-error" hidden style="margin:12px;padding:12px;border:1px solid #b55;color:#9a2828;background:#fff4f2;border-radius:8px"></div><div id="root"></div>
@@ -131,7 +132,7 @@ body{transition:background-color .18s,color .18s}.sidebar{border-color:var(--lin
 (()=>{
 'use strict';
 const THEME_KEY='my-library-theme-v1', KEY='mnemosyne-library-v1', statuses={want:'읽고 싶은 책',reading:'읽는 중',done:'완독'}, colors=['#2f4a3d','#38503c','#44533f','#5e6e55','#6c7a5e','#a4ae95','#5a2e33','#6b3438','#6e3f36','#8c5545','#9a6650','#c49c88','#26344a','#2f3d4f','#384656','#56657a','#66758a','#a6b0bd','#4a3527','#5a4130','#6a4d36','#8a6a4c','#9c7f5e','#d3c2a2','#3f2d3f','#4d3647','#574250','#786273','#857870','#b9a9b1'];
-let apiResults=[],apiPending=false,apiError='',apiNote='',theme='ivory',apiStage='works',apiActiveWork='',apiQueryText='';
+let apiResults=[],apiPending=false,apiError='',apiNote='',theme='ivory',apiStage='works',apiActiveWork='',apiQueryText='',apiBindSource='';
 const apiCache=new Map();let apiCooldownUntil=0;const API_CACHE_MS=30*60*1000;
 function getCachedSearch(key){const item=apiCache.get(key);if(item&&Date.now()-item.time<API_CACHE_MS)return item.books;apiCache.delete(key);return null}
 function cacheSearch(key,items){if(apiCache.size>=30)apiCache.delete(apiCache.keys().next().value);apiCache.set(key,{time:Date.now(),books:items})}
@@ -1527,18 +1528,29 @@ function cleanAuthor(raw){
 }
 // v2.12.0: 작품 이름 정리. 판본 낱말(에디션·초판본·리커버·양장…)과 부제(":" 또는 " - " 뒤)를 떼어 같은 작품을 하나로 묶습니다.
 // 판본 낱말은 제목 앞뒤에 이어 붙은 묶음만 떼고, 그 묶음에 판본을 뜻하는 낱말이 하나 이상 있을 때만 뗍니다("블랙 스완"의 "블랙"은 남습니다).
+// 판본을 뜻하는 낱말 조각. 붙어 쓴 묶음(블랙에디션)과 같은 저자 작품끼리 합칠 때 씁니다.
+const ED_MORPHS='\\d+주년|\\d+|세계문학전집|세계문학|문학전집|고전문학|전집|에디션|edition|블랙|화이트|골드|실버|리커버|특별판|한정판|기념판|소장판|보급판|개정증보판|개정판|증보판|초판본|초판|양장본|양장|반양장|완역본|완역|무삭제|합본|큰글자책|큰글자|미니북|세트|영문판|한글판|오리지널|표지디자인|기념|특별|한정|스페셜|리미티드|디럭스|클래식|hardcover|paperback|권|판|본';
+const ED_ANCHOR_MORPHS='전집|에디션|edition|리커버|특별판|한정판|기념판|소장판|보급판|개정|증보|초판|양장|완역|무삭제|합본|큰글자|미니북|세트|영문판|한글판|표지디자인|hardcover|paperback';
 function workBaseTitle(raw){
  const ANCHOR=/^(?:(?:\d+주년)?(?:기념|특별|한정|소장|보급|신장|개정|개정증보|증보|완역|무삭제|무삭제완역|리커버|일러스트|컬러|포켓|문고|양장|반양장|큰글자|큰글씨|합본|특장|초|신|영문|국문|원전|스페셜|리미티드|디럭스|컬렉터스|아트|에센셜|한정특별)(?:판|본|판본|에디션)|에디션|edition|editions|초판본|미니북|세트|전집|양장|양장본|합본|완역|완역본|무삭제|무삭제판|큰글자책|리커버|한영대역|영한대역|hardcover|paperback)$/i;
  const MOD=/^(?:\d+주년|\d{4}년?|기념|특별|한정|오리지널|original|스페셜|special|리미티드|limited|디럭스|deluxe|블랙|black|화이트|white|골드|gold|실버|silver|레드|블루|그린|네이비|핑크|퍼플|클래식|classic|뉴|new|한글판|영문판|원서|표지|표지디자인|디자인|초판|기념판)$/i;
- const tok=w=>w.replace(/^[,.·+\-–—:：]+|[,.·+\-–—:：]+$/g,'');
- const isEd=w=>{const x=tok(w);return !!x&&(ANCHOR.test(x)||MOD.test(x))};
- let t=cleanDisplayTitle(baseWorkTitle(raw));
+ // v2.13.0: 띄어 쓰지 않은 판본 낱말 묶음(세계문학전집, 블랙에디션, 무삭제완역본…)과 판본 묶음 속 숫자(전집 101, 1권)도 판본 표시로 봅니다.
+ const GLUE=new RegExp('^(?:'+ED_MORPHS+')+$','i'),GLUE_ANCHOR=new RegExp(ED_ANCHOR_MORPHS,'i');
+ const tok=w=>w.replace(/^[,.·+\-–—:：…]+|[,.·+\-–—:：…]+$/g,'');
+ const isAnchor=w=>{const x=tok(w);return ANCHOR.test(x)||(GLUE.test(x)&&GLUE_ANCHOR.test(x))};
+ const isEd=w=>{const x=tok(w);return !!x&&(isAnchor(w)||MOD.test(x)||GLUE.test(x)||/^\d{1,4}$/.test(x))};
+ let t=String(raw||'').normalize('NFKC');
+ // 〈 〉《 》 로 감싼 부분(총서·판본 이름)은 지우되, 그 부분이 제목 전부이면 괄호만 뗍니다.
+ {const cut=t.replace(/\s*[〈《][^〉》]*[〉》]\s*/g,' ').trim();t=cut?cut:t.replace(/[〈〉《》]/g,'')}
+ // 잘려서 닫히지 않은 괄호: "데미안(세계문학전집101" → "데미안"
+ {const cut=t.replace(/\s*[\(（\[【][^\)）\]】]*$/,'').replace(/[.…]+$/,'').trim();if(titleKey(cut).length>=1)t=cut}
+ t=cleanDisplayTitle(baseWorkTitle(t));
  const sub=t.match(/^(.+?)\s*(?:[:：]|\s[-–—]\s)\s*\S.*$/);
  if(sub&&titleKey(sub[1]).length>=2)t=sub[1].trim();
  const w=t.split(/\s+/).filter(Boolean);
- let z=w.length,hit=false;while(z>1&&isEd(w[z-1])){if(ANCHOR.test(tok(w[z-1])))hit=true;z--}
+ let z=w.length,hit=false;while(z>1&&isEd(w[z-1])){if(isAnchor(w[z-1]))hit=true;z--}
  const end=hit?z:w.length;
- let a=0;hit=false;while(a<end-1&&isEd(w[a])){if(ANCHOR.test(tok(w[a])))hit=true;a++}
+ let a=0;hit=false;while(a<end-1&&isEd(w[a])&&!/^\d+$/.test(tok(w[a]))){if(isAnchor(w[a]))hit=true;a++}
  t=w.slice(hit?a:0,end).join(' ');
  t=cleanDisplayTitle(baseWorkTitle(t));
  return t||String(raw||'').trim();
@@ -1551,15 +1563,55 @@ function canonicalWork(b){
  }
  return {key:k,title:t,author:cleanAuthor(b.author),authorKey:a};
 }
+
+// ---------- 판본 → 작품 기록 (v2.13.0) ----------
+// "판본으로 넣기"로 묶은 판본의 ISBN이 어느 작품인지 기억합니다. 내가 묶은 것은 이 브라우저에 두고, 로그인되어 있으면 공유 표(edition_map)에도 올려 모두가 씁니다.
+// 같은 ISBN을 내가 직접 묶었으면 내 선택이 먼저이고, 공유 표는 먼저 묶은 사람의 것이 고정됩니다.
+const EDMAP_KEY='my-library-edition-map-v1';
+let edMapLocal={},edMapShared={};
+try{const v=JSON.parse(localStorage.getItem(EDMAP_KEY)||'{}');if(v&&typeof v==='object')edMapLocal=v}catch{}
+const isbnOf=b=>{const x=String(b?.isbn||'').replace(/[^0-9Xx]/g,'');return x.length===10||x.length===13?x:''};
+const editionIdOf=b=>isbnOf(b)||('t:'+titleKey(b?.title)+'|'+authorKey(b?.author)+'|'+titleKey(b?.publisher)).slice(0,240);
+function edMapGet(b){const k=editionIdOf(b);const m=edMapLocal[k]||edMapShared[k];return m&&m.k?m:null}
+function saveEdMapLocal(){try{const ks=Object.keys(edMapLocal);if(ks.length>5000)for(const k of ks.slice(0,ks.length-5000))delete edMapLocal[k];localStorage.setItem(EDMAP_KEY,JSON.stringify(edMapLocal))}catch{}}
+async function loadEdMapShared(items){
+ if(!session)return;
+ const isbns=[...new Set(items.map(isbnOf).filter(x=>x&&!(x in edMapShared)))];
+ try{
+  for(let i=0;i<isbns.length;i+=50){
+   const chunk=isbns.slice(i,i+50);
+   const rows=await sbFetch('/rest/v1/edition_map?select=isbn,title_key,author_key,work_title,work_author&isbn=in.'+encodeURIComponent('('+chunk.join(',')+')'));
+   for(const r of Array.isArray(rows)?rows:[])if(r&&r.isbn&&r.title_key)edMapShared[r.isbn]={k:String(r.title_key),a:String(r.author_key||''),t:String(r.work_title||''),au:String(r.work_author||'')};
+  }
+ }catch(err){console.warn('[나의 서재] 판본 기록 불러오기 실패',err.message)}
+}
+async function shareEdMap(entries){
+ if(!session||!entries.length)return;
+ const rows=entries.filter(([id])=>/^[0-9Xx]{10,13}$/.test(id)).map(([id,m])=>({isbn:id,title_key:m.k,author_key:m.a,work_title:m.t,work_author:m.au}));
+ try{for(let i=0;i<rows.length;i+=50)await sbFetch('/rest/v1/edition_map',{method:'POST',prefer:'resolution=ignore-duplicates,return=minimal',body:rows.slice(i,i+50)})}
+ catch(err){console.warn('[나의 서재] 판본 기록 공유 실패',err.message)}
+}
+// 같은 저자의 작품끼리, 한 작품명 뒤에 판본 낱말만 더 붙은 작품은 짧은 쪽으로 합칩니다(예: 데미안 / 데미안세계문학전집101).
+function mergeEditionGroups(groups){
+ const rest=new RegExp('^(?:'+ED_MORPHS+')+$','i'),anchor=new RegExp(ED_ANCHOR_MORPHS,'i');
+ const byLen=[...groups].sort((a,b)=>a.key.length-b.key.length),gone=new Set();
+ for(const g of byLen){
+  if(gone.has(g)||!g.authorKey)continue;
+  const s=byLen.find(s=>s!==g&&!gone.has(s)&&s.authorKey===g.authorKey&&s.key.length>=2&&g.key.length>s.key.length&&g.key.startsWith(s.key)&&rest.test(g.key.slice(s.key.length))&&anchor.test(g.key.slice(s.key.length)));
+  if(s){s.indices.push(...g.indices);gone.add(g)}
+ }
+ return groups.filter(g=>!gone.has(g));
+}
 function groupWorks(items){
  const groups=[];
  for(let i=0;i<items.length;i++){
-  const b=items[i],c=canonicalWork(b);
+  const b=items[i],m=edMapGet(b),c=m?{key:m.k,title:m.t||m.k,author:m.au,authorKey:m.a}:canonicalWork(b);
   let g=groups.find(g=>g.key===c.key&&(g.authorKey===c.authorKey||!g.authorKey||!c.authorKey));
   if(!g){g={key:c.key,id:c.key+'|'+c.authorKey,authorKey:c.authorKey,title:c.title,author:c.author,indices:[]};groups.push(g)}
   g.indices.push(i);
   if(!g.author&&c.author)g.author=c.author;
  }
+ const merged=mergeEditionGroups(groups);groups.length=0;groups.push(...merged);
  const q=titleKey(workBaseTitle(apiQueryText));
  groups.sort((a,b)=>Number(b.key===q)-Number(a.key===q)||Number(b.key.startsWith(q))-Number(a.key.startsWith(q)));
  return groups;
@@ -1596,7 +1648,14 @@ function showApiResults(){
    if(!group){apiStage='works';apiActiveWork='';showApiResults();return}
    content+=`<div class="api-level"><button type="button" class="btn" data-api-back="1">← 작품 목록</button><span class="muted">${esc(group.title)} · 판본 ${group.indices.length}개</span></div><div class="api-results">${group.indices.map(i=>editionButton(apiResults[i],i)).join('')}</div><p class="api-disclaimer muted">카카오 책 검색에서 조회된 판본만 표시합니다.</p>`;
  }else{
-   content+=`<p class="api-heading">연관 작품 ${groups.length}개 · 작품 선택 후 판본 선택</p><div class="api-results">${groups.map((g,i)=>`<button type="button" class="api-result" data-api-work="${i}"><span class="api-work-icon">▤</span><span class="api-result-copy"><strong>${esc(g.title)}</strong><small>${esc(cleanAuthor(g.author)||'저자 미상')}</small></span><span class="api-result-select">›</span></button>`).join('')}</div><p class="api-disclaimer muted">동명 작품은 저자별로 구분하며, 1·2권이나 합본 등 같은 작품의 판본만 통합합니다.</p>`;
+   if(apiStage==='bind'){
+    const src=groups.find(g=>g.id===apiBindSource);
+    if(!src||groups.length<2){apiStage='works';apiBindSource='';showApiResults();return}
+    const others=groups.map((g,i)=>[g,i]).filter(([g])=>g!==src).sort((x,y)=>Number(y[0].authorKey===src.authorKey)-Number(x[0].authorKey===src.authorKey));
+    content+=`<div class="api-level"><button type="button" class="btn" data-api-back="1">← 취소</button><span class="muted">「${esc(src.title)}」(판본 ${src.indices.length}개)을 어느 작품의 판본으로 넣을까요?</span></div><div class="api-results">${others.map(([g,i])=>`<button type="button" class="api-result" data-api-bind-to="${i}"><span class="api-work-icon">▤</span><span class="api-result-copy"><strong>${esc(g.title)}</strong><small>${esc(cleanAuthor(g.author)||'저자 미상')} · 판본 ${g.indices.length}개</small></span><span class="api-result-select">여기에 넣기</span></button>`).join('')}</div><p class="api-disclaimer muted">묶은 결과는 기억해 두었다가 다음 검색에도 그대로 적용합니다. 로그인되어 있으면 다른 사람의 검색에도 적용됩니다.</p>`;
+    node.innerHTML=content;return;
+   }
+   content+=`<p class="api-heading">연관 작품 ${groups.length}개 · 작품 선택 후 판본 선택</p><div class="api-results">${groups.map((g,i)=>`<div class="api-work-row"><button type="button" class="api-result" data-api-work="${i}"><span class="api-work-icon">▤</span><span class="api-result-copy"><strong>${esc(g.title)}</strong><small>${esc(cleanAuthor(g.author)||'저자 미상')} · 판본 ${g.indices.length}개</small></span><span class="api-result-select">›</span></button>${groups.length>1?`<button type="button" class="api-bind" data-api-bind="${i}" title="이 작품을 다른 작품의 판본으로 넣기">판본으로 넣기</button>`:''}</div>`).join('')}</div><p class="api-disclaimer muted">같은 작품이 따로 보이면 <strong>판본으로 넣기</strong>로 묶어 주세요. 동명 작품은 저자별로 구분합니다.</p>`;
  }
  node.innerHTML=content;
 }
@@ -1643,7 +1702,7 @@ async function searchKakaoBooks(){
  if(!restKey){apiError='설정 → 도서 검색 연결에서 카카오 REST API 키를 먼저 저장해 주세요.';showApiResults();return}
  const key=query.normalize('NFKC').toLocaleLowerCase().replace(/\s+/g,' ');
  const cached=getCachedSearch(key);
- if(cached){apiResults=cached;showApiResults();return}
+ if(cached){apiResults=cached;await loadEdMapShared(cached);showApiResults();return}
  if(Date.now()<apiCooldownUntil){apiError='카카오 검색 요청 한도에 도달했습니다. 잠시 후 다시 시도하거나 직접 입력하세요.';showApiResults();return}
  apiPending=true;apiResults=[];showApiResults();
  try{
@@ -1669,10 +1728,22 @@ async function searchKakaoBooks(){
   apiResults=all;
   apiNote=errors.length&&all.length?'일부 검색 요청이 실패했지만 수집된 결과를 표시합니다.':'';
   if(all.length)cacheSearch(key,all);
+  await loadEdMapShared(all);
  }catch(err){apiError=err.message||'검색에 실패했습니다.'}
  finally{apiPending=false;showApiResults()}
 }
-function applyBookResult(index){const b=apiResults[index];if(!b)return;for(const [name,value] of Object.entries({title:canonicalWork(b).title,workTitle:canonicalWork(b).title,author:canonicalWork(b).author||cleanAuthor(b.author),publisher:b.publisher,isbn:b.isbn,coverUrl:b.coverUrl,googleBooksId:b.googleBooksId,editionTitle:b.title,summary:b.summary||''})){const node=document.getElementById(name);if(node)node.value=value}{const tr=document.getElementById('translator');if(tr)tr.value=b.translator||''}apiResults=[];const results=$('#api-results');if(results)results.innerHTML='<p class="api-success">도서 정보를 입력했어요. 판본과 작품명을 확인한 뒤 저장하세요.</p>';updateMotifPreview();flash('도서 정보를 불러왔어요.');}
+function bindEditions(targetIndex){
+ const groups=rankedWorks(),src=groups.find(g=>g.id===apiBindSource),dst=groups[targetIndex];
+ if(!src||!dst||src===dst){apiStage='works';apiBindSource='';showApiResults();return}
+ const m={k:dst.key,a:dst.authorKey,t:dst.title,au:dst.author},entries=[];
+ for(const i of src.indices){const id=editionIdOf(apiResults[i]);if(!id)continue;edMapLocal[id]=m;entries.push([id,m])}
+ // 대상 작품의 판본도 같은 작품으로 적어 두어, 다음 검색에서 규칙이 바뀌어도 함께 있게 합니다.
+ for(const i of dst.indices){const id=editionIdOf(apiResults[i]);if(id&&!edMapLocal[id]){edMapLocal[id]=m;entries.push([id,m])}}
+ saveEdMapLocal();shareEdMap(entries);
+ apiStage='works';apiBindSource='';showApiResults();
+ flash(`「${src.title}」 판본 ${src.indices.length}개를 「${dst.title}」에 넣었어요.`);
+}
+function applyBookResult(index){const b=apiResults[index];if(!b)return;const grp=rankedWorks().find(g=>g.indices.includes(index)),cw=grp?{title:grp.title,author:grp.author}:canonicalWork(b);for(const [name,value] of Object.entries({title:cw.title,workTitle:cw.title,author:cleanAuthor(cw.author)||cleanAuthor(b.author),publisher:b.publisher,isbn:b.isbn,coverUrl:b.coverUrl,googleBooksId:b.googleBooksId,editionTitle:b.title,summary:b.summary||''})){const node=document.getElementById(name);if(node)node.value=value}{const tr=document.getElementById('translator');if(tr)tr.value=b.translator||''}apiResults=[];const results=$('#api-results');if(results)results.innerHTML='<p class="api-success">도서 정보를 입력했어요. 판본과 작품명을 확인한 뒤 저장하세요.</p>';updateMotifPreview();flash('도서 정보를 불러왔어요.');}
 
 function updateMotifPreview(){
  const box=$('#motifPreview');if(!box)return;
@@ -1701,7 +1772,7 @@ const formState=()=>{const f=$('#bookform');return f?JSON.stringify([...new Form
 let formInit={};
 function readFormInit(){const v=k=>document.getElementById(k)?.value??'';return {customMotif:v('customMotif'),motifIdea:v('motifIdea'),motifDrawnFor:v('motifDrawnFor'),summary:v('summary'),aiSummary:v('aiSummary')}}
 function requestClose(){if(dialog==='edit'&&formSnapshot&&formState()!==formSnapshot&&!confirm('작성 중인 내용이 저장되지 않습니다. 닫을까요?'))return;close()}
-document.addEventListener('click',e=>{const tagButton=e.target.closest('[data-tag]');if(tagButton){tagFilter=tagButton.dataset.tag||'';if(dialog){dialog=null;editing=null}view='library';render();return}const paletteButton=e.target.closest('button[data-color]');if(paletteButton){const input=$('#bookColor');if(input)input.value=paletteButton.dataset.color;setColorMode('custom');return}const themeButton=e.target.closest('button[data-theme]');if(themeButton){setTheme(themeButton.dataset.theme);render();return}const back=e.target.closest('[data-api-back]');if(back){apiStage='works';apiActiveWork='';showApiResults();return}const workButton=e.target.closest('[data-api-work]');if(workButton){const group=rankedWorks()[Number(workButton.dataset.apiWork)];if(group){apiStage='editions';apiActiveWork=group.id;showApiResults()}return}const picked=e.target.closest('[data-api-pick]');if(picked){applyBookResult(Number(picked.dataset.apiPick));return}const nav=e.target.closest('[data-view]');if(nav){view=nav.dataset.view;render();return}const t=e.target.closest('[data-filter]');if(t){filter=t.dataset.filter;render();return}const b=e.target.closest('[data-book]');if(b){if(pulling)return;const bid=b.dataset.book;const go=()=>{pulling=false;editing=bid;dialog='detail';dialogEnter=true;lastSpine=bid;render();queueDraw([editing],{front:true})};if(reduceMotion()){go();return}pulling=true;b.classList.add('pulling');setTimeout(go,170);return}const r=e.target.closest('[data-rate]');if(r){const old=books.find(x=>x.id===editing);if(old){const n=Number(r.dataset.rate);commit(books.map(x=>x.id===editing?{...x,rating:x.rating===n?0:n}:x),'평점을 저장했어요.')}return}const a=e.target.closest('[data-action]');if(!a){if(e.target.classList?.contains('overlay')&&downTarget===e.target)requestClose();return}switch(a.dataset.action){case'api-search':searchKakaoBooks();break;case'ai-motif':generateMotifWithAI();break;case'fetch-summary':fetchSummaryForCurrent();break;case'ai-analyze':if(editing)analyzeBook(editing).catch(()=>{});break;case'analyze-all':analyzeAll();break;case'toggle-life':{const bk=books.find(x=>x.id===editing);if(!bk)break;commit(books.map(x=>x.id===editing?normalize({...x,lifeBook:!x.lifeBook}):x),bk.lifeBook?'인생책에서 내렸어요.':'인생책으로 간직했어요.');break}case'auto-color':{setColorMode('auto');previewAutoColor();break}case'recolor-all':{const n=books.filter(x=>x.colorMode!=='auto').length;if(!n){flash('모든 책이 이미 자동 배색이에요.');break}if(!confirm(`책 ${n}권의 책등 색을 새 팔레트로 자동 배합합니다. 직접 고른 색도 바뀝니다. 먼저 JSON 백업을 받아 두길 권해요. 계속할까요?`))break;commit(books.map(x=>normalize({...x,colorMode:'auto',color:autoColorOf(x)})),`${n}권을 새 팔레트로 배합했어요.`);break}case'draw-all':{if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');break}const ids=books.filter(needsDrawing).map(b=>b.id);queueDraw(ids);flash(drawQueue.length?`상징 ${drawQueue.length}권을 5권씩 묶어 그리고 있어요.`:'남은 상징이 없어요.');render();break}case'redraw-motif':{const bk=books.find(x=>x.id===editing);if(!bk)break;if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');break}books=books.map(x=>x.id===editing?normalize({...x,motifDrawnFor:''}):x);persist(books);queueDraw([editing],{front:true,force:true});flash('상징을 다시 그리고 있어요.');render();break}case'add-quote':{const t=($('#newQuote')?.value||'').trim(),pg=($('#newQuotePage')?.value||'').trim();if(!t){flash('추가할 문장을 적어 주세요.');break}const bk=books.find(x=>x.id===editing);if(!bk)break;commit(books.map(x=>x.id===editing?normalize({...x,quotes:[...(x.quotes||[]),{id:id(),text:t,page:pg,createdAt:new Date().toISOString()}]}):x),'문장을 모았어요.');break}case'del-quote':{const qid=e.target.closest('[data-qid]')?.dataset.qid;if(!qid||!confirm('이 문장을 지울까요?'))break;commit(books.map(x=>x.id===editing?normalize({...x,quotes:(x.quotes||[]).filter(q=>q.id!==qid)}):x),'문장을 지웠어요.');break}case'reanalyze-all':if(confirm('이미 정리된 책까지 모두 새 기준으로 다시 정리할까요? 직접 고친 짧은 소개도 덮어씁니다. 모은 문장은 그대로 둡니다.'))analyzeAll(true);break;case'toggle-raw':{const el=document.querySelector('.rawsummary');if(el){if(el.hidden){el.hidden=false;el.classList.remove('clamp')}else if(el.classList.contains('clamp'))el.classList.remove('clamp');else if(document.querySelector('.aisummary'))el.hidden=true;else el.classList.add('clamp')}break}case'add':editing=null;dialog='edit';dialogEnter=true;apiResults=[];apiError='';apiStage='works';apiActiveWork='';render();break;case'close':requestClose();break;case'edit':dialog='edit';apiResults=[];apiError='';apiStage='works';apiActiveWork='';render();break;case'delete':if(confirm('이 책을 서재에서 삭제할까요?')){if(commit(books.filter(b=>b.id!==editing),'책을 삭제했어요.'))close()}break;case'export':exportData();break;
+document.addEventListener('click',e=>{const tagButton=e.target.closest('[data-tag]');if(tagButton){tagFilter=tagButton.dataset.tag||'';if(dialog){dialog=null;editing=null}view='library';render();return}const paletteButton=e.target.closest('button[data-color]');if(paletteButton){const input=$('#bookColor');if(input)input.value=paletteButton.dataset.color;setColorMode('custom');return}const themeButton=e.target.closest('button[data-theme]');if(themeButton){setTheme(themeButton.dataset.theme);render();return}const back=e.target.closest('[data-api-back]');if(back){apiStage='works';apiActiveWork='';apiBindSource='';showApiResults();return}const bindBtn=e.target.closest('[data-api-bind]');if(bindBtn){const g=rankedWorks()[Number(bindBtn.dataset.apiBind)];if(g){apiStage='bind';apiBindSource=g.id;showApiResults()}return}const bindTo=e.target.closest('[data-api-bind-to]');if(bindTo){bindEditions(Number(bindTo.dataset.apiBindTo));return}const workButton=e.target.closest('[data-api-work]');if(workButton){const group=rankedWorks()[Number(workButton.dataset.apiWork)];if(group){apiStage='editions';apiActiveWork=group.id;showApiResults()}return}const picked=e.target.closest('[data-api-pick]');if(picked){applyBookResult(Number(picked.dataset.apiPick));return}const nav=e.target.closest('[data-view]');if(nav){view=nav.dataset.view;render();return}const t=e.target.closest('[data-filter]');if(t){filter=t.dataset.filter;render();return}const b=e.target.closest('[data-book]');if(b){if(pulling)return;const bid=b.dataset.book;const go=()=>{pulling=false;editing=bid;dialog='detail';dialogEnter=true;lastSpine=bid;render();queueDraw([editing],{front:true})};if(reduceMotion()){go();return}pulling=true;b.classList.add('pulling');setTimeout(go,170);return}const r=e.target.closest('[data-rate]');if(r){const old=books.find(x=>x.id===editing);if(old){const n=Number(r.dataset.rate);commit(books.map(x=>x.id===editing?{...x,rating:x.rating===n?0:n}:x),'평점을 저장했어요.')}return}const a=e.target.closest('[data-action]');if(!a){if(e.target.classList?.contains('overlay')&&downTarget===e.target)requestClose();return}switch(a.dataset.action){case'api-search':searchKakaoBooks();break;case'ai-motif':generateMotifWithAI();break;case'fetch-summary':fetchSummaryForCurrent();break;case'ai-analyze':if(editing)analyzeBook(editing).catch(()=>{});break;case'analyze-all':analyzeAll();break;case'toggle-life':{const bk=books.find(x=>x.id===editing);if(!bk)break;commit(books.map(x=>x.id===editing?normalize({...x,lifeBook:!x.lifeBook}):x),bk.lifeBook?'인생책에서 내렸어요.':'인생책으로 간직했어요.');break}case'auto-color':{setColorMode('auto');previewAutoColor();break}case'recolor-all':{const n=books.filter(x=>x.colorMode!=='auto').length;if(!n){flash('모든 책이 이미 자동 배색이에요.');break}if(!confirm(`책 ${n}권의 책등 색을 새 팔레트로 자동 배합합니다. 직접 고른 색도 바뀝니다. 먼저 JSON 백업을 받아 두길 권해요. 계속할까요?`))break;commit(books.map(x=>normalize({...x,colorMode:'auto',color:autoColorOf(x)})),`${n}권을 새 팔레트로 배합했어요.`);break}case'draw-all':{if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');break}const ids=books.filter(needsDrawing).map(b=>b.id);queueDraw(ids);flash(drawQueue.length?`상징 ${drawQueue.length}권을 5권씩 묶어 그리고 있어요.`:'남은 상징이 없어요.');render();break}case'redraw-motif':{const bk=books.find(x=>x.id===editing);if(!bk)break;if(!getAiKey()){flash('먼저 Gemini API 키를 저장하세요.');break}books=books.map(x=>x.id===editing?normalize({...x,motifDrawnFor:''}):x);persist(books);queueDraw([editing],{front:true,force:true});flash('상징을 다시 그리고 있어요.');render();break}case'add-quote':{const t=($('#newQuote')?.value||'').trim(),pg=($('#newQuotePage')?.value||'').trim();if(!t){flash('추가할 문장을 적어 주세요.');break}const bk=books.find(x=>x.id===editing);if(!bk)break;commit(books.map(x=>x.id===editing?normalize({...x,quotes:[...(x.quotes||[]),{id:id(),text:t,page:pg,createdAt:new Date().toISOString()}]}):x),'문장을 모았어요.');break}case'del-quote':{const qid=e.target.closest('[data-qid]')?.dataset.qid;if(!qid||!confirm('이 문장을 지울까요?'))break;commit(books.map(x=>x.id===editing?normalize({...x,quotes:(x.quotes||[]).filter(q=>q.id!==qid)}):x),'문장을 지웠어요.');break}case'reanalyze-all':if(confirm('이미 정리된 책까지 모두 새 기준으로 다시 정리할까요? 직접 고친 짧은 소개도 덮어씁니다. 모은 문장은 그대로 둡니다.'))analyzeAll(true);break;case'toggle-raw':{const el=document.querySelector('.rawsummary');if(el){if(el.hidden){el.hidden=false;el.classList.remove('clamp')}else if(el.classList.contains('clamp'))el.classList.remove('clamp');else if(document.querySelector('.aisummary'))el.hidden=true;else el.classList.add('clamp')}break}case'add':editing=null;dialog='edit';dialogEnter=true;apiResults=[];apiError='';apiStage='works';apiActiveWork='';render();break;case'close':requestClose();break;case'edit':dialog='edit';apiResults=[];apiError='';apiStage='works';apiActiveWork='';render();break;case'delete':if(confirm('이 책을 서재에서 삭제할까요?')){if(commit(books.filter(b=>b.id!==editing),'책을 삭제했어요.'))close()}break;case'export':exportData();break;
 case'save-key':{const gv=($('#gb-key')?.value||'').trim(),okf=/^[0-9a-fA-F]{32}$/;if(gv&&!okf.test(gv)){flash('카카오 REST API 키는 32자리 영문/숫자입니다. 다시 확인해 주세요.');break}try{gv?localStorage.setItem(API_KEY_STORE,gv):localStorage.removeItem(API_KEY_STORE);apiCooldownUntil=0;apiCache.clear();markKeyDirty('kakao');flash(gv?(session?'카카오 키를 저장했어요. 내 계정에도 보관할게요.':'카카오 REST API 키를 저장했어요. 로그인하면 내 계정에도 보관돼요.'):(session?'키를 삭제했어요. 내 계정에서도 지울게요.':'저장된 키를 삭제했어요.'))}catch{flash('키를 저장하지 못했습니다.')}break}
 case'save-ai-key':{const av=($('#ai-key')?.value||'').trim(),okf=/^(?:AQ\.[A-Za-z0-9_\-]{20,220}|AIza[A-Za-z0-9_\-]{25,50})$/;if(av&&!okf.test(av)){flash('Gemini API 키는 AQ. 또는 AIza 로 시작합니다. 다시 확인해 주세요.');break}try{av?localStorage.setItem(AI_KEY_STORE,av):localStorage.removeItem(AI_KEY_STORE);clearPause();markKeyDirty('gemini');flash(av?(session?'Gemini 키를 저장했어요. 내 계정에도 보관할게요.':'Gemini API 키를 저장했어요. 로그인하면 내 계정에도 보관돼요.'):(session?'키를 삭제했어요. 내 계정에서도 지울게요.':'저장된 키를 삭제했어요.'))}catch{flash('키를 저장하지 못했습니다.')}break}
 case'raw-download':{try{const blob=new Blob([rawCorrupt],{type:'text/plain'}),u=URL.createObjectURL(blob),a2=document.createElement('a');a2.href=u;a2.download='mnemosyne-corrupt-raw-'+new Date().toISOString().slice(0,10)+'.txt';document.body.append(a2);a2.click();a2.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)}catch{flash('원본을 내려받지 못했습니다.')}break}
