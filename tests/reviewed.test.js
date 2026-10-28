@@ -56,7 +56,8 @@ async function addBook(p, title = '합성 작품', author = '김합성') {
   await p.click('#bookform button[type="submit"]');
 }
 const book = async (p, title = '합성 작품') => (await stored(p)).find(b => b.title === title);
-const waitBook = (p, fn, title = '합성 작품', timeout = 8000) => p.waitForFunction(([t, f]) => { const b = JSON.parse(localStorage.getItem('mnemosyne-library-v1')).find(x => x.title === t); return b && new Function('b', 'return ' + f)(b); }, [title, fn], { timeout });
+const waitBook = (p, fn, title = '합성 작품', timeout = 15000) => // 전체 테스트를 함께 돌릴 때(5,000권 시험과 동시) 느려질 수 있어 15초까지 기다림
+  p.waitForFunction(([t, f]) => { const b = JSON.parse(localStorage.getItem('mnemosyne-library-v1')).find(x => x.title === t); return b && new Function('b', 'return ' + f)(b); }, [title, fn], { timeout });
 const NOW = () => new Date().toISOString();
 
 test('우선순위 ①: 검수 소개가 있으면 Gemini 0회, 글자·줄바꿈 그대로, 상세에 "검수된 소개"', async () => {
