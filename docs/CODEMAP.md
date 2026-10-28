@@ -70,6 +70,12 @@ render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11
 - 상단 상태: `.topsync[data-sync-status="top"]` ← `syncTopText()`·`syncTone()`(local/ok/pending/warn). `offline`·`online` 이벤트로 갱신하고, `syncNow`는 오프라인이면 보내지 않아요. 키 보관 실패(`keySyncError`)는 책 동기화와 따로 표시해요.
 - 통계(insights)는 완독 기준이에요. 예전 reading/want는 `archivedBooks()`로 따로 세고, 설정의 `archiveHTML()`이 읽기 전용 목록을 보여 줘요(상태는 바꾸지 않아요).
 
+## 실수 복구 (T5, `// v2.14.0 실수 복구` 묶음)
+- `lastDeleted`: 이번 접속 중 가장 최근에 지운 것 하나({kind:'book',book,index} 또는 {kind:'quote',bookId,quote,index})예요. 새로 지우면 바뀌고, 새로고침하면 사라져요.
+- `undoBarHTML()`: 서재에서는 필터 줄 아래, 다른 화면에서는 main 맨 위, 문장이면 그 책 상세의 "모은 문장" 아래에 보여요(토스트와 별개로 계속 보여요).
+- `undoDelete()`: 버퍼를 빼 두고 commit하고, 실패하면 되돌려요. 책은 원래 index에, 문장은 부모의 최신 필드 위에 원래 위치로 넣어요. 부모가 없으면 되살리지 않고 이유를 알려요.
+- 동기화 경쟁: 되살리면 `trackChanges`가 dirty로 옮기고 removed에서 빼요. 동기화는 직렬(`syncBusy`/`syncAgain`)이라, 전송 중인 PATCH(deleted:true) 뒤에 다음 회차 upsert(deleted:false)가 와서 최종 상태가 맞춰져요(t5 테스트로 확인).
+
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
 - 로그인: `sendLoginLink`(~1088) → `handleAuthRedirect`(~1075) · `signedOut`(~1037)

@@ -17,7 +17,7 @@
 - 버전: 배포하는 변경은 `<title>나의 서재 vX.Y.Z</title>`를 올려요. 파일로 전달할 때는 `나의서재_vX.Y.Z_기능이름.html`.
 
 ## 불변 조건
-- localStorage 키 이름은 절대 바꾸지 않아요: `mnemosyne-library-v1`, `my-library-kakao-key-v1`, `my-library-gemini-key-v1`, `my-library-theme-v1`, `my-library-ai-pause-v1`, `my-library-auth-v1`, `my-library-sync-v1`, `my-library-edition-map-v1`
+- localStorage 키 이름은 절대 바꾸지 않아요: `mnemosyne-library-v1`, `my-library-kakao-key-v1`, `my-library-gemini-key-v1`, `my-library-theme-v1`, `my-library-ai-pause-v1`, `my-library-auth-v1`, `my-library-sync-v1`, `my-library-edition-map-v1`, `my-library-ui-v1`(v2.14.0, 보기 선호만)
 - 백업 JSON 계약 `{app:'Mnemosyne', version:2, books:[...]}`을 유지해요. 키·로그인 정보는 넣지 않아요.
 - 모든 책은 `normalize()`를 거쳐요. 새 필드는 normalize·handleSave·백업 왕복·동기화 보존을 함께 확인해요.
 - 저장은 `persist()` 한 경로로 해요. 뒤에서 고칠 때는 `softRender()`를 써요. 저장 실패 때 초안을 지우거나 성공 표시를 하지 않아요.
