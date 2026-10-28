@@ -1,6 +1,6 @@
 # HANDOFF — 나의 서재
 
-갱신: 2026-10-28 · 작업 가지 `v2.14.2-motif-quality`(원격에도 올림). main에는 앱 파일 3개만 배포해요.
+갱신: 2026-10-28 · 작업 가지 `v2.14.2-motif-quality`(원격에도 올림). main = 78036fb(v2.14.2). main에는 앱 파일 3개만 배포해요.
 배포 중: `main` = `171e481` (v2.14.1, 2026-10-28 14:49 push). 이전 배포본 927dd1e(v2.14.0), 7eea0d9(v2.13.0). Supabase(2026-10-28): books 5 · user_settings 1 · work_cache 5 · edition_map 0 · books_old 0. DB는 바꾸지 않았어요.
 
 ## 단계 상태 (세부 내용은 각 커밋 메시지)
@@ -66,7 +66,7 @@ npm test                   # 43/43 통과 (node --test tests/*.test.js, Playwrig
 - 비교 시험: 같은 5권을 예전·새 규칙으로 1번씩(10회) 나란히 보여 줘요. 본보기 작품은 목록에서 뺐어요.
 - 호출 수·모델·생각 단계(minimal)는 그대로예요. 생각 단계 상향은 비교 결과를 보고 정해요.
 - 검증: `npm test` 60/60(ai 17개: 비교 시험 규칙 구분, 새 지시문 포함 확인 추가).
-- 아쉬운 네 권(클루지·인생·남아 있는 나날·삼국지): 사용자 결정 (나) — 배포 뒤 books의 customMotif·motifDrawnFor와 work_cache의 custom_motif를 비워, 새 규칙으로 다시 그리게 해요(SQL은 사용자가 미리 허락).
+- 아쉬운 네 권(클루지·인생·남아 있는 나날·삼국지): 사용자 결정 (나). 2026-10-28 15:14에 배포(main 78036fb) 뒤 SQL로 books의 customMotif·motifDrawnFor와 work_cache의 custom_motif를 비웠어요(사용자가 미리 허락). 상징 이름은 그대로예요. 바꾸기 전 그림은 이 대화의 작업 공간 백업(motif-backup-2026-10-28.json)에 있어요.
 - 미검증: 실제 Flash-Lite가 새 지시문으로 그린 품질(사용자의 비교 시험으로 확인).
 
 ## 정확한 다음 행동
