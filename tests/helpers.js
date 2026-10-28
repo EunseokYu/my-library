@@ -59,6 +59,16 @@ async function openApp(base, { books = null, seed = {}, mock = null, width = 144
   return { browser, context, page, external, errors };
 }
 
+// 가짜 로그인 정보(합성 JWT, 실제 서버에서는 쓸 수 없음) + 이미 한 번 동기화한 상태
+function fakeSession(uid = 'u-test') {
+  const b64 = o => Buffer.from(JSON.stringify(o)).toString('base64url');
+  const jwt = `${b64({ alg: 'none' })}.${b64({ sub: uid, email: 'test@example.invalid', exp: 4102444800 })}.x`;
+  return {
+    'my-library-auth-v1': JSON.stringify({ access_token: jwt, refresh_token: 'fake-refresh', expires_at: 4102444800, user: { id: uid, email: 'test@example.invalid' } }),
+    'my-library-sync-v1': JSON.stringify({ userId: uid, lastPull: '2026-10-28T00:00:00Z', backupFor: uid, cacheSeeded: uid + '|k2', dirty: [], removed: [], keysDirty: [] }),
+  };
+}
+
 const stored = page => page.evaluate(k => JSON.parse(localStorage.getItem(k) || 'null'), STORE_KEY);
 
-module.exports = { startServer, openApp, fixtureBooks, stored, STORE_KEY, FIXTURE };
+module.exports = { startServer, openApp, fixtureBooks, stored, fakeSession, STORE_KEY, FIXTURE };

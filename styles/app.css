@@ -144,3 +144,37 @@ body{transition:background-color .18s,color .18s}.sidebar{border-color:var(--lin
 .notesedit textarea{min-height:140px}
 .quoteform{grid-template-columns:minmax(0,1fr)}
 .quoteform textarea{width:100%}
+/* ---------- v2.14.0 T4 찾기와 저장 상태 ---------- */
+.tabs{align-items:center}
+.viewtoggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;flex:none}
+.viewtoggle button{background:none;border:0;padding:6px 12px;font-size:11px;color:var(--muted);cursor:pointer}
+.viewtoggle button+button{border-left:1px solid var(--line)}
+.viewtoggle button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);font-weight:700}
+.filterbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 16px}
+.filtersummary{font-size:11px;color:var(--muted);margin-left:6px}
+.filtersummary .link{font-size:11px;margin-left:6px}
+.booklist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.booklist>li{border-bottom:1px solid var(--line)}
+.listrow{display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;padding:14px 4px;text-align:left;color:var(--ink);cursor:pointer}
+.listrow:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.listswatch{flex:none;width:8px;height:34px;border-radius:2px}
+.listmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.listtitle{font-family:'Noto Serif KR',serif;font-size:15px;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
+.listmeta{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listside{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.listrating{font-size:11px;color:#b8955a;letter-spacing:1px;white-space:nowrap}
+.listrating[aria-label="평가 안 함"]{color:var(--muted);letter-spacing:0}
+.listlife{font-size:10px;letter-spacing:1.5px;color:#a47e3f;border:1px solid color-mix(in srgb,#a47e3f 45%,transparent);border-radius:3px;padding:1px 5px}
+.listempty{border:0}
+.listempty .shelf-tier{border:0;background:none;box-shadow:none}
+.topsync{margin:0 12px 0 auto;text-decoration:none;font-size:11px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.topsync::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--muted);flex:none}
+.topsync[data-sync-tone="ok"]::before{background:var(--accent)}
+.topsync[data-sync-tone="pending"]::before{background:#b8955a}
+.topsync[data-sync-tone="warn"]::before{background:#b5553f}
+.topsync[data-sync-tone="warn"]{color:#9a4434}
+.archivelist{list-style:none;margin:8px 0 0;padding:0;font-size:12px}
+.archivelist li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+@media(max-width:620px){.topsync{margin:0 6px 0 auto;max-width:46vw;overflow:hidden;text-overflow:ellipsis}.listtitle{font-size:14px}}
+button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:12px}
+@media(max-width:620px){.topbar{flex-wrap:wrap;row-gap:4px}.mobilebrand{white-space:nowrap}.topbuttons .btn{white-space:nowrap}.topsync{order:3;flex-basis:100%;max-width:none;margin:0}}

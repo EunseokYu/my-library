@@ -62,6 +62,14 @@ render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11
 - 상세 편집: `notesBlockHTML`(초안 키 `책ID|notes`), `quoteHTML`(초안 키 `책ID|q|문장ID`). 입력칸의 `data-dk/data-df`로 초안을 갱신해요. 판정은 `detailDirty()`, 저장 액션은 `save-notes`/`save-quote`(최신 books 기준으로 그 필드만 바꿔요).
 - 새 책 AI 정리는 저장 뒤 따로 돌고, 실패해도 "책은 저장됐어요…"로 알려요.
 
+## 찾기와 저장 상태 (T4, `// v2.14.0 찾기와 저장 상태` 묶음)
+- 공통 selector: `getShown()` = 완독 + 태그 + `shelfFilters{life,notes,unrated}`(AND) + 검색(제목·작가·작품명·책등명·출판사·소개·AI 소개·문장·감상) + 정렬. 책장(`layoutShelf`)과 목록(`renderList`, `.booklist .listrow[data-book]`)이 같은 결과를 써요.
+- `updateShelf()`(검색 입력)는 보이는 보기만 다시 그리고, 개수와 `#filterSummary`를 갱신해요. 필터·보기 전환은 별도 click 리스너(`data-filter-toggle`, `data-shelf-view`)가 맡고, `clear-filters`는 action으로 처리해요.
+- UI 선호: `my-library-ui-v1` = `{shelfView}`만 저장해요. 검색·필터는 세션 변수라 새로 열면 비어 있어요. 책 데이터·백업과는 무관해요.
+- 빈 상태: `emptyShelfHTML`이 빈 서재 / 이전 기록만 있음 / 검색 결과 없음(`filtersActive`)을 나눠서 보여 줘요.
+- 상단 상태: `.topsync[data-sync-status="top"]` ← `syncTopText()`·`syncTone()`(local/ok/pending/warn). `offline`·`online` 이벤트로 갱신하고, `syncNow`는 오프라인이면 보내지 않아요. 키 보관 실패(`keySyncError`)는 책 동기화와 따로 표시해요.
+- 통계(insights)는 완독 기준이에요. 예전 reading/want는 `archivedBooks()`로 따로 세고, 설정의 `archiveHTML()`이 읽기 전용 목록을 보여 줘요(상태는 바꾸지 않아요).
+
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
 - 로그인: `sendLoginLink`(~1088) → `handleAuthRedirect`(~1075) · `signedOut`(~1037)
