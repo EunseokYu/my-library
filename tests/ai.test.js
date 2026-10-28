@@ -36,7 +36,7 @@ function gemini(over = {}, { analysisIdea = '종이학 — 분석이 고른 이�
     const text = JSON.parse(route.request().postData()).contents[0].parts[0].text;
     const kind = kindOf(text);
     log.kinds[kind] = (log.kinds[kind] || 0) + 1; log.models[model] = (log.models[model] || 0) + 1;
-    log.calls.push({ model, kind }); log.inflight++; log.last = Date.now();
+    log.calls.push({ model, kind, text }); log.inflight++; log.last = Date.now();
     try {
       await sleep(80);
       if (over[kind] && await over[kind](route, { model, text }, log.kinds[kind])) return true;
@@ -286,7 +286,7 @@ test('#7 공유 기록이 내가 고른 상징 이름·그림을 덮지 않음',
   } finally { await app.browser.close(); }
 });
 
-test('4.7 상징 비교 시험: 확인 후 10회, 화면에만 표시하고 저장하지 않음', async () => {
+test('4.7 상징 비교 시험(v2.14.2): 같은 5권을 예전·새 규칙으로 1번씩(10회), 화면에만 표시', async () => {
   const { log, mock } = gemini();
   const app = await openApp(srv.base, { books: fixtureBooks(), seed: GKEY, mock });
   const p = app.page;
@@ -301,7 +301,13 @@ test('4.7 상징 비교 시험: 확인 후 10회, 화면에만 표시하고 저�
     assert.equal(log.kinds.draw, 10); onlyFast(log);
     assert.equal(await p.$$eval('.comparespine svg', e => e.length), 10);
     assert.equal(await p.$$eval('.comparebig svg', e => e.length), 10);
-    assert.match(await p.textContent('.comparebox'), /규칙 통과/);
+    const draws = log.calls.filter(c => c.kind === 'draw');
+    assert.equal(draws.filter(c => c.text.includes('[잘 그린 예]')).length, 5, '새 규칙 5회');
+    assert.equal(draws.filter(c => !c.text.includes('[잘 그린 예]') && c.text.includes('최대 6개')).length, 5, '예전 규칙 5회');
+    assert.ok(!draws.some(c => /그릴 사물: (도끼|알|티백)\n/.test(c.text)), '본보기 작품은 시험 목록에 없음');
+    assert.equal(await p.$$eval('.compareitem', e => e.length), 5);
+    assert.match(await p.textContent('.comparebox'), /지금까지[\s\S]*새 규칙/);
+    assert.match(await p.textContent('.comparebox'), /도형 2개/);
     assert.equal(await p.evaluate(() => localStorage.getItem('mnemosyne-library-v1')), before, '서재 데이터 변화 없음');
   } finally { await app.browser.close(); }
 });
@@ -321,5 +327,22 @@ test('4.7 비교 시험 중 하루 한도에 걸리면 멈추고 다시 보내�
     await p.click('[data-action="motif-compare"]');
     await sleep(800);
     assert.equal(log.kinds.draw, 3);
+  } finally { await app.browser.close(); }
+});
+
+test('v2.14.2 새 책 그림은 새 그리기 규칙(1~4개 + 잘 그린 예)으로, 상징 이름 고르기에도 작은 크기 규칙', async () => {
+  const { log, mock } = gemini();
+  const app = await openApp(srv.base, { books: fixtureBooks(), seed: GKEY, mock });
+  const p = app.page;
+  try {
+    await addBook(p, '합성 규칙 확인 책');
+    await p.waitForFunction(() => JSON.parse(localStorage.getItem('mnemosyne-library-v1')).find(x => x.title === '합성 규칙 확인 책')?.customMotif, null, { timeout: 10000 });
+    await quiet(log);
+    const draw = log.calls.find(c => c.kind === 'draw').text, analysis = log.calls.find(c => c.kind === 'analysis').text;
+    for (const part of ['도형은 1~4개만', '[잘 그린 예]', '도끼 — <path d="M10 33 27 7', '알 — <path d="M20 7c', '티백 — <path d="M12 7h16v16H12z"/>', '요소는 최대 4개', 'transform 속성은 넣지 마세요'])
+      assert.ok(draw.includes(part), '그리기 지시문에 포함: ' + part);
+    assert.ok(!draw.includes('최대 6개'), '예전 규칙은 쓰지 않음');
+    assert.ok(analysis.includes('부품이 많은 기계'), '상징 이름 규칙');
+    assert.deepEqual(log.kinds, { analysis: 1, draw: 1 }); onlyFast(log);
   } finally { await app.browser.close(); }
 });

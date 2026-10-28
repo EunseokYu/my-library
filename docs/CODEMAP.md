@@ -83,7 +83,8 @@ render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11
 - 실패: `drawFail` Map(세션 메모리, 책ID→{kind,msg}). 오류 종류는 `err.kind`(quota-daily·quota-minute·auth·model·format·timeout·network·server)이고, 이름은 `FAIL_LABEL`이에요. 한도·키·모델 오류(`STOP_KINDS`)면 큐 전체를 멈춰요.
 - 상세: `motifStatusHTML(b)` — 그릴 상징은 있는데 그림이 없을 때만 상태와 `retry-motif` 버튼을 보여 줘요(그림이 있으면 버튼 없음). `ai-analyze`는 `draw:false`예요.
 - 상징 이름 고정: `analyzeBook`·`analyzeAll`은 `x.motifIdea||r.motifIdea`이고, `applyCache`는 내 상징 이름·그림이 있으면 덮지 않아요. 문체 검사(styleOk)를 통과한 소개만 공유 기록에 올려요.
-- 비교 시험: `runMotifCompare`/`compareHTML`/`COMPARE_SET`(10권). 결과는 `compareState`(메모리)에만 있어요.
+- 그리기 규칙(v2.14.2): `MOTIF_DRAW_RULES` = 좋은 상징 조건(도형 1~4개·큰 윤곽 + 특징 하나·작은 점/격자/반복 금지) + 잘 그린 예(도끼·알·티백 실제 SVG) + 출력 규칙(최대 4개, transform 금지). 예전 규칙은 `MOTIF_DRAW_RULES_V1`(비교 시험 전용)이에요. `motifPrompt(...,rules)`. 상징 이름 규칙(`MOTIF_IDEA_RULES`)에는 '작게 새겨도 윤곽으로 알아볼 사물'을 넣었어요.
+- 비교 시험: `runMotifCompare`/`compareHTML`. `COMPARE_SET` 5권 × `COMPARE_RULES`(예전·새) = 10회. 결과는 `compareState`(메모리)에만 있어요.
 
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
