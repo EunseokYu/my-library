@@ -31,20 +31,25 @@ function startServer() {
 function fixtureBooks() { return JSON.parse(fs.readFileSync(FIXTURE, 'utf8')).books; }
 
 // 새 브라우저 페이지. books를 주면 앱이 열리기 전에 localStorage에 넣습니다(이 테스트 브라우저 안에서만).
-async function openApp(base, { books = null, width = 1440, height = 900 } = {}) {
+// mock(route, url): 바깥 요청을 직접 처리하면 true. 처리하지 않은 바깥 요청은 막습니다.
+// seed: { localStorage키: 값 } — 책 말고도 가짜 로그인 정보·합성 키 등을 넣을 때 씁니다.
+async function openApp(base, { books = null, seed = {}, mock = null, width = 1440, height = 900 } = {}) {
   const browser = await playwright.chromium.launch();
   const context = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce', acceptDownloads: true });
   const external = [], errors = [];
-  await context.route('**/*', route => {
+  await context.route('**/*', async route => {
     const u = new URL(route.request().url());
     if (u.hostname === '127.0.0.1') return route.continue();
     external.push(u.hostname + u.pathname);
+    if (mock && await mock(route, u)) return;
     return route.abort();
   });
-  if (books) {
-    await context.addInitScript(([k, v]) => {
-      if (!sessionStorage.getItem('__seeded')) { localStorage.setItem(k, v); sessionStorage.setItem('__seeded', '1'); }
-    }, [STORE_KEY, JSON.stringify(books)]);
+  const all = { ...seed };
+  if (books) all[STORE_KEY] = JSON.stringify(books);
+  if (Object.keys(all).length) {
+    await context.addInitScript(entries => {
+      if (!sessionStorage.getItem('__seeded')) { for (const [k, v] of entries) localStorage.setItem(k, v); sessionStorage.setItem('__seeded', '1'); }
+    }, Object.entries(all));
   }
   const page = await context.newPage();
   page.on('pageerror', e => errors.push(e.message));

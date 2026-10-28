@@ -1,6 +1,5 @@
 // 실행: npm test  (또는 node --test tests/)
 // 기준점 테스트(T0). 앱 동작을 바꾸지 않고 현재 동작을 기록합니다.
-// { todo } 표시 테스트는 "알려진 결함(U01/U02) 재현"이며, 현재 실패하는 것이 정상입니다. T1에서 todo를 지웁니다.
 'use strict';
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
@@ -62,40 +61,4 @@ test('JSON 백업 왕복: 내보내기 → 빈 서재에 병합 복원 → 같�
   } finally { await c.browser.close(); }
 });
 
-async function openDetailWithDraft() {
-  const app = await openApp(srv.base, { books: fixtureBooks() });
-  await app.page.click('.spine[data-book="fx-done-rated"]');
-  await app.page.waitForSelector('#newQuote');
-  await app.page.fill('#newQuote', '아직 저장하지 않은 문장');
-  await app.page.fill('#newQuotePage', '77');
-  return app;
-}
-
-test('U01 재현: 문장 입력 중 평점을 바꿔도 입력이 남아야 함', { todo: 'T1에서 수정 (현재 render()가 상세 창을 다시 그려 입력이 사라짐)' }, async () => {
-  const app = await openDetailWithDraft();
-  try {
-    await app.page.click('[data-rate="2"]');
-    assert.equal(await app.page.inputValue('#newQuote'), '아직 저장하지 않은 문장');
-    assert.equal(await app.page.inputValue('#newQuotePage'), '77');
-  } finally { await app.browser.close(); }
-});
-
-test('U01 재현: 문장 입력 중 인생책을 바꿔도 입력이 남아야 함', { todo: 'T1에서 수정' }, async () => {
-  const app = await openDetailWithDraft();
-  try {
-    await app.page.click('[data-action="toggle-life"]');
-    assert.equal(await app.page.inputValue('#newQuote'), '아직 저장하지 않은 문장');
-  } finally { await app.browser.close(); }
-});
-
-test('U02 재현: 문장 입력 중 Esc → 경고에서 "취소"하면 창이 남아야 함', { todo: 'T1에서 수정 (requestClose가 상세 창을 검사하지 않음)' }, async () => {
-  const app = await openDetailWithDraft();
-  try {
-    app.page.removeAllListeners('dialog');
-    let asked = false;
-    app.page.on('dialog', d => { asked = true; d.dismiss(); });
-    await app.page.keyboard.press('Escape');
-    assert.ok(asked, '닫기 전에 확인을 물어야 함');
-    assert.equal(await app.page.inputValue('#newQuote'), '아직 저장하지 않은 문장');
-  } finally { await app.browser.close(); }
-});
+// U01/U02 재현 테스트는 T1에서 고쳐져 tests/t1.test.js로 옮겼어요.

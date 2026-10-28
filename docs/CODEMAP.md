@@ -1,6 +1,6 @@
 # CODEMAP — 나의 서재
 
-기준: 커밋 `7eea0d9` · `index.html` 1,788줄 / 196,736바이트 · 탭 제목 `나의 서재 v2.13.0`.
+기준: T1 이후(가지 `t1-input-guard`) · `index.html` 탭 제목 `나의 서재 v2.14.0`. 원 기준 커밋 `7eea0d9`(v2.13.0, 1,788줄).
 줄 번호는 참고용이에요. 바뀌면 함수명으로 찾아요(`rg -n "function 이름" index.html`).
 
 ## 파일
@@ -25,8 +25,8 @@
 normalize(b)  ~989   모든 책의 입구(필드 정리·기본값). 새 필드 → normalize + handleSave 둘 다
 persist(list) ~1279  localStorage 쓰기 + 다시 읽어 검증 → trackChanges(list)(~1014, 동기화 대기열)
 commit(list,msg) ~1290  persist 성공 → books=list → render() → flash(msg)
-softRender()  ~581   뒤쪽 갱신용(AI·그리기·동기화). edit 창이나 #newQuote에 글이 있으면 건너뜀
-render()      ~1475  #root 전체와 열린 창(showDialog ~1481)을 다시 그림 → 입력칸 DOM 교체
+softRender()  ~581   뒤쪽 갱신용(AI·그리기·동기화). edit 창일 때만 건너뜀(상세 창은 다시 그림)
+render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11yDialog) → restoreDialogUI
 ```
 - `load/loadLocal`(~1271): 손상 데이터면 `loadProblem` → persist 차단, 원본 보관(raw-download / raw-reset)
 
@@ -38,13 +38,18 @@ render()      ~1475  #root 전체와 열린 창(showDialog ~1481)을 다시 그�
 ## 이벤트 (끝부분 ~1775–1786)
 - 문서 하나의 `click` 위임: `[data-tag]` → 색 → 테마 → 검색 결과 → `[data-book]`(상세 열기) → `[data-rate]`(commit) → `[data-action]` switch
 - action: add, edit, delete, close, add-quote, del-quote, toggle-life, export, import, merge, replace, save-key, save-ai-key, sync-login/now/logout, ai-*, draw-all 등
-- `keydown` Esc → `requestClose()`(~1774): **dialog==='edit'일 때만** 변경 확인 → `close()`(~1764)
+- `keydown` Esc / × / 배경 → `requestClose()` → `confirmLeave()` → `close()`(~1764). `[data-tag]` 이동·상세→`edit`도 confirmLeave를 거침
+- `keydown` Tab: 열린 창 안에서 순환 · `beforeunload`: dialogDirty일 때만
 - `storage` 이벤트: 다른 탭이 책을 바꾸면 창이 닫혀 있을 때만 다시 읽음
 
-## T1 관련 지점 (U01·U02·U11)
-- U01: 상세 창의 `[data-rate]`·`toggle-life` → `commit` → `render` → `#newQuote`·`#newQuotePage`가 지워짐. softRender 보호는 `#newQuote` 하나만 보고 쪽수 칸은 보지 않음
-- U02: `requestClose`가 상세 창 초안을 검사하지 않음. ×(`close`)·배경 클릭(overlay + `downTarget`)·Esc는 requestClose를 거치지만, `[data-tag]` 이동은 dialog를 바로 비움
-- U11: `showDialogInner`가 만드는 `.overlay`/모달에 role·aria-modal·초점 제한이 없음. 닫을 때 `lastSpine` 초점 복귀는 있음
+## 입력 보호와 창 접근성 (T1, `// v2.14.0 입력 보호` 묶음, requestClose 바로 앞)
+- 초안: `drafts` Map, 키 `책ID|quote`, 칸 `DRAFT_FIELDS=['newQuote','newQuotePage']`. 문서 `input` 이벤트에서 갱신해요. 저장된 books와는 분리돼요.
+- `dialogDirty()`: edit는 `formSnapshot` 비교, detail은 초안에 공백이 아닌 글이 있는지로 판단 · `confirmLeave()`: 묻고 승인되면 true
+- `add-quote`: 초안을 빼 두고 commit을 시도하고, 실패하면 되돌려요. `close()`·태그 이동·`edit` 전환은 `dropDrafts(책ID)`를 불러요.
+- `captureDialogUI`/`restoreDialogUI`: 같은 창(dialog|editing)일 때 초점(id·data- 선택자 `selFor`), 선택 범위, `.modal`·`.overlay` 스크롤을 되살려요.
+- `a11yDialog()`(showDialog 끝): `.modal`에 role=dialog·aria-modal·aria-labelledby(h2)를 달고, `.app`·`.mobile-nav`를 inert로 만들어요. 새 창일 때만(`dialogShownKey`) 창으로 초점을 옮겨요.
+- 초점 복귀: 책등은 `lastSpine`, 그 밖에는 여는 클릭 때 기록한 `dialogOpener` 선택자로 돌아가요.
+- 새 편집 종류를 보호하려면 `draftKey`·`DRAFT_FIELDS`·`dialogDirty`를 넓혀요. 전체 render를 막는 방식은 쓰지 않아요.
 
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
