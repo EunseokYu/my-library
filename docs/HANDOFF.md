@@ -1,7 +1,7 @@
 # HANDOFF — 나의 서재
 
 갱신: 2026-10-28 · 작업 가지 `ux-t2-t5`(t0-baseline → t1-input-guard 위). 로컬 커밋만, push·배포·main 병합 안 함.
-배포 중: `main` = `7eea0d9` (v2.13.0, 단일 index.html). Supabase(2026-10-28): books 5 · user_settings 1 · work_cache 5 · edition_map 0 · books_old 0. DB는 바꾸지 않았어요.
+배포 중: `main` = `927dd1e` (v2.14.0, 앱 파일 3개만. 2026-10-28 13:58 push). 이전 배포본 7eea0d9(v2.13.0). Supabase(2026-10-28): books 5 · user_settings 1 · work_cache 5 · edition_map 0 · books_old 0. DB는 바꾸지 않았어요.
 
 ## 단계 상태 (세부 내용은 각 커밋 메시지)
 | 단계 | 내용 | 커밋 |
@@ -43,12 +43,11 @@ npm test                   # 43/43 통과 (node --test tests/*.test.js, Playwrig
 - 다계정 로컬 기록이 섞일 수 있는 구조, 두 기기 동시 편집 충돌 정책은 범위 밖이에요(UX_PLAN 2장).
 - 단일 HTML 파일 하나로 전달하던 방식은 T2부터 쓸 수 없어요(세 파일이 필요해요).
 
-## 배포 전 필요한 것 (사용자 결정)
-1. (확정) 앱 파일 세 개를 함께 올려요. 남은 결정: `docs/`·`tests/`·`CLAUDE.md`·`package.json`·`.gitignore`도 main에 올릴지.
-2. 병합·push 허락 → 1~2분 뒤 사이트에서 Ctrl+F5 → 실제 휴대폰 확인
-3. (적용) "발견 기능"은 v2.15.0으로 옮겼어요(CLAUDE.md '버전 번호').
-4. `claude-push-test` 가지 삭제 여부
-5. 문제가 생기면 main을 7eea0d9로 되돌려요(데이터 호환됨).
+## 배포 기록 (2026-10-28)
+- main에는 `index.html`·`styles/app.css`·`js/app.js`만 올렸어요(ux-t2-t5와 바이트 동일). `docs/`·`tests/` 등 개발 파일은 main에 없고 이 작업 가지(로컬)와 zip으로만 있어요 — 올릴지는 아직 미정이에요.
+- 실제 사이트 반영은 확인하지 못했어요(이 환경에서 github.io 접근 불가). 사용자가 Ctrl+F5로 탭 제목 v2.14.0을 확인해야 해요.
+- `claude-push-test` 삭제는 두 번(`--delete`, `:refs/heads/…`) 시도했지만 모두 "remote end hung up"으로 실패했어요(이전 세션과 같은 증상, 환경의 가지 삭제 제한으로 보여요). 사용자가 GitHub 화면에서 지워야 해요.
+- 되돌리기: main을 7eea0d9로 되돌리면 v2.13.0으로 돌아가요(데이터 호환).
 
 ## 정확한 다음 행동
-사용자의 배포 결정을 기다려요. 승인되면 `git fetch origin main`으로 main이 7eea0d9 그대로인지 확인하고, `ux-t2-t5`를 main에 병합(또는 선택한 파일만 반영)해 push해요.
+사이트 확인 결과를 기다려요. 문제가 있으면 AS 템플릿(UX_PLAN 6장)으로 받아요. 다음 기능은 v2.15.0 발견 기능(제안 → 허락 후)이에요.
