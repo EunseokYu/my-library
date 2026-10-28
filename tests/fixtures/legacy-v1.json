@@ -1,0 +1,9 @@
+{
+  "app": "Mnemosyne",
+  "version": 1,
+  "books": [
+    { "id": "legacy-1", "title": "예전 형식 합성 책", "author": "합성 저자", "status": "done", "rating": 3, "notes": "예전 감상", "color": "#6b3438", "createdAt": "2025-01-01T00:00:00.000Z", "googleBooksId": "legacyGB1" },
+    { "id": "legacy-2", "title": "예전 형식 읽는 중", "author": "", "status": "reading", "rating": 0, "color": "#26344a", "createdAt": "2025-02-01T00:00:00.000Z", "notionUrl": "https://www.notion.so/synthetic-page" },
+    { "id": "legacy-3", "title": "예전 형식 상태 없음", "createdAt": "2025-03-01T00:00:00.000Z" }
+  ]
+}

@@ -1,6 +1,6 @@
 # CLAUDE.md — 나의 서재 (eunseokyu/my-library)
 
-개인 독서 서재 웹앱. GitHub Pages 단일 `index.html`(CSS·JS 내장, 외부 라이브러리 없음) + Supabase(REST·Auth를 fetch로 직접 호출).
+개인 독서 서재 웹앱. GitHub Pages 정적 파일 3개 — `index.html`(뼈대) · `styles/app.css` · `js/app.js`(IIFE 하나) — 외부 라이브러리 없음 + Supabase(REST·Auth를 fetch로 직접 호출). T2(v2.14.0)부터 CSS·JS가 분리됐어요.
 
 ## 문서
 - `docs/UX_PLAN.md` — 사용성 개선 명세와 작업 순서(T0~T5). 작업은 ID로 요청받음
@@ -28,12 +28,20 @@
 - 명문장 AI 기능은 다시 넣지 않아요. 한 번 만든 AI 소개·상징은 고정이에요(다시 만들기 버튼 없음).
 - 프레임워크 전환·전면 재작성은 하지 않아요. 의존성은 개발용만 최소로 써요.
 
+## 코드 운영 규칙 (T2)
+- 화면 코드는 외부 API를 직접 부르지 않고 기능 함수(`searchKakaoBooks`, `callGemini`, `sbFetch`…)에 맡겨요.
+- 저장은 `persist`/`commit` 공통 경로로만 해요. 파생 목록(서재·목록 보기·개수)은 공통 selector(`getShown`)에서 계산해요.
+- 미저장 편집은 draft 경로(`drafts`·`dialogDirty`·`confirmLeave`)를 써요. 전체 render를 막아서 입력을 지키지 않아요.
+- 자산은 상대 경로 + `?v=버전` 쿼리로 불러요. 버전을 올릴 때 `<title>`과 두 쿼리를 함께 바꿔요.
+- 미래 기능용 빈 파일이나 모듈을 미리 만들지 않아요. 새 모듈은 두 번째 사용처가 생길 때 만들어요.
+
 ## 테스트
-- 실행: `npm test` (= `node --test tests/app.test.js`). 브라우저는 Playwright Chromium.
+- 실행: `npm test` (= `node --test tests/*.test.js`). 브라우저는 Playwright Chromium.
 - 바깥 주소(Supabase·카카오·Gemini·글꼴)는 테스트에서 모두 막혀요. 실제 계정·책 데이터·공유 기록(work_cache, edition_map)을 테스트로 바꾸지 않아요.
 - 데이터는 `tests/fixtures/books.json`(합성)만 써요. 개인 데이터·실제 키는 넣지 않아요.
 - `{ todo }` 테스트는 알려진 결함 재현이에요. 고친 단계에서 todo를 지워 일반 테스트로 바꿔요.
 
 ## 저장소에 올리는 범위 (사용자 확인 필요)
-- 예전 규칙은 "저장소에는 `index.html`만 올린다"였어요. UX_PLAN은 `docs/`·`tests/`·`CLAUDE.md`를 저장소에 두는 방식이에요.
+- 예전 규칙은 "저장소에는 `index.html`만 올린다"였어요. T2부터 앱이 작동하려면 `index.html`·`styles/app.css`·`js/app.js` 셋이 모두 필요해요.
+- UX_PLAN은 `docs/`·`tests/`·`CLAUDE.md`도 저장소에 두는 방식이에요.
 - 이 파일들을 `main`에 올릴지는 push 전에 사용자에게 다시 확인해요. 공개 저장소라 Pages에서도 보이게 돼요(합성 데이터뿐이에요).

@@ -1,12 +1,14 @@
 # CODEMAP — 나의 서재
 
-기준: T1 이후(가지 `t1-input-guard`) · `index.html` 탭 제목 `나의 서재 v2.14.0`. 원 기준 커밋 `7eea0d9`(v2.13.0, 1,788줄).
-줄 번호는 참고용이에요. 바뀌면 함수명으로 찾아요(`rg -n "function 이름" index.html`).
+기준: T2 이후 · 탭 제목 `나의 서재 v2.14.0`. 원 기준 커밋 `7eea0d9`(v2.13.0, 단일 index.html 1,788줄).
+아래 `~줄`은 예전 index.html 기준이에요. `js/app.js`에서는 대략 132를 빼고, 정확한 위치는 함수명으로 찾아요(`rg -n "function 이름" js/app.js`).
 
 ## 파일
 | 경로 | 역할 |
 |---|---|
-| `index.html` | 앱 전체(CSS ~1–130줄, JS IIFE 하나 ~132–1788줄). 외부 라이브러리 없음 |
+| `index.html` | 뼈대만(#fatal-error, #root). `styles/app.css?v=`·`js/app.js?v=`를 상대 경로로 불러요 |
+| `styles/app.css` | 스타일 전체(예전 `<style>` 두 블록을 순서대로) |
+| `js/app.js` | 앱 코드 전체. `'use strict'` IIFE 하나이고, body 끝에서 동기 실행해요 |
 | `docs/UX_PLAN.md` | 사용성 검토와 작업 명세(T0~T5) |
 | `docs/HANDOFF.md` | 현재 상태·다음 작업 |
 | `tests/` | 개발용 테스트(Playwright + node:test), 합성 fixture. 배포 앱과 무관 |
