@@ -1,0 +1,91 @@
+{
+  "app": "Mnemosyne",
+  "version": 2,
+  "displayName": "나의 서재 (테스트용 합성 데이터)",
+  "exportedAt": "2026-10-28T00:00:00.000Z",
+  "books": [
+    {
+      "id": "fx-done-rated",
+      "title": "가상의 강 1",
+      "workTitle": "가상의 강",
+      "author": "테스트 작가",
+      "translator": "테스트 번역가",
+      "publisher": "합성출판",
+      "isbn": "9790000000011",
+      "status": "done",
+      "rating": 4,
+      "notes": "합성 감상문입니다.\n두 번째 줄입니다.",
+      "color": "#2f4a3d",
+      "colorMode": "custom",
+      "createdAt": "2026-01-10T09:00:00.000Z",
+      "tags": ["테스트태그"],
+      "aiTags": ["번역서"],
+      "summary": "합성 소개 원문입니다.",
+      "aiSummary": "합성 AI 소개입니다.",
+      "aiAt": "2026-01-10T09:01:00.000Z",
+      "motifIdea": "돛단배 — 합성 이유",
+      "motifDrawnFor": "돛단배 — 합성 이유",
+      "pages": 320,
+      "quotes": [
+        { "id": "fx-q1", "text": "합성 문장 하나.", "page": "12", "createdAt": "2026-01-11T10:00:00.000Z" },
+        { "id": "fx-q2", "text": "합성 문장 둘.", "page": "", "createdAt": "2026-01-12T10:00:00.000Z" }
+      ]
+    },
+    {
+      "id": "fx-same-work",
+      "title": "가상의 강 (리커버 에디션)",
+      "workTitle": "가상의 강 (리커버 에디션)",
+      "author": "테스트 작가",
+      "publisher": "다른출판",
+      "isbn": "9790000000028",
+      "status": "done",
+      "rating": 3,
+      "color": "#5a2e33",
+      "colorMode": "custom",
+      "createdAt": "2026-02-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-long-ko-unrated",
+      "title": "아주 길고 길어서 책등에 다 들어가지 않는 한글 제목을 가진 합성 소설의 첫 번째 이야기",
+      "spineTitle": "아주 긴 한글 제목",
+      "author": "합성 저자",
+      "status": "done",
+      "rating": 0,
+      "color": "#26344a",
+      "colorMode": "custom",
+      "createdAt": "2026-03-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-long-en-life",
+      "title": "An Extremely Long Synthetic English Title That Will Never Fit On A Single Spine",
+      "author": "Synthetic Author",
+      "status": "done",
+      "rating": 5,
+      "lifeBook": true,
+      "spineType": "C",
+      "colorMode": "auto",
+      "color": "#4a3527",
+      "createdAt": "2026-04-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-reading",
+      "title": "읽는 중인 합성 책",
+      "author": "합성 저자",
+      "status": "reading",
+      "rating": 0,
+      "color": "#3f2d3f",
+      "colorMode": "custom",
+      "createdAt": "2026-05-01T09:00:00.000Z"
+    },
+    {
+      "id": "fx-want",
+      "title": "읽고 싶은 합성 책",
+      "author": "",
+      "status": "want",
+      "rating": 0,
+      "color": "#857870",
+      "colorMode": "custom",
+      "createdAt": "2026-06-01T09:00:00.000Z"
+    }
+  ]
+}

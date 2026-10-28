@@ -1,0 +1,11 @@
+{
+  "name": "my-library-dev",
+  "private": true,
+  "description": "나의 서재 개발용 테스트. 배포 앱(index.html)은 이 파일과 무관합니다.",
+  "scripts": {
+    "test": "node --test tests/app.test.js"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
