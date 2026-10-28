@@ -181,9 +181,10 @@ test('U01 AI 상징 응답(mock)이 도착해 다시 그려져도 입력 유지'
   const app = await openApp(srv.base, { books, mock, seed: { 'my-library-gemini-key-v1': 'AIza' + 'T'.repeat(35) } });
   const { page } = app;
   try {
-    await openDetail(page, A); // 상세를 열면 상징 그리기가 시작됨
+    await openDetail(page, A); // v2.14.1: 책을 열기만 해서는 그리지 않음 → '상징 그리기'로 시작
     await typeDraft(page);
     await page.evaluate(() => { document.querySelector('#dialog .modal').__old = true; });
+    await page.dispatchEvent('[data-action="retry-motif"]', 'click'); // 초점을 옮기지 않는 클릭
     await page.waitForFunction(() => JSON.parse(localStorage.getItem('mnemosyne-library-v1')).find(b => b.id === 'fx-done-rated').motifDrawnFor === '종이학 — 합성 이유', null, { timeout: 8000 });
     await sleep(200);
     assert.ok(answered >= 1, 'mock 응답을 받았어야 함');

@@ -76,6 +76,15 @@ render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11
 - `undoDelete()`: 버퍼를 빼 두고 commit하고, 실패하면 되돌려요. 책은 원래 index에, 문장은 부모의 최신 필드 위에 원래 위치로 넣어요. 부모가 없으면 되살리지 않고 이유를 알려요.
 - 동기화 경쟁: 되살리면 `trackChanges`가 dirty로 옮기고 removed에서 빼요. 동기화는 직렬(`syncBusy`/`syncAgain`)이라, 전송 중인 PATCH(deleted:true) 뒤에 다음 회차 upsert(deleted:false)가 와서 최종 상태가 맞춰져요(t5 테스트로 확인).
 
+## AI 호출 정책 (v2.14.1)
+- 모델: 소개·상징 이름·상징 SVG 모두 `AI_FAST_MODEL`(Flash-Lite, `AI_DRAW_MODEL`)이에요. `AI_MODEL`(3.8 Flash)은 상수만 남아 있고 부르지 않아요. `callGemini`는 막혀도 다른 모델로 넘기지 않아요.
+- 자동 호출은 새 책 저장(`handleSave` → `analyzeBook(id,{quiet:true})`) 때만, 소개 1회 + 상징 1회예요. 공유 기록(work_cache)이 있으면 0회예요. 책 열기·앱 시작은 `queueDraw(...,{instantOnly:true})`(AI 없음)만 해요.
+- 자동 반복 없음: 문체 재요청·thinking 단계 올리기·묶음 실패 뒤 한 권씩·분당 한도 대기·하루 한도 뒤 이어 그리기를 모두 없앴어요. 남은 것은 `callGemini`의 400 설정 호환 재전송(thinking 설정을 모델이 거절할 때)뿐이에요.
+- 실패: `drawFail` Map(세션 메모리, 책ID→{kind,msg}). 오류 종류는 `err.kind`(quota-daily·quota-minute·auth·model·format·timeout·network·server)이고, 이름은 `FAIL_LABEL`이에요. 한도·키·모델 오류(`STOP_KINDS`)면 큐 전체를 멈춰요.
+- 상세: `motifStatusHTML(b)` — 그릴 상징은 있는데 그림이 없을 때만 상태와 `retry-motif` 버튼을 보여 줘요(그림이 있으면 버튼 없음). `ai-analyze`는 `draw:false`예요.
+- 상징 이름 고정: `analyzeBook`·`analyzeAll`은 `x.motifIdea||r.motifIdea`이고, `applyCache`는 내 상징 이름·그림이 있으면 덮지 않아요. 문체 검사(styleOk)를 통과한 소개만 공유 기록에 올려요.
+- 비교 시험: `runMotifCompare`/`compareHTML`/`COMPARE_SET`(10권). 결과는 `compareState`(메모리)에만 있어요.
+
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
 - 로그인: `sendLoginLink`(~1088) → `handleAuthRedirect`(~1075) · `signedOut`(~1037)
