@@ -189,8 +189,12 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
 .motifstatus{margin:6px 0 0;font-size:12px;line-height:1.7}
 .motifstatus .link{margin-left:6px}
 .comparebox{margin:12px 0 4px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
-.comparegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:8px}
-.compareitem{display:grid;grid-template-columns:30px 64px minmax(0,1fr);gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:7px}
+.comparegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:10px;margin-top:8px}
+.compareitem{padding:8px;border:1px solid var(--line);border-radius:7px}
+.comparetitle{font-size:12px;margin:0 0 6px}
+.comparepair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.comparecell{display:grid;grid-template-columns:30px 1fr;grid-template-rows:auto auto;gap:4px 8px;align-items:center}
+.comparecell .comparespine{grid-row:span 2}
 .comparespine{width:30px;height:96px;border-radius:2px;background:#2f4a3d;color:#e9dfc6;display:flex;align-items:center;justify-content:center}
 .comparebig{width:64px;height:64px;color:var(--ink);display:flex;align-items:center;justify-content:center;border:1px dashed var(--line);border-radius:6px}
 .comparemeta{display:flex;flex-direction:column;gap:2px;font-size:11px;min-width:0}
