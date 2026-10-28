@@ -44,9 +44,9 @@ npm test                   # 43/43 통과 (node --test tests/*.test.js, Playwrig
 - 단일 HTML 파일 하나로 전달하던 방식은 T2부터 쓸 수 없어요(세 파일이 필요해요).
 
 ## 배포 전 필요한 것 (사용자 결정)
-1. main에 올릴 범위: 필수 `index.html`·`styles/app.css`·`js/app.js`. `docs/`·`tests/`·`CLAUDE.md`·`package.json`·`.gitignore`도 올릴지(공개 저장소, 합성 데이터만 있음).
+1. (확정) 앱 파일 세 개를 함께 올려요. 남은 결정: `docs/`·`tests/`·`CLAUDE.md`·`package.json`·`.gitignore`도 main에 올릴지.
 2. 병합·push 허락 → 1~2분 뒤 사이트에서 Ctrl+F5 → 실제 휴대폰 확인
-3. 예전 계획의 v2.14.0 "발견 기능"은 v2.15.0 이상으로 번호 이동
+3. (적용) "발견 기능"은 v2.15.0으로 옮겼어요(CLAUDE.md '버전 번호').
 4. `claude-push-test` 가지 삭제 여부
 5. 문제가 생기면 main을 7eea0d9로 되돌려요(데이터 호환됨).
 
