@@ -119,3 +119,28 @@ body{transition:background-color .18s,color .18s}.sidebar{border-color:var(--lin
 .syncstatus{background:none;border:0;padding:0;margin-left:8px;color:var(--muted);font:inherit;letter-spacing:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.syncstatus:empty{display:none}.syncstatus:hover{color:var(--accent)}
 .api-work-row{display:flex;gap:6px;align-items:stretch}.api-work-row .api-result{flex:1;min-width:0}.api-bind{flex:none;border:0;background:none;color:var(--muted);padding:0 4px;font-size:11px;cursor:pointer;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}.api-bind:hover{color:var(--accent)}@media(max-width:620px){.api-bind{width:44px;padding:0;font-size:10px;line-height:1.35;white-space:normal;word-break:keep-all}}
 #dialog .modal:focus{outline:none} /* v2.14.0: 창 자체에 주는 초점은 표시하지 않음(안의 버튼·칸은 그대로 표시) */
+/* ---------- v2.14.0 T3 등록·기록 ---------- */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.modal{max-height:calc(100dvh - 35px);scroll-padding-bottom:84px}
+.formsection{border-top:1px solid var(--line);margin:0}
+.formsection:last-of-type{border-bottom:1px solid var(--line)}
+.formsection>summary{cursor:pointer;list-style:none;padding:14px 2px;font-size:12px;font-weight:600;color:var(--ink);display:flex;align-items:baseline;gap:2px}
+.formsection>summary::-webkit-details-marker{display:none}
+.formsection>summary::before{content:'+';display:inline-block;width:16px;color:var(--muted);font-weight:400}
+.formsection[open]>summary::before{content:'−'}
+.formsection>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sechint{font-weight:400;color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.formsection>.edition-info{margin:0 0 14px}
+.formactions{position:sticky;bottom:-34px;z-index:2;margin:20px -34px -34px;padding:14px 34px 18px;background:var(--paper);border-top:1px solid var(--line)}
+@media(max-width:620px){.formactions{bottom:-25px;margin:18px -25px -25px;padding:12px 25px 14px}.formactions .btn{flex:1}}
+.formnote{margin:-6px 0 14px}
+.api-status{margin:4px 0 8px;font-size:12px;color:var(--muted);line-height:1.7}
+.dup-notice{margin:-6px 0 16px;padding:10px 12px;border:1px solid var(--line);border-left:2px solid var(--wood);border-radius:0 7px 7px 0;font-size:12px;color:var(--ink);line-height:1.7;background:var(--paper)}
+.dup-notice .link,.api-status .link,.notesbar .link{background:none;border:0;padding:0;cursor:pointer}
+.notesbar{margin:8px 0 0;text-align:right}
+.quoteformrow.end{justify-content:flex-end}
+.quoteacts{margin-left:auto;display:flex;gap:12px}
+.quoteacts .quotedel{margin-left:0}
+.notesedit textarea{min-height:140px}
+.quoteform{grid-template-columns:minmax(0,1fr)}
+.quoteform textarea{width:100%}

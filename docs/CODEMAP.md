@@ -53,6 +53,15 @@ render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11
 - 초점 복귀: 책등은 `lastSpine`, 그 밖에는 여는 클릭 때 기록한 `dialogOpener` 선택자로 돌아가요.
 - 새 편집 종류를 보호하려면 `draftKey`·`DRAFT_FIELDS`·`dialogDirty`를 넓혀요. 전체 render를 막는 방식은 쓰지 않아요.
 
+## 등록·기록 (T3, `// v2.14.0 등록·기록` 묶음)
+- 폼 순서: 검색(+`searchStatusHTML` 미연결 안내) → 제목·저자 → `#dupNotice` → 평점·감상(새 책만)·Notion → `<details class="formsection">` 판본 정보 / 소개와 태그 / 책등 꾸미기 → `.formactions`(sticky)
+- 접힌 칸도 폼 안이라 FormData에 그대로 들어가요(숨은 값 포함). 값 오류가 나면 `afterFormRender`의 invalid 처리가 그 칸을 열어요. `updateSectionHints`가 칸 요약을 써요.
+- 기존 책 수정 폼에는 감상 칸이 없어요. 대신 `handleSave`가 `fd.has('notes')`가 아니면 기존 감상을 지켜요.
+- 중복: `findDuplicateWork(cand)` 하나를 저장 직전 검사와 `checkDupNotice`(판본 선택 직후, 제목·저자 change)가 함께 써요. `open-existing`은 confirmLeave를 거쳐요.
+- 설정 왕복: `connect-search`가 `pendingAdd={editing,fields,query}`를 보관하고, 설정의 `resume-add`나 `+ 책 추가`가 `resumeAddFields()`로 되살려요(세션 중에만, beforeunload 경고).
+- 상세 편집: `notesBlockHTML`(초안 키 `책ID|notes`), `quoteHTML`(초안 키 `책ID|q|문장ID`). 입력칸의 `data-dk/data-df`로 초안을 갱신해요. 판정은 `detailDirty()`, 저장 액션은 `save-notes`/`save-quote`(최신 books 기준으로 그 필드만 바꿔요).
+- 새 책 AI 정리는 저장 뒤 따로 돌고, 실패해도 "책은 저장됐어요…"로 알려요.
+
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
 - 로그인: `sendLoginLink`(~1088) → `handleAuthRedirect`(~1075) · `signedOut`(~1037)
