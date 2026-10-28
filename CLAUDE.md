@@ -1,6 +1,6 @@
 # CLAUDE.md — 나의 서재 (eunseokyu/my-library)
 
-개인 독서 서재 웹앱. GitHub Pages 정적 파일 3개 — `index.html`(뼈대) · `styles/app.css` · `js/app.js`(IIFE 하나) — 외부 라이브러리 없음 + Supabase(REST·Auth를 fetch로 직접 호출). T2(v2.14.0)부터 CSS·JS가 분리됐어요.
+개인 독서 서재 웹앱. GitHub Pages 정적 파일 — 서재: `index.html`(뼈대) · `styles/app.css` · `js/app.js`(ES 모듈, IIFE 하나) · `js/workkey.js`(원작 판별, 공용) / 관리자: `admin.html` · `js/admin.js` · `styles/admin.css` — 외부 라이브러리 없음 + Supabase(REST·Auth를 fetch로 직접 호출).
 
 ## 문서
 - `docs/UX_PLAN.md` — 사용성 개선 명세와 작업 순서(T0~T5). 작업은 ID로 요청받음
@@ -19,6 +19,9 @@
 ## 불변 조건
 - localStorage 키 이름은 절대 바꾸지 않아요: `mnemosyne-library-v1`, `my-library-kakao-key-v1`, `my-library-gemini-key-v1`, `my-library-theme-v1`, `my-library-ai-pause-v1`, `my-library-auth-v1`, `my-library-sync-v1`, `my-library-edition-map-v1`, `my-library-ui-v1`(v2.14.0, 보기 선호만)
 - 백업 JSON 계약 `{app:'Mnemosyne', version:2, books:[...]}`을 유지해요. 키·로그인 정보는 넣지 않아요.
+- 소개 출처(v2.15.0): 책의 `aiSrc`(ai·shared·reviewed·user·'')와 `aiRev`. 우선순위는 내가 고친 소개(user) > 검수 소개(reviewed) > 공유 AI 소개 > Gemini예요. user 소개는 자동으로 바꾸지 않아요. 검수 소개는 글자·줄바꿈 그대로 저장해요(1000자 상한).
+- 검수 소개는 관리자 서버 함수(`admin_upsert_reviewed`)로만 써요. 앱에서 work_cache 소개를 직접 고치지 않아요. 관리자 권한은 서버(`is_admin`)가 판단해요. 화면에서 숨기는 것만으로 권한을 구현하지 않아요. service role 키는 절대 코드에 넣지 않아요.
+- `js/workkey.js`의 원작 판별 규칙을 바꾸면 work_cache 작품 키가 달라져요. 바꾸기 전에 기존 키 영향을 먼저 확인해요.
 - 모든 책은 `normalize()`를 거쳐요. 새 필드는 normalize·handleSave·백업 왕복·동기화 보존을 함께 확인해요.
 - 저장은 `persist()` 한 경로로 해요. 뒤에서 고칠 때는 `softRender()`를 써요. 저장 실패 때 초안을 지우거나 성공 표시를 하지 않아요.
 - 데이터 구조를 바꾸면 기존 데이터 손실이 없어야 해요. 필요하면 먼저 자동 백업을 받아요.
@@ -32,7 +35,7 @@
 - 화면 코드는 외부 API를 직접 부르지 않고 기능 함수(`searchKakaoBooks`, `callGemini`, `sbFetch`…)에 맡겨요.
 - 저장은 `persist`/`commit` 공통 경로로만 해요. 파생 목록(서재·목록 보기·개수)은 공통 selector(`getShown`)에서 계산해요.
 - 미저장 편집은 draft 경로(`drafts`·`dialogDirty`·`confirmLeave`)를 써요. 전체 render를 막아서 입력을 지키지 않아요.
-- 자산은 상대 경로 + `?v=버전` 쿼리로 불러요. 버전을 올릴 때 `<title>`과 두 쿼리를 함께 바꿔요.
+- 자산은 상대 경로 + `?v=버전` 쿼리로 불러요. 버전을 올릴 때 `<title>`, index.html·admin.html의 쿼리, js/app.js·js/admin.js 안의 `import ... './workkey.js?v='`를 함께 바꿔요.
 - 미래 기능용 빈 파일이나 모듈을 미리 만들지 않아요. 새 모듈은 두 번째 사용처가 생길 때 만들어요.
 
 ## 테스트
@@ -42,9 +45,11 @@
 - `{ todo }` 테스트는 알려진 결함 재현이에요. 고친 단계에서 todo를 지워 일반 테스트로 바꿔요.
 
 ## 저장소에 올리는 범위 (2026-10-28 사용자 확정)
-- 앱 파일은 `index.html`·`styles/app.css`·`js/app.js` 세 개를 항상 함께 올려요("index.html만 올린다"는 예전 규칙은 끝났어요).
-- `docs/`·`tests/`·`CLAUDE.md`·`package.json`·`.gitignore`를 `main`에 함께 올릴지는 아직 정하지 않았어요. push 전에 다시 물어봐요.
-- 단일 HTML 파일 하나로 전달하는 방식은 더 쓰지 않아요. 파일로 전달할 때는 세 파일을 함께 줘요.
+- `main`에는 앱 파일만 올려요: `index.html`, `admin.html`, `styles/app.css`, `styles/admin.css`, `js/app.js`, `js/workkey.js`, `js/admin.js`.
+- `docs/`·`tests/`·`db/`·`CLAUDE.md`·`package.json`은 작업 가지에만 둬요(main에 올릴지는 사용자에게 다시 물어봐요).
+- 단일 HTML 파일 하나로 전달하는 방식은 더 쓰지 않아요.
 
 ## 버전 번호
-- v2.14.0 = UX 개선 T1~T5. 예전 인수인계에서 v2.14.0으로 계획했던 "발견 기능"(작품 키 고정·서재 수·최초 발견자)은 v2.15.0으로 옮겼어요.
+- v2.14.x = UX 개선과 AI 호출 최적화, v2.15.0 = 관리자 검수 소개.
+- "발견 기능"(작품 키 고정·서재 수·최초 발견자)은 2026-10-28 사용자 결정으로 **취소**했어요(구현된 코드 없음). 다시 제안하지 않아요.
+- 상징(그림) 개선은 사용자가 나중에 다루기로 했어요. 치명적 버그가 아니면 손대지 않아요.

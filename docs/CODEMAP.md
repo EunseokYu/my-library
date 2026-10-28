@@ -6,7 +6,10 @@
 ## 파일
 | 경로 | 역할 |
 |---|---|
-| `index.html` | 뼈대만(#fatal-error, #root). `styles/app.css?v=`·`js/app.js?v=`를 상대 경로로 불러요 |
+| `index.html` | 서재 뼈대(#fatal-error, #root). `styles/app.css?v=`·`js/app.js?v=`(type=module)를 상대 경로로 불러요 |
+| `js/workkey.js` | 원작 판별 공용 모듈(titleKey·workBaseTitle·cleanAuthor·canonicalWork·workKeyOf). 서재·관리자가 함께 import |
+| `admin.html`·`js/admin.js`·`styles/admin.css` | 관리자 검수 소개 페이지(v2.15.0) |
+| `db/` | 적용한 DB 변경 기록 사본과 되돌리기 SQL |
 | `styles/app.css` | 스타일 전체(예전 `<style>` 두 블록을 순서대로) |
 | `js/app.js` | 앱 코드 전체. `'use strict'` IIFE 하나이고, body 끝에서 동기 실행해요 |
 | `docs/UX_PLAN.md` | 사용성 검토와 작업 명세(T0~T5) |
@@ -85,6 +88,12 @@ render()      ~1475  captureDialogUI → #root 전체 교체 → showDialog(+a11
 - 상징 이름 고정: `analyzeBook`·`analyzeAll`은 `x.motifIdea||r.motifIdea`이고, `applyCache`는 내 상징 이름·그림이 있으면 덮지 않아요. 문체 검사(styleOk)를 통과한 소개만 공유 기록에 올려요.
 - 그리기 규칙(v2.14.2): `MOTIF_DRAW_RULES` = 좋은 상징 조건(도형 1~4개·큰 윤곽 + 특징 하나·작은 점/격자/반복 금지) + 잘 그린 예(도끼·알·티백 실제 SVG) + 출력 규칙(최대 4개, transform 금지). 예전 규칙은 `MOTIF_DRAW_RULES_V1`(비교 시험 전용)이에요. `motifPrompt(...,rules)`. 상징 이름 규칙(`MOTIF_IDEA_RULES`)에는 '작게 새겨도 윤곽으로 알아볼 사물'을 넣었어요.
 - 비교 시험: `runMotifCompare`/`compareHTML`. `COMPARE_SET` 5권 × `COMPARE_RULES`(예전·새) = 10회. 결과는 `compareState`(메모리)에만 있어요.
+
+## 검수 소개 (v2.15.0)
+- DB: work_cache에 `source`(ai|reviewed)·`rev`·`ai_summary`(검수 전 AI 소개)·`genre`·`original_title`·`reviewed_at`·`reviewed_by`가 있어요. 쓰기는 `admin_upsert_reviewed(items)`(최대 100건, 항목별 결과 inserted/updated/same/error, `expectRev`로 미리보기 뒤 변경 차단)와 `admin_restore_reviewed(history_id)`만 해요. 이력은 `work_cache_history`(관리자만 읽기), 관리자는 `admins` + `is_admin()`이에요. 로그아웃(anon)은 source=reviewed 행만 읽을 수 있어요.
+- 서재: 책 `aiSrc`/`aiRev`, `cleanAiSummary`(검수 소개는 그대로, 나머지는 공백 정리 + 줄바꿈 보존, 1000자). `analyzeBook`은 공유 기록(검수 포함)을 먼저 찾고, 키가 없어도 붙여요. Gemini 응답이 오는 사이 소개가 바뀌었으면 버려요. `applyCache`는 user 소개를 두고, 태그가 빈 검수 행이면 내 태그를 유지해요. `putCache`는 reviewed·user 소개를 공유하지 않아요.
+- 반영: `refreshReviewed()`(syncNow 끝, 로그아웃이면 앱 시작 3초 뒤) — `syncMeta.reviewPull` 이후 바뀐 행의 키·번호만 받고, 내 책에 해당하는 행만 전문을 받아 `reviewedUpdate` 규칙으로 바꿔요(예전 기록은 `ai_summary`와 글자까지 같을 때만 자동). 상세를 열면 `checkReviewOffer` → `reviewOfferHTML`('검수된 소개로 바꾸기', `use-reviewed`)을 보여 줘요.
+- 관리자 페이지: `loadExisting`(work_cache·edition_map 전체) → `checkFile`(형식·JS 길이 500~700·중복) → `classify`(신규/변경/동일/충돌/오류, 같은 제목 다른 저자·판본 묶기 불일치 = 충돌) → `save`(50건씩 차례로, network/auth/server 구분, auth면 멈춤) → `retryList` → 이력 `findHistory`/`restore`.
 
 ## 클라우드 (Supabase, fetch 직접)
 - `SB_URL`·`SB_KEY`(publishable, ~994) · `sbFetch`(~1059, 401이면 refresh)
