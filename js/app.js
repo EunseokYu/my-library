@@ -875,6 +875,9 @@ const APP_URL='https://eunseokyu.github.io/my-library/';
 const AUTH_KEY='my-library-auth-v1',SYNC_KEY='my-library-sync-v1';
 let session=null,syncMeta={userId:'',lastPull:'',dirty:[],removed:[],lastSync:'',email:'',backupFor:'',keysDirty:[],cacheSeeded:''};let keySyncError='';
 let syncSnap=new Map(),applyingRemote=false,syncBusy=false,syncAgain=false,syncTimer=0,syncState='idle',syncError='',loginSentTo='',refreshing=null;
+// v2.16.0: 계정 보호. 'switch' = 이 브라우저가 전에 동기화한 계정과 다른 계정, 'new-google' = 책이 하나도 없는 Google 전용 새 계정.
+// 이 상태에서는 책·키를 받거나 올리지 않습니다(로그아웃하면 풀림). 이 브라우저와 클라우드의 데이터는 그대로 둡니다.
+let accountHold='',oauthBusy=false;
 function readJSON(k){try{const v=JSON.parse(localStorage.getItem(k)||'null');return v&&typeof v==='object'?v:null}catch{return null}}
 function writeJSON(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v))}catch{}}
 function loadSync(){
@@ -911,7 +914,7 @@ function setSession(d){
   user:{id:String(uid),email:String(d.user?.email||p.email||session?.user?.email||'')}};
  saveSession();return true;
 }
-function signedOut(msg){session=null;saveSession();syncState='idle';syncError='';clearTimeout(syncTimer);syncTimer=0;if(msg)flash(msg);softRender()}
+function signedOut(msg){session=null;saveSession();accountHold='';syncState='idle';syncError='';clearTimeout(syncTimer);syncTimer=0;if(msg)flash(msg);softRender()}
 // 접속 토큰은 1시간마다 바뀝니다. 만료 1분 전이면 새로 받습니다. 동시에 여러 번 받지 않도록 하나로 묶습니다.
 function refreshSession(){
  if(refreshing)return refreshing;
@@ -937,6 +940,7 @@ async function sbFetch(path,{method='GET',body,prefer='',auth=true,retry=true}={
  const headers={apikey:SB_KEY};
  if(body!==undefined)headers['Content-Type']='application/json';
  if(prefer)headers.Prefer=prefer;
+ if(auth&&method!=='GET'&&accountHeld()){const e=Error('계정 확인이 필요해 서버에 저장하지 않았어요.');e.hold=true;throw e} // v2.16.0
  if(auth){const t=await accessToken();if(!t){const e=Error('로그인이 필요해요.');e.auth=true;throw e}headers.Authorization='Bearer '+t}
  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),20000);
  let r;
@@ -950,18 +954,52 @@ async function sbFetch(path,{method='GET',body,prefer='',auth=true,retry=true}={
 }
 // 메일의 로그인 링크를 누르면 이 앱 주소 뒤에 #access_token=… 이 붙어 열립니다. 그 값을 받아 로그인하고 주소창은 깨끗하게 지웁니다.
 function handleAuthRedirect(){
- const h=location.hash||'';
- if(!/access_token=|error_code=|error_description=/.test(h))return;
- const p=new URLSearchParams(h.slice(1));
- try{history.replaceState(null,'',location.pathname+location.search)}catch{}
+ // v2.16.0: Google 로그인도 같은 방식(#access_token=…)으로 돌아옵니다. 취소·오류는 주소의 ?error=… 로 올 수도 있어 둘 다 읽습니다.
+ const h=location.hash||'',q=new URLSearchParams(location.search);
+ const inHash=/access_token=|error_code=|error_description=|(^#|&)error=/.test(h),inQuery=q.has('error')||q.has('error_code')||q.has('error_description');
+ let via='';try{via=sessionStorage.getItem(OAUTH_FLAG)||'';sessionStorage.removeItem(OAUTH_FLAG)}catch{}
+ if(!inHash&&!inQuery)return;
+ const p=new URLSearchParams(inHash?h.slice(1):location.search);
+ if(inQuery)for(const k of ['error','error_code','error_description'])q.delete(k);
+ const qs=q.toString();
+ try{history.replaceState(null,'',location.pathname+(qs?'?'+qs:''))}catch{}
  if(p.get('access_token')){
-  if(setSession({access_token:p.get('access_token'),refresh_token:p.get('refresh_token'),expires_in:p.get('expires_in'),expires_at:p.get('expires_at')}))flash('로그인했어요. 서재를 불러오는 중…');
+  if(setSession({access_token:p.get('access_token'),refresh_token:p.get('refresh_token'),expires_in:p.get('expires_in'),expires_at:p.get('expires_at')}))flash(via==='google'?'Google 계정으로 로그인했어요. 서재를 불러오는 중…':'로그인했어요. 서재를 불러오는 중…');
   else flash('로그인 정보를 읽지 못했어요. 설정에서 다시 시도해 주세요.');
  }else{
-  const code=p.get('error_code')||'';
-  flash(code==='otp_expired'?'로그인 링크가 만료됐거나 이미 사용됐어요. 설정에서 새 링크를 받아 주세요.':'로그인하지 못했어요: '+(p.get('error_description')||code||'알 수 없는 오류'));
+  const code=p.get('error_code')||'',err=p.get('error')||'',desc=p.get('error_description')||'';
+  if(code==='otp_expired')flash('로그인 링크가 만료됐거나 이미 사용됐어요. 설정에서 새 링크를 받아 주세요.');
+  else if(err==='access_denied'||/cancel|denied/i.test(desc))flash('로그인을 취소했어요. 서재는 그대로예요.');
+  else flash('로그인하지 못했어요: '+(desc||code||err||'알 수 없는 오류')+'. 이메일 로그인 링크로도 로그인할 수 있어요.');
  }
 }
+const OAUTH_FLAG='my-library-oauth-v1'; // 이 탭에서 Google 로그인을 시작했다는 표시(sessionStorage, 안내 문구용)
+function loginProviders(){const a=jwtPayload(session?.access_token).app_metadata||{};return Array.isArray(a.providers)?a.providers.map(String):a.provider?[String(a.provider)]:[]}
+function accountHeld(){return !!(session&&(accountHold||(syncMeta.userId&&session.user.id!==syncMeta.userId)))}
+function holdText(){return accountHold==='new-google'
+ ?'이 Google 계정에는 저장된 서재가 없어요. 기존 이메일 계정과 연결되지 않은 새 계정일 수 있어, 기존 서재를 지키려고 동기화를 멈췄어요. 로그아웃한 뒤 이메일 로그인 링크로 로그인해 주세요. 이 브라우저와 클라우드의 책은 그대로예요.'
+ :'이 브라우저가 전에 동기화하던 계정과 다른 계정으로 로그인됐어요. 기존 서재를 지키려고 동기화를 멈췄어요. 로그아웃한 뒤 원래 쓰던 방법(이메일 로그인 링크 등)으로 로그인해 주세요. 이 브라우저와 클라우드의 책은 그대로예요.'}
+function resetGoogleBtn(){oauthBusy=false;const b=$('[data-action="sync-google"]');if(b){b.disabled=false;b.textContent='Google 계정으로 계속하기'}}
+// v2.16.0: Google 로그인. Supabase의 Google 로그인 화면으로 이동했다가 이 앱으로 돌아옵니다(돌아올 때 처리는 handleAuthRedirect).
+// 이동하기 전에 Google 로그인이 켜져 있는지 먼저 확인해, 꺼져 있거나 인터넷이 끊겼으면 이동하지 않고 알려 줍니다.
+async function signInWithGoogle(){
+ if(oauthBusy)return;
+ if(navigator.onLine===false){flash('인터넷에 연결되어 있지 않아요. 연결을 확인한 뒤 다시 시도해 주세요.');return}
+ oauthBusy=true;
+ const btn=$('[data-action="sync-google"]');if(btn){btn.disabled=true;btn.textContent='Google로 이동하는 중…'}
+ const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),10000);
+ try{
+  const r=await fetch(SB_URL+'/auth/v1/settings',{headers:{apikey:SB_KEY},signal:ctl.signal});
+  const d=await r.json().catch(()=>null);
+  if(r.ok&&d?.external&&d.external.google!==true){resetGoogleBtn();flash('Google 로그인이 아직 켜져 있지 않아요. 이메일 로그인 링크를 이용해 주세요.');return}
+ }catch{resetGoogleBtn();flash('서버에 연결하지 못했어요. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.');return}
+ finally{clearTimeout(timer)}
+ const redirect=location.protocol==='https:'?location.origin+location.pathname:APP_URL;
+ try{sessionStorage.setItem(OAUTH_FLAG,'google')}catch{}
+ location.assign(SB_URL+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(redirect));
+}
+// Google 화면에서 '뒤로'로 돌아오면 페이지가 그대로 복원될 수 있어, 버튼을 원래대로 돌려놓습니다.
+window.addEventListener('pageshow',e=>{if(e.persisted&&oauthBusy){resetGoogleBtn();try{sessionStorage.removeItem(OAUTH_FLAG)}catch{}}});
 async function sendLoginLink(){
  const email=($('#sync-email')?.value||'').trim();
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){flash('이메일 주소를 확인해 주세요.');return}
@@ -988,6 +1026,11 @@ async function syncNow(){
  const wasEmpty=!books.length;
  try{
   const uid=session.user.id;
+  // v2.16.0: 다른 계정이면 받기·올리기·키 동기화를 하지 않습니다(자동 이동·병합 방지).
+  if(syncMeta.userId&&syncMeta.userId!==uid)accountHold='switch';
+  // 이 브라우저의 첫 동기화가 Google 전용 계정이고 서버에 책이 한 줄도 없으면, 연결되지 않은 새 계정일 수 있어 멈춥니다.
+  if(!accountHold&&!syncMeta.lastPull){const pv=loginProviders();if(pv.includes('google')&&!pv.includes('email')){const probe=await sbFetch('/rest/v1/books?select=id&limit=1');if(Array.isArray(probe)&&!probe.length)accountHold='new-google'}}
+  if(accountHold){const first=syncState!=='hold';syncState='hold';syncError='';if(first)flash(holdText());if(view==='settings'&&!dialog)render();return}
   if(syncMeta.userId!==uid){syncMeta.userId=uid;syncMeta.lastPull='';saveSync()}
   const first=!syncMeta.lastPull;
   // 이 계정으로 처음 동기화할 때, 이 브라우저에 책이 있으면 먼저 JSON 백업을 한 번 받아 둡니다.
@@ -1129,6 +1172,7 @@ function shareMotif(b,idea,inner){
 function syncStatusText(){
  if(!session)return books.length?'이 브라우저에만 저장됨 · 로그인':'';
  const n=pendingCount();
+ if(syncState==='hold')return '☁ 동기화 멈춤 · 계정 확인 필요';
  if(syncState==='busy')return '☁ 동기화 중…';
  if(syncState==='error')return `☁ 연결 안 됨${n?` · 올릴 변경 ${n}건`:''}`;
  if(n)return `☁ 올릴 변경 ${n}건`;
@@ -1136,6 +1180,7 @@ function syncStatusText(){
 }
 function syncDetailText(){
  const n=pendingCount();
+ if(syncState==='hold')return holdText();
  if(syncState==='busy')return '동기화하는 중이에요…';
  if(syncState==='error')return `마지막 동기화가 실패했어요: ${syncError}. 1분 뒤 자동으로 다시 시도해요.${n?` 아직 올리지 못한 변경 ${n}건은 이 브라우저에 안전하게 남아 있어요.`:''}`;
  return (syncMeta.lastSync?`마지막 동기화: ${fmtWhen(syncMeta.lastSync)}.`:'아직 동기화하지 않았어요.')+(n?` 올릴 변경 ${n}건이 곧 올라가요.`:' 모든 변경이 클라우드에 저장돼 있어요.')+(keySyncError?` 키 보관 실패: ${keySyncError}`:' API 키도 내 계정에 보관돼요.');
@@ -1143,12 +1188,12 @@ function syncDetailText(){
 function updateSyncStatus(){document.querySelectorAll('[data-sync-status]').forEach(el=>{const k=el.dataset.syncStatus;el.textContent=k==='long'?syncDetailText():k==='top'?syncTopText():syncStatusText();if(k==='top')el.dataset.syncTone=syncTone()})}
 // v2.14.0(U06): 화면 위쪽의 짧은 저장 상태. 책 동기화와 키 보관 실패를 따로 말합니다.
 function syncTopText(){if(!session)return books.length?'이 기기에만 저장':'';const n=pendingCount(),off=navigator.onLine===false,key=keySyncError?' · 키 보관 실패':'';
- if(off)return `오프라인 · 이 기기에 저장됨${n?` · 올릴 변경 ${n}건`:''}`;if(syncState==='busy')return '동기화 중…';
+ if(off)return `오프라인 · 이 기기에 저장됨${n?` · 올릴 변경 ${n}건`:''}`;if(syncState==='hold')return '동기화 멈춤 · 계정 확인 필요';if(syncState==='busy')return '동기화 중…';
  if(syncState==='error')return `동기화 실패${n?` · 올릴 변경 ${n}건 보관 중`:''}`;if(n)return `업로드 대기 ${n}건${key}`;return `클라우드에 저장됨${key}`}
-function syncTone(){if(!session)return 'local';if(navigator.onLine===false||syncState==='error')return 'warn';if(syncState==='busy'||pendingCount())return 'pending';return keySyncError?'warn':'ok'}
+function syncTone(){if(!session)return 'local';if(navigator.onLine===false||syncState==='error'||syncState==='hold')return 'warn';if(syncState==='busy'||pendingCount())return 'pending';return keySyncError?'warn':'ok'}
 window.addEventListener('offline',()=>updateSyncStatus());window.addEventListener('online',()=>updateSyncStatus());
 function syncPanelHTML(){
- if(!session)return `<div class="eyebrow">CLOUD SYNC</div><h3>클라우드에 서재 보관하기</h3><p>이메일로 로그인하면 서재가 클라우드에 저장됩니다. 브라우저 데이터가 지워지거나 다른 기기에서 열어도, 로그인만 하면 그대로 돌아와요.</p><div class="field"><label for="sync-email">이메일</label><input id="sync-email" type="email" autocomplete="email" inputmode="email" maxlength="200" placeholder="you@example.com" value="${esc(syncMeta.email)}"></div><div class="actions" style="justify-content:flex-start"><button class="btn primary" data-action="sync-login">로그인 링크 받기</button></div>${loginSentTo?`<p class="api-success">${esc(loginSentTo)}(으)로 로그인 링크를 보냈어요. 메일의 링크를 누르면 이 앱이 다시 열리며 로그인됩니다. 메일이 보이지 않으면 스팸함도 확인해 주세요.</p>`:''}<p class="message">비밀번호는 필요 없어요. 이 계정으로 처음 로그인할 때, 이 브라우저에 책이 있으면 JSON 백업을 한 번 내려받은 뒤 클라우드에 올립니다.</p>`;
+ if(!session)return `<div class="eyebrow">CLOUD SYNC</div><h3>클라우드에 서재 보관하기</h3><p>Google 계정이나 이메일로 로그인하면 서재가 클라우드에 저장됩니다. 브라우저 데이터가 지워지거나 다른 기기에서 열어도, 로그인만 하면 그대로 돌아와요.</p><div class="actions" style="justify-content:flex-start"><button class="btn primary" data-action="sync-google"${oauthBusy?' disabled':''}>${oauthBusy?'Google로 이동하는 중…':'Google 계정으로 계속하기'}</button></div><p class="message" style="margin-top:18px">또는 이메일로 로그인 링크 받기</p><div class="field"><label for="sync-email">이메일</label><input id="sync-email" type="email" autocomplete="email" inputmode="email" maxlength="200" placeholder="you@example.com" value="${esc(syncMeta.email)}"></div><div class="actions" style="justify-content:flex-start"><button class="btn" data-action="sync-login">로그인 링크 받기</button></div>${loginSentTo?`<p class="api-success">${esc(loginSentTo)}(으)로 로그인 링크를 보냈어요. 메일의 링크를 누르면 이 앱이 다시 열리며 로그인됩니다. 메일이 보이지 않으면 스팸함도 확인해 주세요.</p>`:''}<p class="message">비밀번호는 필요 없어요. 이 계정으로 처음 로그인할 때, 이 브라우저에 책이 있으면 JSON 백업을 한 번 내려받은 뒤 클라우드에 올립니다.</p>`;
  return `<div class="eyebrow">CLOUD SYNC</div><h3>클라우드 동기화</h3><p><strong>${esc(session.user.email||'이메일 계정')}</strong>(으)로 로그인되어 있어요. 책을 저장하면 잠시 뒤 클라우드에도 저장됩니다.</p><p class="message" data-sync-status="long">${esc(syncDetailText())}</p><div class="actions" style="justify-content:flex-start"><button class="btn" data-action="sync-now">지금 동기화</button><button class="btn" data-action="sync-logout">로그아웃</button></div>`;
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&session&&Date.now()-(Date.parse(syncMeta.lastSync)||0)>30000)scheduleSync(400)});
@@ -1791,7 +1836,7 @@ document.addEventListener('click',e=>{const tagButton=e.target.closest('[data-ta
 case'save-key':{const gv=($('#gb-key')?.value||'').trim(),okf=/^[0-9a-fA-F]{32}$/;if(gv&&!okf.test(gv)){flash('카카오 REST API 키는 32자리 영문/숫자입니다. 다시 확인해 주세요.');break}try{gv?localStorage.setItem(API_KEY_STORE,gv):localStorage.removeItem(API_KEY_STORE);apiCooldownUntil=0;apiCache.clear();markKeyDirty('kakao');flash(gv?(session?'카카오 키를 저장했어요. 내 계정에도 보관할게요.':'카카오 REST API 키를 저장했어요. 로그인하면 내 계정에도 보관돼요.'):(session?'키를 삭제했어요. 내 계정에서도 지울게요.':'저장된 키를 삭제했어요.'))}catch{flash('키를 저장하지 못했습니다.')}break}
 case'save-ai-key':{const av=($('#ai-key')?.value||'').trim(),okf=/^(?:AQ\.[A-Za-z0-9_\-]{20,220}|AIza[A-Za-z0-9_\-]{25,50})$/;if(av&&!okf.test(av)){flash('Gemini API 키는 AQ. 또는 AIza 로 시작합니다. 다시 확인해 주세요.');break}try{av?localStorage.setItem(AI_KEY_STORE,av):localStorage.removeItem(AI_KEY_STORE);clearPause();markKeyDirty('gemini');flash(av?(session?'Gemini 키를 저장했어요. 내 계정에도 보관할게요.':'Gemini API 키를 저장했어요. 로그인하면 내 계정에도 보관돼요.'):(session?'키를 삭제했어요. 내 계정에서도 지울게요.':'저장된 키를 삭제했어요.'))}catch{flash('키를 저장하지 못했습니다.')}break}
 case'raw-download':{try{const blob=new Blob([rawCorrupt],{type:'text/plain'}),u=URL.createObjectURL(blob),a2=document.createElement('a');a2.href=u;a2.download='mnemosyne-corrupt-raw-'+new Date().toISOString().slice(0,10)+'.txt';document.body.append(a2);a2.click();a2.remove();setTimeout(()=>URL.revokeObjectURL(u),15000)}catch{flash('원본을 내려받지 못했습니다.')}break}
-case'raw-reset':{if(!confirm('원본을 별도 항목에 보관한 뒤 빈 서재로 시작합니다. 계속할까요?'))break;try{localStorage.setItem(KEY+'-corrupt-'+Date.now(),rawCorrupt);loadProblem=false;rawCorrupt='';books=[];render();flash('새 서재로 시작합니다. 원본은 브라우저에 보관되어 있어요.')}catch(err){flash('원본을 보관하지 못해 초기화를 중단했습니다: '+err.message)}break}case'sync-login':sendLoginLink();break;case'sync-now':if(session){syncNow();flash('동기화하고 있어요.')}break;case'sync-logout':{const n=pendingCount();if(!confirm(n?`아직 클라우드에 올리지 못한 변경이 ${n}건 있어요. 로그아웃해도 이 브라우저에 남아 있다가 다시 로그인하면 올라갑니다. 로그아웃할까요?`:'로그아웃할까요? 이 브라우저의 서재는 그대로 남아 있어요.'))break;const tok=session?.access_token;if(tok)fetch(SB_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+tok}}).catch(()=>{});loginSentTo='';signedOut();render();flash('로그아웃했어요.');break}case'import':$('#importer')?.click();break;case'merge':restore('merge');break;case'replace':restore('replace');break;}});
+case'raw-reset':{if(!confirm('원본을 별도 항목에 보관한 뒤 빈 서재로 시작합니다. 계속할까요?'))break;try{localStorage.setItem(KEY+'-corrupt-'+Date.now(),rawCorrupt);loadProblem=false;rawCorrupt='';books=[];render();flash('새 서재로 시작합니다. 원본은 브라우저에 보관되어 있어요.')}catch(err){flash('원본을 보관하지 못해 초기화를 중단했습니다: '+err.message)}break}case'sync-login':sendLoginLink();break;case'sync-google':signInWithGoogle();break;case'sync-now':if(session){syncNow();flash('동기화하고 있어요.')}break;case'sync-logout':{const n=pendingCount();if(!confirm(n?`아직 클라우드에 올리지 못한 변경이 ${n}건 있어요. 로그아웃해도 이 브라우저에 남아 있다가 다시 로그인하면 올라갑니다. 로그아웃할까요?`:'로그아웃할까요? 이 브라우저의 서재는 그대로 남아 있어요.'))break;const tok=session?.access_token;if(tok)fetch(SB_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+tok}}).catch(()=>{});loginSentTo='';signedOut();render();flash('로그아웃했어요.');break}case'import':$('#importer')?.click();break;case'merge':restore('merge');break;case'replace':restore('replace');break;}});
 document.addEventListener('input',e=>{if(['title','workTitle','summary'].includes(e.target.id))updateMotifPreview();if(e.target.id==='bookColor')setColorMode('custom')});
 // 색 방식 표시. '자동 배색'을 누르면 유형·인생책 선택에 맞는 자동 색으로 돌아갑니다(저장하면 확정).
 function setColorMode(mode){const f=$('#colorMode');if(f)f.value=mode;const n=$('#colorModeNote');if(n)n.textContent=mode==='auto'?'자동 배색 중':'직접 고른 색'}
