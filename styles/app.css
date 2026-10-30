@@ -203,3 +203,55 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
 .aisummary{white-space:pre-wrap}
 .aisrc{margin:2px 0 8px;font-size:11px;color:var(--muted);line-height:1.7}
 .aisrc .link{font-size:11px}
+
+/* ---------- v2.17.0 읽을 책 (읽는 중·읽고 싶은 책 카드) ---------- */
+.tabcount{font-weight:500;color:var(--muted);margin-left:2px}
+.readsection{margin:6px 0 34px}
+.readhead{font:600 19px 'Noto Serif KR',serif;color:var(--ink);margin:0 0 14px;display:flex;align-items:baseline;gap:9px}
+.readhead span{font:400 14px 'DM Sans',system-ui,sans-serif;color:var(--muted)}
+.readlist{display:grid;gap:14px}
+.readcard,.wantcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;cursor:pointer;min-width:0}
+.readcard{display:grid;grid-template-columns:104px minmax(0,1fr);gap:24px;padding:20px 22px}
+.wantgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.wantcard{display:grid;grid-template-columns:76px minmax(0,1fr);gap:16px;padding:16px}
+.cardcoverbtn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;align-self:start}
+.cardcoverbtn .cover.cardcover{width:100%;min-height:0;aspect-ratio:2/3;padding:8px 6px;gap:4px;justify-content:center;border-radius:2px 4px 4px 2px;box-shadow:3px 4px 9px #2a23232a;animation:none}
+.cardcoverbtn .cover.cardcover.photo-cover{padding:0}
+.cardcover{overflow:hidden}
+.cardcover strong{font-size:12px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;max-width:100%}
+.cardcover small{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.cardcover small{font-size:9px}
+.cardcover .cover-motif{min-height:0}
+.cardcover .cover-motif svg{width:24px;height:24px}
+.cardcover:not(.photo-cover)>div:last-child{display:none}
+.cardbody{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.cardtitle{padding:0;border:0;background:none;color:var(--ink);font:600 18px/1.4 'Noto Serif KR',serif;text-align:left;cursor:pointer;word-break:keep-all;overflow-wrap:anywhere;max-width:100%}
+.wantcard .cardtitle{font-size:15px}
+.cardtitle:hover{text-decoration:underline;text-underline-offset:3px}
+.cardauthor{font-size:12px;color:var(--muted)}
+.cardnote{margin-top:12px;max-width:100%}
+.cardnote small{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+.cardnote p{margin:0;font-size:13px;line-height:1.7;color:var(--ink);overflow-wrap:anywhere}
+.cardactions{margin-top:auto;padding-top:16px;align-self:stretch;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;align-items:center}
+.cardactions .btn{min-width:108px}
+.cardfinish{order:-1;margin-right:auto;font-size:12px}
+.cardstart{margin-top:auto;padding:8px 18px}
+.readempty{border:1px dashed var(--line);border-radius:10px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.readempty p{margin:0;font-size:13px;color:var(--muted)}
+.statusrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.statuspill{display:inline-block;padding:7px 13px;border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:600;color:var(--accent);background:var(--paper)}
+.finishmodal textarea{min-height:130px}
+.spine.justshelved,.listrow.justshelved{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:620px){
+ .readcard{grid-template-columns:84px minmax(0,1fr);gap:16px;padding:16px}
+ .cardtitle{font-size:16px}
+ .cardactions{justify-content:stretch}
+ .cardactions .btn{flex:1 1 120px;min-width:0}
+ .cardfinish{flex-basis:100%;order:1;margin:2px 0 0;text-align:center}
+ .wantgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .wantcard{grid-template-columns:1fr;gap:10px;padding:12px}
+ .wantcard .cardcoverbtn{width:78%;justify-self:center}
+ .cardstart{align-self:stretch;margin-top:8px;padding:8px 6px}
+}
+@media(max-width:360px){.wantgrid{grid-template-columns:1fr}.wantcard{grid-template-columns:72px minmax(0,1fr)}.wantcard .cardcoverbtn{width:100%}}
+.wantcard .cardcover strong{-webkit-line-clamp:3}
