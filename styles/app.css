@@ -255,3 +255,6 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
 }
 @media(max-width:360px){.wantgrid{grid-template-columns:1fr}.wantcard{grid-template-columns:72px minmax(0,1fr)}.wantcard .cardcoverbtn{width:100%}}
 .wantcard .cardcover strong{-webkit-line-clamp:3}
+
+.readhead .readadd{margin-left:auto;padding:7px 12px;font:600 12px 'DM Sans',system-ui,sans-serif;align-self:center}
+@media(max-width:360px){.readhead{flex-wrap:wrap}.readhead .readadd{margin-left:0;flex-basis:100%}}
