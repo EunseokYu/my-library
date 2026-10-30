@@ -258,3 +258,28 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
 
 .readhead .readadd{margin-left:auto;padding:7px 12px;font:600 12px 'DM Sans',system-ui,sans-serif;align-self:center}
 @media(max-width:360px){.readhead{flex-wrap:wrap}.readhead .readadd{margin-left:0;flex-basis:100%}}
+
+/* ---------- v2.18.0 나의 서재 첫 화면 = 책장 중심 ---------- */
+.main.libmain{padding-left:clamp(20px,3vw,44px);padding-right:clamp(20px,3vw,44px)}
+.libmain .hero{padding:22px 0 6px;align-items:end}
+.libmain .hero .eyebrow{display:none}
+.libmain .hero h1{font-size:28px;letter-spacing:-1px;margin:0 0 4px}
+.libmain .toolbar{margin:14px 0 14px}
+.libmain .stats{margin:30px 0 18px}
+.mobile-nav{grid-template-columns:repeat(4,1fr)}
+/* 읽는 중 카드: 독서 시작이 주 행동 */
+.cardsession{min-width:120px}
+/* 카드 확대(약 1.02배, 150ms). 크기만 바꾸므로 주변 배치는 밀리지 않습니다. */
+.readcard,.wantcard{transition:transform .15s ease;transform-origin:center}
+@media(hover:hover) and (pointer:fine){.readcard:hover,.wantcard:hover{transform:scale(1.02)}}
+.readcard.pressing,.wantcard.pressing{transform:scale(1.02)}
+@media(prefers-reduced-motion:reduce){.readcard,.wantcard{transition:none}.readcard:hover,.wantcard:hover,.readcard.pressing,.wantcard.pressing{transform:none}}
+@media(max-width:620px){
+ .libmain .hero{padding:12px 0 2px}
+ .libmain .hero h1{font-size:24px}
+ .libmain .hero .desc{font-size:12px}
+ .libmain .toolbar{margin:10px 0 12px}
+ .cardactions .cardsession{order:-2;flex-basis:100%}
+ .cardactions .btn:not(.cardsession){flex:1 1 0;padding-left:6px;padding-right:6px}
+ .mobile-nav button{padding:9px 2px}
+}
