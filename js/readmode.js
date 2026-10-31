@@ -1,4 +1,4 @@
-// 나의 서재 — 독서모드 (v2.20.0)
+// 나의 서재 — 독서모드 (v2.20.0, v2.21.0: 컬렉션 진입·다른 책 읽기·기록(문구·메모)·조명)
 // 종이책이나 다른 기기로 책을 읽는 동안 켜 두는 화면입니다. 전자책 뷰어가 아닙니다.
 // 앱(app.js)의 데이터·저장 함수는 initReadMode(api)로 넘겨받아 씁니다. 책 데이터는 api.patchBook으로만 고칩니다.
 //
@@ -15,13 +15,15 @@ export const RM_CONFIG={
  // 장면 색·소재. CSS 변수로 들어갑니다.
  style:{wall:'#efe7d9',wood:'#7b5236',woodDark:'#4f3220',woodLight:'#9c6d48',cream:'#f6f1e7',ink:'#3a2e26',lightTint:'255,232,196'},
  scenery:'city', // 창밖 풍경 종류(지금은 도시 실루엣 하나)
- object:null      // 정해진 자리의 오브제 하나(이번 버전은 없음)
+ object:null,     // 정해진 자리의 오브제 하나(이번 버전은 없음)
+ // 조명: 전등(펜던트) 갓 색과 빛 색, 책장 간접조명 빛 색. 켜고 끄는 상태는 사용자가 정해 이 기기에 기억합니다.
+ lamp:{shade:'#2f2a27',shadeLight:'#4a423c',light:'255,206,140'},shelfLight:'255,208,150'
 };
 const SESSION_KEY='my-library-readsession-v1:',PREF_KEY='my-library-readmode-v1';
 const TIMES={auto:'자동',day:'낮',dusk:'노을',night:'밤'},WEATHERS={clear:'맑음',cloudy:'흐림',rain:'비',snow:'눈'};
 
 let api=null,root=null,pill=null,ticker=0,lastBeat=0,lastEnv=0,wakeLock=null,menuOpen=false,shownId='';
-let prefs={time:'auto',weather:'clear',wake:false};
+let prefs={time:'auto',weather:'clear',wake:false,lamp:true,shelf:true};
 
 const now=()=>Date.now();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -61,6 +63,12 @@ function applyEnv(){
  const mix=(cols)=>'#'+[0,1,2].map(i=>Math.round(cols.reduce((a,[hex,k])=>a+parseInt(hex.slice(1+i*2,3+i*2),16)*k,0)).toString(16).padStart(2,'0')).join('');
  r.setProperty('--city',mix([['#8e9db0',w.day],['#6a5f86',w.dusk],['#1d2237',w.night]]));
  root.dataset.weather=wx;root.classList.toggle('rm-dark',w.night>.5);
+ // 조명: 어두울수록 또렷하게. 낮에도 켜져 있으면 은은하게 보입니다.
+ r.setProperty('--lampk',prefs.lamp?(.5+w.dusk*.25+w.night*.5+(wx==='rain'||wx==='cloudy'?.1:0)).toFixed(3):'0');
+ r.setProperty('--shelfk',prefs.shelf?(.38+w.dusk*.35+w.night*.62+(wx==='rain'||wx==='cloudy'?.08:0)).toFixed(3):'0');
+ root.classList.toggle('lamp-on',!!prefs.lamp);
+ const lb=root.querySelector('.rm-lamp');if(lb){lb.setAttribute('aria-pressed',String(!!prefs.lamp));lb.setAttribute('aria-label',prefs.lamp?'전등 끄기':'전등 켜기')}
+ root.querySelectorAll('[data-rm-light]').forEach(b=>b.setAttribute('aria-pressed',String(!!prefs[b.dataset.rmLight])));
  root.querySelectorAll('[data-rm-time]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.rmTime===prefs.time)));
  root.querySelectorAll('[data-rm-weather]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.rmWeather===prefs.weather)));
  const lab=root.querySelector('.rm-envnote');if(lab)lab.textContent=`${prefs.time==='auto'?'자동('+(['day','dusk','night'].map(k=>[k,w[k]]).sort((a,b)=>b[1]-a[1])[0][0]==='day'?'낮':w.dusk>=w.night?'노을':'밤')+')':TIMES[prefs.time]} · ${WEATHERS[wx]} 분위기 — 직접 고른 분위기로, 실제 날씨가 아니에요.`;
@@ -112,21 +120,22 @@ function layoutShelf(){
  api.fitTitles(shelf);
 }
 function sceneHTML(b){
- const c=RM_CONFIG.style;
- return `<div class="rm-scene" style="--rm-wall:${c.wall};--rm-wood:${c.wood};--rm-wood-d:${c.woodDark};--rm-wood-l:${c.woodLight};--rm-cream:${c.cream};--rm-ink:${c.ink};--rm-light:${c.lightTint}">
+ const c={...RM_CONFIG.style,lamp:RM_CONFIG.lamp};
+ return `<div class="rm-scene" style="--shelf-rgb:${RM_CONFIG.shelfLight};--rm-wall:${c.wall};--rm-wood:${c.wood};--rm-wood-d:${c.woodDark};--rm-wood-l:${c.woodLight};--rm-cream:${c.cream};--rm-ink:${c.ink};--rm-light:${c.lightTint}">
  <div class="rm-wall" aria-hidden="true"></div>
  <div class="rm-window" aria-hidden="true"><div class="rm-sky s-day"></div><div class="rm-sky s-dusk"></div><div class="rm-sky s-night"></div><div class="rm-clouds"></div>${skylineSVG()}<div class="rm-overcast"></div>${weatherHTML()}<div class="rm-glass"></div><div class="rm-frame"></div></div>
  <div class="rm-beam" aria-hidden="true"></div>
  <div class="rm-shelfwrap"><div class="rm-shelf" role="img"><div class="rm-back"></div><div class="rm-tier"><div class="rm-books"></div></div><div class="rm-board"></div><div class="rm-tier"><div class="rm-books"></div></div></div></div>
  <div class="rm-desk" aria-hidden="true"><div class="rm-desktop"></div><div class="rm-deskedge"></div></div>
- <div class="rm-current"><div class="rm-curtitle"><h2>${esc(titleOf(b))}</h2><p>${esc(api.cleanAuthor(b.author)||'작가 미상')}</p></div><div class="rm-curbook">${api.coverHTML(b,'cover rm-cover')}</div></div>
+ <div class="rm-current"><div class="rm-curtitle"><h2>${esc(titleOf(b))}</h2><p>${esc(api.cleanAuthor(b.author)||'작가 미상')}</p><button type="button" class="rm-switch" data-rm="switch">다른 책 읽기</button></div><div class="rm-curbook">${api.coverHTML(b,'cover rm-cover')}</div></div>
  <div class="rm-dimmer" aria-hidden="true"></div>
+ <div class="rm-lampzone" style="--shade:${c.lamp.shade};--shade-l:${c.lamp.shadeLight};--lamp-rgb:${c.lamp.light}"><div class="rm-lampbeam" aria-hidden="true"></div><div class="rm-lamppool" aria-hidden="true"></div><button type="button" class="rm-lamp" data-rm="lamp" aria-pressed="true" aria-label="전등 끄기"><span class="rm-canopy"></span><span class="rm-cord"></span><span class="rm-shade"><span class="rm-bulb"></span></span></button></div>
  </div>`;
 }
 function uiHTML(){
  return `<header class="rm-top"><div class="rm-brand">나의 서재</div><div class="rm-topright"><button type="button" class="rm-finish-top" data-rm="finish">독서 마치기</button><button type="button" class="rm-iconbtn" data-rm="env" aria-label="분위기 설정" aria-expanded="false">⚙</button><button type="button" class="rm-exit" data-rm="exit" aria-label="화면 나가기"><span class="rm-exit-label">화면 나가기</span><span class="rm-x" aria-hidden="true"></span></button></div>
- <div class="rm-env" hidden><p class="rm-envhead">시간</p><div class="rm-seg">${Object.entries(TIMES).map(([k,l])=>`<button type="button" data-rm-time="${k}">${l}</button>`).join('')}</div><p class="rm-envhead">날씨 분위기</p><div class="rm-seg">${Object.entries(WEATHERS).map(([k,l])=>`<button type="button" data-rm-weather="${k}">${l}</button>`).join('')}</div>${'wakeLock' in navigator?`<label class="rm-wake"><input type="checkbox" data-rm="wake" ${prefs.wake?'checked':''}> 읽는 동안 화면 켜두기</label>`:''}<p class="rm-envnote"></p></div></header>
- <section class="rm-ui"><p class="rm-label">함께 읽는 시간</p><div class="rm-time" role="timer" aria-live="off">00:00:00</div><div class="rm-controls"><button type="button" class="rm-round rm-play" data-rm="toggle" aria-label="일시정지"><span class="rm-ico"></span></button><button type="button" class="rm-round rm-memo" data-rm="memo">메모</button></div><p class="rm-state" aria-live="polite"></p><button type="button" class="rm-finish-bottom" data-rm="finish">독서 마치기 ›</button></section>
+ <div class="rm-env" hidden><p class="rm-envhead">시간</p><div class="rm-seg">${Object.entries(TIMES).map(([k,l])=>`<button type="button" data-rm-time="${k}">${l}</button>`).join('')}</div><p class="rm-envhead">조명</p><div class="rm-seg"><button type="button" data-rm-light="lamp">전등</button><button type="button" data-rm-light="shelf">책장 조명</button></div><p class="rm-envhead">날씨 분위기</p><div class="rm-seg">${Object.entries(WEATHERS).map(([k,l])=>`<button type="button" data-rm-weather="${k}">${l}</button>`).join('')}</div>${'wakeLock' in navigator?`<label class="rm-wake"><input type="checkbox" data-rm="wake" ${prefs.wake?'checked':''}> 읽는 동안 화면 켜두기</label>`:''}<p class="rm-envnote"></p></div></header>
+ <section class="rm-ui"><p class="rm-label">함께 읽는 시간</p><div class="rm-time" role="timer" aria-live="off">00:00:00</div><div class="rm-controls"><button type="button" class="rm-round rm-play" data-rm="toggle" aria-label="일시정지"><span class="rm-ico"></span></button><button type="button" class="rm-round rm-memo" data-rm="record">기록</button></div><p class="rm-state" aria-live="polite"></p><button type="button" class="rm-finish-bottom" data-rm="finish">독서 마치기 ›</button></section>
  <div class="rm-modal" hidden></div>`;
 }
 
@@ -135,7 +144,7 @@ export function openReadMode(bookId){
  const b=book(bookId);if(!b)return;
  let s=getSession();
  if(s&&s.bookId!==bookId){const ob=book(s.bookId);
-  if(ob){if(!confirm(`「${titleOf(ob)}」 독서가 진행 중이에요. 그 책 화면으로 돌아갈까요?\n(새 책으로 시작하려면 먼저 그 책의 독서를 마쳐 주세요.)`))return;show();return}
+  if(ob){openPicker({target:bookId});return}
   s=null;putSession(null); // 책이 지워진 세션은 정리합니다.
  }
  if(!s){const t=now();s={id:'rs-'+t.toString(36)+Math.random().toString(36).slice(2,7),bookId,uid:uid(),startedAt:new Date(t).toISOString(),acc:0,runFrom:t,beat:t};putSession(s)}
@@ -195,19 +204,88 @@ let modalCtx=null;
 function openModal(html,ctx={}){if(!root)return;const m=root.querySelector('.rm-modal');modalCtx=ctx;m.innerHTML=`<div class="rm-card" role="dialog" aria-modal="true">${html}</div>`;m.hidden=false;m.querySelector('textarea,input,.primary')?.focus({preventScroll:true})}
 function closeModal(){const m=root?.querySelector('.rm-modal');if(m){m.hidden=true;m.innerHTML=''}modalCtx=null}
 
-// ---------- 메모(기존 감상 칸 재사용) ----------
-function openMemo(){
+// ---------- 기록: 문구(모은 문장 + 페이지)와 메모(감상 칸). 둘 다 기존 기록 구조를 그대로 씁니다 ----------
+function openRecord(tab='quote'){
  const s=getSession(),b=s&&book(s.bookId);if(!b)return;
- openModal(`<h3>메모</h3><p class="rm-muted">「${esc(titleOf(b))}」의 감상 칸에 저장돼요. 타이머는 그대로 흘러요.</p><textarea class="rm-text" id="rm-memo" maxlength="100000" placeholder="떠오른 생각을 적어 두세요">${esc(b.notes||'')}</textarea><div class="rm-actions"><button type="button" class="rm-btn" data-rm="modal-cancel">취소</button><button type="button" class="rm-btn primary" data-rm="memo-save">저장</button></div>`,{memo:true,orig:b.notes||''});
+ const recent=(b.quotes||[]).slice(-3).reverse();
+ openModal(`<h3>기록</h3><div class="rm-tabs" role="tablist"><button type="button" role="tab" data-rm="rtab" data-tab="quote" aria-selected="${tab==='quote'}">문구</button><button type="button" role="tab" data-rm="rtab" data-tab="memo" aria-selected="${tab==='memo'}">메모</button></div>
+ <div class="rm-pane" data-pane="quote" ${tab==='quote'?'':'hidden'}><label class="rm-notelabel" for="rm-quote">인상 깊은 문구</label><textarea class="rm-text short" id="rm-quote" maxlength="600" placeholder="마음에 남은 문장을 옮겨 적어 두세요"></textarea><div class="rm-pagerow"><label for="rm-page">페이지</label><input id="rm-page" maxlength="20" inputmode="numeric" placeholder="선택"></div>
+ ${recent.length?`<p class="rm-envhead">최근 모은 문구</p><ul class="rm-recent">${recent.map(q=>`<li>“${esc(q.text.length>70?q.text.slice(0,70)+'…':q.text)}”${q.page?` <small>p.${esc(q.page)}</small>`:''}</li>`).join('')}</ul>`:''}</div>
+ <div class="rm-pane" data-pane="memo" ${tab==='memo'?'':'hidden'}><p class="rm-muted">「${esc(titleOf(b))}」의 감상 칸에 저장돼요.</p><textarea class="rm-text" id="rm-memo" maxlength="100000" placeholder="떠오른 생각을 적어 두세요">${esc(b.notes||'')}</textarea></div>
+ <p class="rm-muted small">기록하는 동안에도 타이머는 그대로 흘러요.</p>
+ <div class="rm-actions"><button type="button" class="rm-btn" data-rm="modal-cancel">닫기</button><button type="button" class="rm-btn primary" data-rm="record-save">저장</button></div>`,{record:true,tab});
 }
-function saveMemo(){
- const s=getSession(),b=s&&book(s.bookId),t=root?.querySelector('#rm-memo')?.value??'';if(!b)return;
- if(t===(b.notes||'')){closeModal();return}
- if(!t.trim()&&b.notes){closeModal();api.flash('칸이 비어 있어 기존 감상은 그대로 두었어요.');return}
- if(api.patchBook(b.id,x=>({...x,notes:t}),'메모를 감상에 저장했어요.'))closeModal();
+function recordTab(tab){if(!root||!modalCtx?.record)return;modalCtx.tab=tab;root.querySelectorAll('.rm-tabs [data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===tab)));root.querySelectorAll('.rm-pane').forEach(x=>x.hidden=x.dataset.pane!==tab);root.querySelector(tab==='quote'?'#rm-quote':'#rm-memo')?.focus({preventScroll:true})}
+function saveRecord(){
+ const s=getSession(),b=s&&book(s.bookId);if(!b||!modalCtx?.record)return;
+ if(modalCtx.tab==='memo'){
+  const t=root.querySelector('#rm-memo')?.value??'';
+  if(t===(b.notes||'')){closeModal();return}
+  if(!t.trim()&&b.notes){closeModal();api.flash('칸이 비어 있어 기존 감상은 그대로 두었어요.');return}
+  if(api.patchBook(b.id,x=>({...x,notes:t}),'메모를 감상에 저장했어요.'))closeModal();
+  return;
+ }
+ const text=(root.querySelector('#rm-quote')?.value||'').trim(),page=(root.querySelector('#rm-page')?.value||'').trim();
+ if(!text){api.flash('문구를 적어 주세요.');root.querySelector('#rm-quote')?.focus();return}
+ const q={id:'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),text,page,createdAt:new Date().toISOString()};
+ if(api.patchBook(b.id,x=>({...x,quotes:[...(x.quotes||[]),q]}),`문구를 모았어요${page?` (p.${page})`:''}.`))closeModal();
+}
+
+// ---------- 다른 책 읽기: 읽는 중·읽고 싶은 책에서 고릅니다 ----------
+// 읽고 싶은 책을 고르면 사용자가 고른 것이므로 '읽는 중'으로 옮깁니다. 진행 중인 독서가 있으면 그 시간을 어떻게 할지 먼저 묻습니다.
+let picker=null,pickCtx=null;
+function pickRowHTML(b,cur){return `<li><button type="button" class="rm-pick" data-rm-pick="${esc(b.id)}" ${b.id===cur?'disabled aria-current="true"':''}>${api.coverHTML(b,'cover rm-pickcover')}<span class="rm-pickmain"><span class="rm-picktitle">${esc(titleOf(b))}</span><span class="rm-pickauthor">${esc(api.cleanAuthor(b.author)||'작가 미상')}${b.readSec?` · 총 ${esc(fmtDuration(b.readSec))}`:''}</span></span>${b.id===cur?'<span class="rm-picknow">지금 읽는 중</span>':''}</button></li>`}
+export function openPicker({target=''}={}){
+ const s=getSession(),cur=s?.bookId||'',list=api.books();
+ const byRecent=(a,b)=>String(b.readAt||'').localeCompare(String(a.readAt||''))||String(b.createdAt).localeCompare(String(a.createdAt));
+ const reading=list.filter(b=>b.status==='reading').sort(byRecent),want=list.filter(b=>b.status==='want').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+ if(!picker){picker=document.createElement('div');picker.className='rm-picker';picker.setAttribute('role','dialog');picker.setAttribute('aria-modal','true');picker.setAttribute('aria-label','읽을 책 고르기');document.body.append(picker)}
+ pickCtx={target:''};picker.hidden=false;document.documentElement.classList.add('rm-open');
+ picker.innerHTML=`<div class="rm-card rm-pickcard"><h3>다른 책 읽기</h3>${reading.length||want.length?`${reading.length?`<p class="rm-envhead">읽는 중</p><ul class="rm-picklist">${reading.map(b=>pickRowHTML(b,cur)).join('')}</ul>`:''}${want.length?`<p class="rm-envhead">읽고 싶은 책 <small>고르면 ‘읽는 중’으로 옮겨져요</small></p><ul class="rm-picklist">${want.map(b=>pickRowHTML(b,cur)).join('')}</ul>`:''}`:`<p class="rm-muted">읽는 중이거나 읽고 싶은 책이 없어요. 책 목록에서 먼저 추가해 주세요.</p>`}<div class="rm-actions"><button type="button" class="rm-btn" data-rm="pick-close">닫기</button></div></div>`;
+ picker.querySelector('.rm-pick:not([disabled]),[data-rm="pick-close"]')?.focus({preventScroll:true});
+ if(target)pickBook(target);
+}
+function closePicker(){if(!picker)return;picker.hidden=true;picker.innerHTML='';pickCtx=null;if(!root)document.documentElement.classList.remove('rm-open')}
+function pickBook(id){
+ const b=book(id),s=getSession();if(!b)return;
+ if(s&&s.bookId!==id&&book(s.bookId)&&elapsed(s)>=1000){
+  const ob=book(s.bookId),was=!!s.runFrom;setRunning(false);
+  const sec=Math.round(elapsed(getSession())/1000);pickCtx={target:id,was,sec,sid:s.id};
+  picker.querySelector('.rm-pickcard').innerHTML=`<h3>「${esc(titleOf(b))}」로 바꿀까요?</h3><p class="rm-muted">「${esc(titleOf(ob))}」을(를) ${esc(fmtDuration(sec))} 읽는 중이에요. 이 시간을 어떻게 할까요?</p><div class="rm-actions wrap"><button type="button" class="rm-btn quiet" data-rm="switch-discard">기록 없이 바꾸기</button><span class="rm-grow"></span><button type="button" class="rm-btn" data-rm="switch-cancel">취소</button><button type="button" class="rm-btn primary" data-rm="switch-save">저장하고 바꾸기</button></div>`;
+  picker.querySelector('[data-rm="switch-save"]')?.focus({preventScroll:true});return;
+ }
+ startWith(id);
+}
+// 지금 세션을 정리하고 새 책으로 시작합니다.
+function startWith(id,{saveOld=false}={}){
+ const s=getSession(),b=book(id);if(!b)return;
+ if(s&&s.bookId!==id){
+  if(saveOld&&pickCtx?.sid===s.id){putSession(null);addTime(s,pickCtx.sec,null)}
+  else putSession(null);
+ }
+ if(b.status==='want')api.patchBook(id,x=>({...x,status:'reading'}),`「${titleOf(b)}」을(를) 읽는 중으로 옮겼어요.`);
+ closePicker();
+ const cur=getSession();
+ if(!cur||cur.bookId!==id){const t=now();putSession({id:'rs-'+t.toString(36)+Math.random().toString(36).slice(2,7),bookId:id,uid:uid(),startedAt:new Date(t).toISOString(),acc:0,runFrom:t,beat:t})}
+ closeModal();show();
+}
+// 컬렉션의 '독서모드': 진행 중이면 그 화면, 아니면 가장 최근에 읽던 '읽는 중' 책, 없으면 고르기 창.
+export function openReadModeDefault(){
+ const s=getSession();if(s&&book(s.bookId)){show();return}
+ const reading=api.books().filter(b=>b.status==='reading').sort((a,b)=>String(b.readAt||'').localeCompare(String(a.readAt||''))||String(b.createdAt).localeCompare(String(a.createdAt)));
+ if(reading.length){openReadMode(reading[0].id);return}
+ openPicker();
 }
 
 // ---------- 독서 마치기 ----------
+// 책의 총 독서 시간(readSec)에 더하고, 마지막으로 읽은 시각(readAt)·세션 번호(readLast)를 남깁니다. notes가 문자열이면 감상도 함께 저장합니다.
+function addTime(s,sec,notes){
+ const b=book(s.bookId);if(!b)return true;
+ if(b.readLast===s.id){api.flash('이미 저장된 독서예요.');return true}
+ const keepNotes=notes===null||notes===undefined||notes===(b.notes||'')||(!notes.trim()&&!!b.notes);
+ return api.patchBook(b.id,x=>({...x,readSec:(Number(x.readSec)||0)+sec,readLast:s.id,readAt:new Date().toISOString(),...(keepNotes?{}:{notes})}),
+  `「${titleOf(b)}」 ${fmtDuration(sec)}을 기록했어요.${uid()?'':' (이 기기에만 저장됨)'}`);
+}
 function openFinish(){
  const s=getSession(),b=s&&book(s.bookId);if(!s)return;
  const wasRunning=!!s.runFrom;setRunning(false);
@@ -227,13 +305,8 @@ function finishSave(){
  const b=book(s.bookId),noteEl=root.querySelector('#rm-fnotes'),t=noteEl?noteEl.value:null;
  // 세션을 먼저 지워 다른 탭에서 같은 기록을 다시 저장하지 못하게 합니다.
  putSession(null);
- if(b){
-  if(b.readLast===s.id){closeModal();hide();api.flash('이미 저장된 독서예요.');return}
-  const keepNotes=t===null||t===(b.notes||'')||(!t.trim()&&!!b.notes);
-  const ok=api.patchBook(b.id,x=>({...x,readSec:(Number(x.readSec)||0)+sec,readLast:s.id,...(keepNotes?{}:{notes:t})}),
-   `「${titleOf(b)}」 ${fmtDuration(sec)}을 기록했어요.${uid()?'':' (이 기기에만 저장됨)'}`);
-  if(!ok){putSession(s);api.flash('저장하지 못했어요. 독서는 이어지고 있어요.');return}
- }
+ if(b&&b.readLast===s.id){closeModal();hide();api.flash('이미 저장된 독서예요.');return}
+ if(b&&!addTime(s,sec,t)){putSession(s);api.flash('저장하지 못했어요. 독서는 이어지고 있어요.');return}
  closeModal();hide();
 }
 function finishDiscard(){
@@ -258,16 +331,32 @@ function updatePill(){
 
 // ---------- 이벤트 ----------
 let touchArmed=0,lastPointer='mouse';
+function onPickerClick(e){
+ if(!picker||picker.hidden||!picker.contains(e.target))return;
+ const pk=e.target.closest('[data-rm-pick]');if(pk){pickBook(pk.dataset.rmPick);return}
+ const t=e.target.closest('[data-rm]');if(!t){if(e.target===picker)closePicker();return}
+ switch(t.dataset.rm){
+  case'pick-close':closePicker();break;
+  case'switch-cancel':{const c=pickCtx;closePicker();if(c?.was)setRunning(true);break}
+  case'switch-save':startWith(pickCtx.target,{saveOld:true});break;
+  case'switch-discard':if(confirm('지금까지의 시간을 기록하지 않고 바꿀까요?'))startWith(pickCtx.target);break;
+ }
+}
 function onClick(e){
+ if(picker&&!picker.hidden&&picker.contains(e.target)){onPickerClick(e);return}
  if(!root||!root.contains(e.target))return;
- const t=e.target.closest('[data-rm],[data-rm-time],[data-rm-weather]');
+ const t=e.target.closest('[data-rm],[data-rm-time],[data-rm-weather],[data-rm-light]');
  if(!t){if(menuOpen&&!e.target.closest('.rm-env'))toggleMenu(false);if(e.target.classList.contains('rm-modal')&&!modalCtx?.finish&&!modalCtx?.gap)closeModal();return}
  if(t.dataset.rmTime){prefs.time=t.dataset.rmTime;savePrefs();applyEnv();return}
  if(t.dataset.rmWeather){prefs.weather=t.dataset.rmWeather;savePrefs();applyEnv();return}
+ if(t.dataset.rmLight){const k=t.dataset.rmLight;prefs[k]=!prefs[k];savePrefs();applyEnv();return}
  switch(t.dataset.rm){
   case'toggle':{const s=getSession();setRunning(!s?.runFrom);break}
-  case'memo':openMemo();break;
-  case'memo-save':saveMemo();break;
+  case'record':openRecord();break;
+  case'rtab':recordTab(t.dataset.tab);break;
+  case'record-save':saveRecord();break;
+  case'switch':toggleMenu(false);openPicker();break;
+  case'lamp':prefs.lamp=!prefs.lamp;savePrefs();applyEnv();break;
   case'modal-cancel':closeModal();break;
   case'finish':toggleMenu(false);openFinish();break;
   case'finish-save':finishSave();break;
@@ -285,13 +374,13 @@ function onClick(e){
 }
 function toggleMenu(open){menuOpen=open;const m=root?.querySelector('.rm-env'),b=root?.querySelector('[data-rm="env"]');if(m)m.hidden=!open;if(b)b.setAttribute('aria-expanded',String(open))}
 function savePrefs(){try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs))}catch{}}
-function loadPrefs(){const p=readJSON(PREF_KEY)||{};prefs={time:TIMES[p.time]?p.time:'auto',weather:WEATHERS[p.weather]?p.weather:'clear',wake:p.wake===true}}
+function loadPrefs(){const p=readJSON(PREF_KEY)||{};prefs={time:TIMES[p.time]?p.time:'auto',weather:WEATHERS[p.weather]?p.weather:'clear',wake:p.wake===true,lamp:p.lamp!==false,shelf:p.shelf!==false}}
 
 export function initReadMode(a){
  api=a;loadPrefs();
  document.addEventListener('click',onClick);
  document.addEventListener('pointerdown',e=>{lastPointer=e.pointerType||'mouse'},true);
- document.addEventListener('keydown',e=>{if(!root||e.key!=='Escape')return;e.stopPropagation();if(menuOpen)toggleMenu(false);else if(modalCtx&&!modalCtx.finish&&!modalCtx.gap)closeModal()},true);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&picker&&!picker.hidden){e.stopPropagation();closePicker();return}if(!root||e.key!=='Escape')return;e.stopPropagation();if(menuOpen)toggleMenu(false);else if(modalCtx&&!modalCtx.finish&&!modalCtx.gap)closeModal()},true);
  document.addEventListener('visibilitychange',()=>{
   const s=getSession();
   if(document.visibilityState==='hidden'){if(s&&s.runFrom){s.beat=now();putSession(s)}return}
