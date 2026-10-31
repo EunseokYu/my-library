@@ -326,3 +326,20 @@ html.rm-open,html.rm-open body{overflow:hidden}
 .rm-stand-post{width:max(3px,3.5%);height:calc(var(--bookw)*.86/var(--bk-ratio)*var(--stand-post-k));background:linear-gradient(90deg,var(--stand-metal-l),var(--stand-metal) 60%)}
 .rm-stand-base{position:relative;width:var(--stand-base-w);height:4px;border-radius:999px;background:linear-gradient(180deg,var(--stand-metal-l),var(--stand-metal))}
 .rm-stand-base::after{content:"";position:absolute;left:-20%;right:-20%;top:2px;height:8px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,rgba(20,12,6,.28),transparent 75%);z-index:-1}
+
+/* ---------- v2.25.0 진입·종료 전환 ----------
+   진입 약 800ms(서재 살짝 확대 → 독서 공간 크로스페이드 → 책·UI 등장), 종료 약 450ms(역방향). transform·opacity만 씁니다. */
+html.rm-entering #root{transform:scale(1.04);opacity:.82;transition:transform 200ms cubic-bezier(.2,.7,.3,1),opacity 260ms ease-out}
+.rm.rm-enter{animation:rmSpaceIn 300ms cubic-bezier(.2,.7,.3,1) 200ms both}
+.rm.rm-enter .rm-curbook{animation:rmBookIn 300ms cubic-bezier(.2,.7,.3,1) 500ms both}
+.rm.rm-enter .rm-curtitle,.rm.rm-enter .rm-top,.rm.rm-enter .rm-ui{animation:rmUiIn 300ms ease-out 500ms both}
+.rm.rm-leave{animation:rmSpaceOut 450ms cubic-bezier(.4,0,.2,1) both}
+.rm.rm-leave .rm-curbook,.rm.rm-leave .rm-ui,.rm.rm-leave .rm-top,.rm.rm-leave .rm-curtitle{animation:rmUiOut 200ms ease-in both}
+@keyframes rmSpaceIn{from{opacity:0}to{opacity:1}}
+@keyframes rmBookIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes rmUiIn{from{opacity:0}to{opacity:1}}
+@keyframes rmSpaceOut{from{opacity:1}to{opacity:0}}
+@keyframes rmUiOut{from{opacity:1}to{opacity:0}}
+/* 움직임 줄이기: 짧은 페이드만 */
+.rm.rm-enter-min{animation:rmSpaceIn 150ms linear both}
+@media(prefers-reduced-motion:reduce){html.rm-entering #root{transform:none;transition:none}.rm.rm-enter,.rm.rm-enter *,.rm.rm-leave,.rm.rm-leave *{animation:none!important}}

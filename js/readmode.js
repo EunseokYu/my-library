@@ -165,24 +165,58 @@ export function openReadMode(bookId,{autostart=false}={}){
  else if(autostart&&!isStarted(s)){show();setRunning(true);return}
  show();
 }
+// ---------- 진입·종료 전환 (v2.25.0) ----------
+// 진입(약 800ms): 0~200ms 서재가 살짝 확대되며 흐려짐 → 200~500ms 독서 공간이 겹쳐 나타남 → 500~800ms 책·글자·버튼이 나타남.
+// 종료(약 450ms): 독서 공간이 사라지며 살짝 확대돼 있던 서재가 제자리로 돌아옵니다.
+// 전환은 화면 표시만 바꿉니다. 타이머·세션·기록은 건드리지 않습니다. 전환 중 다시 누르면 무시하고, 시간이 지나면 상태를 반드시 정리합니다.
+const ENTER_MS=800,LEAVE_MS=450;
+let entering=0,leavingEl=null,leaveTimer=0,pushedState=false,ignorePop=false;
+const reducedMotion=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+function appEl(){return document.getElementById('root')}
+function finishLeave(){clearTimeout(leaveTimer);leaveTimer=0;if(leavingEl){leavingEl.remove();leavingEl=null}const a=appEl();if(a){a.style.transition='';a.style.transform='';a.style.opacity='';a.style.transformOrigin=''}document.documentElement.classList.remove('rm-entering')}
+function animateIn(){
+ const html=document.documentElement,a=appEl(),g=++entering;
+ if(reducedMotion()){root.classList.add('rm-enter-min');setTimeout(()=>{if(g!==entering)return;entering=0;root?.classList.remove('rm-enter-min')},180);html.classList.add('rm-open');return}
+ if(a){a.style.transformOrigin=`50% ${Math.round(scrollY+innerHeight/2)}px`}
+ html.classList.add('rm-entering');root.classList.add('rm-enter');
+ setTimeout(()=>{if(g!==entering)return;entering=0;root?.classList.remove('rm-enter');html.classList.remove('rm-entering');html.classList.add('rm-open');if(a)a.style.transformOrigin=''},ENTER_MS+30);
+}
 function show(){
  const s=getSession();if(!s)return;const b=book(s.bookId);if(!b){putSession(null);return}
+ if(root&&entering)return; // 진입 중 중복 실행 방지
+ const fresh=!root;
+ if(fresh&&leavingEl)finishLeave(); // 종료 전환 도중 다시 열면 남은 화면을 바로 정리
  if(!root){root=document.createElement('div');root.id='readmode';root.className='rm';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','독서모드');document.body.append(root)}
  shownId=s.id;
  root.classList.toggle('rm-narrow',innerWidth<760||innerHeight>innerWidth*1.05);
  root.innerHTML=sceneHTML(b)+uiHTML();
- document.documentElement.classList.add('rm-open');
- const app=document.getElementById('root');if(app)app.inert=true;
+ if(fresh){animateIn();
+  // 브라우저 뒤로 가기로 독서모드를 닫을 수 있게 기록을 하나 남깁니다(주소는 그대로).
+  if(!history.state?.rm){try{history.pushState({...(history.state||{}),rm:1},'');pushedState=true}catch{}}
+ }else document.documentElement.classList.add('rm-open');
+ const app=appEl();if(app)app.inert=true;
  applyEnv();requestAnimationFrame(layoutShelf);tick(true);updatePill();
  if(prefs.wake)requestWake();
  root.querySelector(isStarted(s)?'[data-rm="toggle"]':'[data-rm="start"]')?.focus({preventScroll:true});
  checkAway();
 }
-function hide(){
- if(!root)return;{const s=getSession();if(s&&!isStarted(s))putSession(null)}root.remove();root=null;shownId='';menuOpen=false;
- document.documentElement.classList.remove('rm-open');
- const app=document.getElementById('root');if(app)app.inert=false;
+function hide({fromPop=false}={}){
+ if(!root)return;{const s=getSession();if(s&&!isStarted(s))putSession(null)}
+ const el=root,html=document.documentElement,a=appEl();
+ el.removeAttribute('id');el.setAttribute('aria-hidden','true');
+ root=null;shownId='';menuOpen=false;entering=0;
+ html.classList.remove('rm-open','rm-entering');
+ if(a)a.inert=false;
  releaseWake();updatePill();
+ // 남겨 둔 뒤로 가기 기록을 정리합니다(뒤로 가기로 닫힌 경우는 이미 정리됨).
+ if(pushedState&&!fromPop&&history.state?.rm){ignorePop=true;try{history.back()}catch{ignorePop=false}}
+ pushedState=false;
+ if(reducedMotion()){el.remove();if(a){a.style.transform='';a.style.opacity=''}return}
+ if(leavingEl)finishLeave();
+ leavingEl=el;el.classList.remove('rm-enter','rm-enter-min');el.classList.add('rm-leave');el.style.pointerEvents='none';
+ if(a){a.style.transformOrigin=`50% ${Math.round(scrollY+innerHeight/2)}px`;a.style.transition='none';a.style.transform='scale(1.03)';void a.offsetWidth;
+  a.style.transition=`transform ${LEAVE_MS}ms cubic-bezier(.2,.7,.3,1)`;a.style.transform=''}
+ leaveTimer=setTimeout(finishLeave,LEAVE_MS+40);
 }
 export const readModeOpen=()=>!!root;
 
@@ -404,6 +438,7 @@ export function initReadMode(a){
   tick(true);if(root){checkAway();if(prefs.wake)requestWake()}
  });
  // 다른 탭에서 멈춤·재개·마치기를 하면 이 탭에도 바로 반영합니다(같은 기록 하나를 함께 봅니다).
+ window.addEventListener('popstate',()=>{if(ignorePop){ignorePop=false;return}if(root){pushedState=false;hide({fromPop:true})}});
  window.addEventListener('storage',e=>{if(e.key&&e.key.startsWith(SESSION_KEY)){tick(true);updatePill()}if(e.key===PREF_KEY){loadPrefs();applyEnv()}});
  let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(!root)return;const n=innerWidth<760||innerHeight>innerWidth*1.05;if(n!==root.classList.contains('rm-narrow')){root.classList.toggle('rm-narrow',n)}layoutShelf()},150)});
  ticker=setInterval(()=>{if(document.visibilityState==='visible')tick(false);updatePill()},1000);
