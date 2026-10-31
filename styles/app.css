@@ -283,3 +283,15 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
  .cardactions .btn:not(.cardsession){flex:1 1 0;padding-left:6px;padding-right:6px}
  .mobile-nav button{padding:9px 2px}
 }
+
+/* ---------- v2.20.0 통계: 함께 읽은 시간 ---------- */
+.readtime{margin-top:16px}
+.rtlist{list-style:none;margin:14px 0 10px;padding:0;display:grid;gap:4px}
+.rtrow{width:100%;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(60px,1fr) auto;gap:14px;align-items:center;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit}
+.rttitle{font:500 14px 'Noto Serif KR',serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rttitle small{margin-left:8px;font:400 11px 'DM Sans',system-ui,sans-serif;color:var(--muted)}
+.rtbar{height:6px;border-radius:3px;background:color-mix(in srgb,var(--line) 70%,transparent);overflow:hidden}
+.rtbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.rtval{font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.readsec{font-size:12px;margin-left:4px}
+@media(max-width:620px){.rtrow{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}.rtbar{grid-column:1/-1;grid-row:2}}
