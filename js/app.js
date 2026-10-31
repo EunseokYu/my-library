@@ -1,6 +1,6 @@
 // 나의 서재 — 앱 코드 (T2에서 index.html에서 옮김. 실행 순서·IIFE 그대로)
 import {titleKey,baseWorkTitle,authorKey,cleanDisplayTitle,cleanAuthor,ED_MORPHS,ED_ANCHOR_MORPHS,workBaseTitle,canonicalWork,workKeyOf} from './workkey.js?v=2.15.0';
-import {initReadMode,openReadMode,openReadModeDefault,syncReadModeUI,fmtDuration} from './readmode.js?v=2.21.0';
+import {initReadMode,openReadMode,openReadModeDefault,syncReadModeUI,fmtDuration} from './readmode.js?v=2.22.0';
 (()=>{
 'use strict';
 const THEME_KEY='my-library-theme-v1', KEY='mnemosyne-library-v1', statuses={want:'읽고 싶은 책',reading:'읽는 중',done:'완독'}, colors=['#2f4a3d','#38503c','#44533f','#5e6e55','#6c7a5e','#a4ae95','#5a2e33','#6b3438','#6e3f36','#8c5545','#9a6650','#c49c88','#26344a','#2f3d4f','#384656','#56657a','#66758a','#a6b0bd','#4a3527','#5a4130','#6a4d36','#8a6a4c','#9c7f5e','#d3c2a2','#3f2d3f','#4d3647','#574250','#786273','#857870','#b9a9b1'];
@@ -1812,7 +1812,7 @@ function readingHTML(tab){
 // v2.20.0 통계: 독서모드로 쌓은 시간(책별 readSec 합). 상태와 관계없이 시간이 있는 책을 많이 읽은 순으로 보여 줍니다.
 function readingTimeHTML(){const list=books.filter(b=>b.readSec>0).sort((a,b)=>b.readSec-a.readSec),total=list.reduce((t,b)=>t+b.readSec,0),max=list[0]?.readSec||1;
  return `<div class="analysis readtime"><div class="eyebrow">READING TIME</div><h3>함께 읽은 시간</h3>${list.length?`<p>총 독서 시간 <strong>${esc(fmtDuration(total))}</strong> · ${list.length}권</p><ul class="rtlist">${list.map(b=>`<li><button type="button" class="rtrow" data-book="${esc(b.id)}"><span class="rttitle">${esc(cleanDisplayTitle(b.workTitle||b.title))}<small>${esc(statuses[b.status]||'')}</small></span><span class="rtbar" aria-hidden="true"><i style="width:${Math.max(2,Math.round(b.readSec/max*100))}%"></i></span><span class="rtval">${esc(fmtDuration(b.readSec))}</span></button></li>`).join('')}</ul><p class="muted">독서모드에서 ‘독서 마치기’로 저장한 시간만 더해져요.</p>`:'<p class="muted">아직 기록된 독서 시간이 없어요. 읽는 중인 책에서 ‘독서 시작’을 누르면 독서모드에서 시간이 쌓여요.</p>'}</div>`}
-function startReadingSession(bookId){if(!books.some(b=>b.id===bookId))return;if(dialog){if(editing)dropDrafts(editing);dialog=null;editing=null;dialogShownKey='';render()}openReadMode(bookId)}
+function startReadingSession(bookId){if(!books.some(b=>b.id===bookId))return;if(dialog){if(editing)dropDrafts(editing);dialog=null;editing=null;dialogShownKey='';render()}openReadMode(bookId,{autostart:true})}
 // 카드 누름 효과(터치): 누르는 동안만 살짝 확대. 손을 떼거나 스크롤하면 해제합니다. 클릭 동작에는 관여하지 않습니다.
 const unpress=()=>document.querySelectorAll('.pressing').forEach(el=>el.classList.remove('pressing'));
 document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const c=e.target.closest?.('.readcard,.wantcard');if(c)c.classList.add('pressing')},{passive:true});

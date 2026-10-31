@@ -127,27 +127,31 @@ function sceneHTML(b){
  <div class="rm-beam" aria-hidden="true"></div>
  <div class="rm-shelfwrap"><div class="rm-shelf" role="img"><div class="rm-back"></div><div class="rm-tier"><div class="rm-books"></div></div><div class="rm-board"></div><div class="rm-tier"><div class="rm-books"></div></div></div></div>
  <div class="rm-desk" aria-hidden="true"><div class="rm-desktop"></div><div class="rm-deskedge"></div></div>
- <div class="rm-current"><div class="rm-curtitle"><h2>${esc(titleOf(b))}</h2><p>${esc(api.cleanAuthor(b.author)||'작가 미상')}</p><button type="button" class="rm-switch" data-rm="switch">다른 책 읽기</button></div><div class="rm-curbook">${api.coverHTML(b,'cover rm-cover')}</div></div>
+ <div class="rm-current"><div class="rm-curtitle"><h2>${esc(titleOf(b))}</h2><p>${esc(api.cleanAuthor(b.author)||'작가 미상')}</p></div><div class="rm-curbook">${api.coverHTML(b,'cover rm-cover')}</div></div>
  <div class="rm-dimmer" aria-hidden="true"></div>
  <div class="rm-lampzone" style="--shade:${c.lamp.shade};--shade-l:${c.lamp.shadeLight};--lamp-rgb:${c.lamp.light}"><div class="rm-lampbeam" aria-hidden="true"></div><div class="rm-lamppool" aria-hidden="true"></div><button type="button" class="rm-lamp" data-rm="lamp" aria-pressed="true" aria-label="전등 끄기"><span class="rm-canopy"></span><span class="rm-cord"></span><span class="rm-shade"><span class="rm-bulb"></span></span></button></div>
  </div>`;
 }
 function uiHTML(){
- return `<header class="rm-top"><div class="rm-brand">나의 서재</div><div class="rm-topright"><button type="button" class="rm-finish-top" data-rm="finish">독서 마치기</button><button type="button" class="rm-iconbtn" data-rm="env" aria-label="분위기 설정" aria-expanded="false">⚙</button><button type="button" class="rm-exit" data-rm="exit" aria-label="화면 나가기"><span class="rm-exit-label">화면 나가기</span><span class="rm-x" aria-hidden="true"></span></button></div>
+ return `<header class="rm-top"><div class="rm-brand">나의 서재</div><div class="rm-topright"><button type="button" class="rm-pillbtn rm-switch-top" data-rm="switch">다른 책 읽기</button><button type="button" class="rm-pillbtn rm-finish-top" data-rm="finish">독서 마치기</button><button type="button" class="rm-iconbtn" data-rm="env" aria-label="분위기 설정" aria-expanded="false">⚙</button><button type="button" class="rm-exit" data-rm="exit" aria-label="화면 나가기"><span class="rm-exit-label">화면 나가기</span><span class="rm-x" aria-hidden="true"></span></button></div>
  <div class="rm-env" hidden><p class="rm-envhead">시간</p><div class="rm-seg">${Object.entries(TIMES).map(([k,l])=>`<button type="button" data-rm-time="${k}">${l}</button>`).join('')}</div><p class="rm-envhead">조명</p><div class="rm-seg"><button type="button" data-rm-light="lamp">전등</button><button type="button" data-rm-light="shelf">책장 조명</button></div><p class="rm-envhead">날씨 분위기</p><div class="rm-seg">${Object.entries(WEATHERS).map(([k,l])=>`<button type="button" data-rm-weather="${k}">${l}</button>`).join('')}</div>${'wakeLock' in navigator?`<label class="rm-wake"><input type="checkbox" data-rm="wake" ${prefs.wake?'checked':''}> 읽는 동안 화면 켜두기</label>`:''}<p class="rm-envnote"></p></div></header>
- <section class="rm-ui"><p class="rm-label">함께 읽는 시간</p><div class="rm-time" role="timer" aria-live="off">00:00:00</div><div class="rm-controls"><button type="button" class="rm-round rm-play" data-rm="toggle" aria-label="일시정지"><span class="rm-ico"></span></button><button type="button" class="rm-round rm-memo" data-rm="record">기록</button></div><p class="rm-state" aria-live="polite"></p><button type="button" class="rm-finish-bottom" data-rm="finish">독서 마치기 ›</button></section>
+ <section class="rm-ui"><p class="rm-label">함께 읽는 시간</p><div class="rm-time" role="timer" aria-live="off">00:00:00</div><div class="rm-controls"><button type="button" class="rm-startbtn" data-rm="start"><span class="rm-tri" aria-hidden="true"></span>독서 시작</button><button type="button" class="rm-round rm-play" data-rm="toggle" aria-label="일시정지"><span class="rm-ico"></span></button><button type="button" class="rm-round rm-memo" data-rm="record">기록</button></div><p class="rm-state" aria-live="polite"></p><div class="rm-bottombtns"><button type="button" class="rm-pillbtn" data-rm="switch">다른 책 읽기</button><button type="button" class="rm-pillbtn rm-finish-bottom" data-rm="finish">독서 마치기</button></div></section>
  <div class="rm-modal" hidden></div>`;
 }
 
 // ---------- 열기·닫기 ----------
-export function openReadMode(bookId){
+function newSession(bookId,run){const t=now();return {id:'rs-'+t.toString(36)+Math.random().toString(36).slice(2,7),bookId,uid:uid(),startedAt:new Date(t).toISOString(),acc:0,runFrom:run?t:null,beat:t,started:!!run}}
+const isStarted=s=>!!s&&s.started!==false; // v2.21 이전 세션(started 없음)은 이미 시작된 것으로 봅니다.
+// autostart: 책 카드·상세의 [독서 시작]처럼 사용자가 이미 시작을 누른 경우만 바로 흐릅니다. 메뉴·고르기로 열면 준비 상태입니다.
+export function openReadMode(bookId,{autostart=false}={}){
  const b=book(bookId);if(!b)return;
  let s=getSession();
  if(s&&s.bookId!==bookId){const ob=book(s.bookId);
   if(ob){openPicker({target:bookId});return}
   s=null;putSession(null); // 책이 지워진 세션은 정리합니다.
  }
- if(!s){const t=now();s={id:'rs-'+t.toString(36)+Math.random().toString(36).slice(2,7),bookId,uid:uid(),startedAt:new Date(t).toISOString(),acc:0,runFrom:t,beat:t};putSession(s)}
+ if(!s){s=newSession(bookId,autostart);putSession(s)}
+ else if(autostart&&!isStarted(s)){show();setRunning(true);return}
  show();
 }
 function show(){
@@ -160,11 +164,11 @@ function show(){
  const app=document.getElementById('root');if(app)app.inert=true;
  applyEnv();requestAnimationFrame(layoutShelf);tick(true);updatePill();
  if(prefs.wake)requestWake();
- root.querySelector('[data-rm="toggle"]')?.focus({preventScroll:true});
+ root.querySelector(isStarted(s)?'[data-rm="toggle"]':'[data-rm="start"]')?.focus({preventScroll:true});
  checkAway();
 }
 function hide(){
- if(!root)return;root.remove();root=null;shownId='';menuOpen=false;
+ if(!root)return;{const s=getSession();if(s&&!isStarted(s))putSession(null)}root.remove();root=null;shownId='';menuOpen=false;
  document.documentElement.classList.remove('rm-open');
  const app=document.getElementById('root');if(app)app.inert=false;
  releaseWake();updatePill();
@@ -174,7 +178,7 @@ export const readModeOpen=()=>!!root;
 // ---------- 타이머 ----------
 function setRunning(run){
  const s=getSession();if(!s)return;const t=now();
- if(run&&!s.runFrom){s.runFrom=t;s.beat=t}else if(!run&&s.runFrom){s.acc=elapsed(s,t);s.runFrom=null}
+ if(run&&!s.runFrom){s.runFrom=t;s.beat=t;s.started=true}else if(!run&&s.runFrom){s.acc=elapsed(s,t);s.runFrom=null}
  putSession(s);tick(true);
 }
 // 1초마다 숫자 몇 개만 바꿉니다(장면은 다시 그리지 않습니다).
@@ -186,7 +190,8 @@ function tick(force){
  if(root){
   const el=root.querySelector('.rm-time');if(el&&el.textContent!==txt)el.textContent=txt;
   const p=root.querySelector('.rm-play');if(p){p.classList.toggle('paused',!s.runFrom);p.setAttribute('aria-label',s.runFrom?'일시정지':'다시 읽기')}
-  const st=root.querySelector('.rm-state');if(st){const v=s.runFrom?'':'잠시 멈춤';if(st.textContent!==v)st.textContent=v}
+  const ready=!isStarted(s);root.classList.toggle('rm-ready',ready);
+  const st=root.querySelector('.rm-state');if(st){const v=ready?'준비되면 ‘독서 시작’을 눌러 주세요.':s.runFrom?'':'잠시 멈춤';if(st.textContent!==v)st.textContent=v}
   if(t-lastEnv>60000)applyEnv();
  }
  if(pill&&!pill.hidden){const el=pill.querySelector('.rm-pilltime');if(el)el.textContent=txt;pill.classList.toggle('paused',!s.runFrom)}
@@ -266,7 +271,7 @@ function startWith(id,{saveOld=false}={}){
  if(b.status==='want')api.patchBook(id,x=>({...x,status:'reading'}),`「${titleOf(b)}」을(를) 읽는 중으로 옮겼어요.`);
  closePicker();
  const cur=getSession();
- if(!cur||cur.bookId!==id){const t=now();putSession({id:'rs-'+t.toString(36)+Math.random().toString(36).slice(2,7),bookId:id,uid:uid(),startedAt:new Date(t).toISOString(),acc:0,runFrom:t,beat:t})}
+ if(!cur||cur.bookId!==id)putSession(newSession(id,false));
  closeModal();show();
 }
 // 컬렉션의 '독서모드': 진행 중이면 그 화면, 아니면 가장 최근에 읽던 '읽는 중' 책, 없으면 고르기 창.
@@ -322,7 +327,7 @@ function releaseWake(){try{wakeLock?.release()}catch{}wakeLock=null}
 
 // ---------- 다른 화면의 진행 띠 ----------
 function updatePill(){
- const s=getSession(),b=s&&book(s.bookId),want=!!(s&&b&&!root);
+ const s=getSession(),b=s&&book(s.bookId),want=!!(s&&b&&!root&&isStarted(s));
  if(!pill&&want){pill=document.createElement('button');pill.type='button';pill.id='rm-pill';pill.className='rm-pill';document.body.append(pill);pill.addEventListener('click',()=>show())}
  if(!pill)return;
  pill.hidden=!want;
@@ -351,6 +356,7 @@ function onClick(e){
  if(t.dataset.rmWeather){prefs.weather=t.dataset.rmWeather;savePrefs();applyEnv();return}
  if(t.dataset.rmLight){const k=t.dataset.rmLight;prefs[k]=!prefs[k];savePrefs();applyEnv();return}
  switch(t.dataset.rm){
+  case'start':setRunning(true);root?.querySelector('[data-rm="toggle"]')?.focus({preventScroll:true});break;
   case'toggle':{const s=getSession();setRunning(!s?.runFrom);break}
   case'record':openRecord();break;
   case'rtab':recordTab(t.dataset.tab);break;
@@ -369,7 +375,7 @@ function onClick(e){
   case'exit':{
    // 터치 화면은 첫 번째 누름에 '화면 나가기' 문구를 보여 주고, 한 번 더 누르면 나갑니다. 마우스는 올리면 문구가 보이고 누르면 나갑니다.
    if(lastPointer!=='mouse'&&now()-touchArmed>3000){touchArmed=now();t.classList.add('armed');setTimeout(()=>t.classList.remove('armed'),3000);return}
-   hide();api.flash('독서모드 화면을 나왔어요. 타이머는 계속 흘러요.');break}
+   {const st=isStarted(getSession());hide();if(st)api.flash('독서모드 화면을 나왔어요. 타이머는 계속 흘러요.')}break}
  }
 }
 function toggleMenu(open){menuOpen=open;const m=root?.querySelector('.rm-env'),b=root?.querySelector('[data-rm="env"]');if(m)m.hidden=!open;if(b)b.setAttribute('aria-expanded',String(open))}
