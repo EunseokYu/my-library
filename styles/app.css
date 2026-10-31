@@ -344,3 +344,34 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
  .shelfmain .books{min-height:240px}
  .shelfmain .spine .title{max-height:180px}
 }
+
+/* ---------- v2.27.0 화면 간 UI 위치 통일 + 책장 안 스크롤 ----------
+   모든 화면이 같은 메뉴 폭·최대 폭·여백·제목 크기를 써서, 나의 서재와 책 목록을 오갈 때 제목·탭·검색 위치가 같습니다. */
+@media(min-width:941px){
+ .app{max-width:1760px;grid-template-columns:208px minmax(0,1fr)}
+ .app .sidebar{padding-left:18px;padding-right:18px}
+ .main.libmain{padding-left:clamp(18px,2vw,36px);padding-right:clamp(18px,2vw,36px)}
+}
+.main.libmain{padding-top:20px}
+.libmain .hero{padding:8px 0 0;align-items:end}
+.libmain .hero .eyebrow{display:none}
+.libmain .hero h1{font-size:24px;letter-spacing:-1px;margin:0 0 2px}
+.libmain .hero .desc{font-size:12px}
+.libmain .toolbar{margin:8px 0 8px}
+.libmain .stats{margin:14px 0 18px}
+@media(max-width:620px){
+ .main.libmain{padding-top:16px}
+ .libmain .hero{padding:6px 0 0}
+ .libmain .hero h1{font-size:22px}
+ .libmain .hero .desc{display:none}
+ .libmain .toolbar{margin:8px 0 10px}
+}
+/* 책장 안 스크롤: 칸이 화면을 넘치면 책장 안에서 내려 봅니다. 높이는 fitShelfHeight가 화면에 맞춰 정합니다. */
+.shelfmain .shelf{max-height:var(--shelf-max,none);overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;scroll-snap-type:y proximity;
+ scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--wood) 70%,transparent) transparent;padding-right:2px;border-radius:4px}
+.shelfmain .shelf>div:last-child{padding-bottom:10px}
+.shelfmain .shelf>div{scroll-snap-align:start}
+.shelfmain .shelf::-webkit-scrollbar{width:8px}
+.shelfmain .shelf::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--wood) 65%,transparent);border-radius:4px}
+.shelfmain .shelf::-webkit-scrollbar-track{background:transparent}
+.shelfmain .shelf::after{bottom:0;left:0;right:0} /* 책장 안 스크롤에서는 바닥판을 상자 안으로 */
