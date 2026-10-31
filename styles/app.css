@@ -375,3 +375,21 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
 .shelfmain .shelf::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--wood) 65%,transparent);border-radius:4px}
 .shelfmain .shelf::-webkit-scrollbar-track{background:transparent}
 .shelfmain .shelf::after{bottom:0;left:0;right:0} /* 책장 안 스크롤에서는 바닥판을 상자 안으로 */
+
+/* ---------- v2.28.0 판본 선택: 원본 판본명·권차 표시, 판본 검색, 보조 메뉴 ---------- */
+.api-vol{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font-size:10.5px;font-weight:600;vertical-align:1px}
+.api-edmeta{color:var(--ink)!important;font-size:11px!important}
+.api-isbn{opacity:.75}
+.api-edsearch{display:flex;gap:6px;align-items:center;margin:4px 0 0}
+.api-edsearch input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;font-size:13px}
+.api-edsearch .btn{padding:8px 12px}
+.api-edempty{padding:14px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.api-edempty p{margin:0}
+.api-moreWrap{position:relative;flex:none;display:flex}
+.api-more{width:34px;border:1px solid transparent;border-radius:8px;background:none;color:var(--muted);font-size:16px;cursor:pointer}
+.api-more:hover,.api-more[aria-expanded="true"]{border-color:var(--line);color:var(--ink)}
+.api-menu{position:absolute;right:0;top:calc(100% - 4px);z-index:5;min-width:190px;padding:5px;border:1px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:0 8px 20px rgba(40,30,20,.14)}
+.api-menu[hidden]{display:none}
+.api-menu button{display:block;width:100%;padding:9px 10px;border:0;border-radius:7px;background:none;color:var(--ink);font-size:12.5px;text-align:left;cursor:pointer}
+.api-menu button:hover,.api-menu button:focus-visible{background:var(--line)}
+.api-work-row:last-child .api-menu{top:auto;bottom:calc(100% - 4px)}

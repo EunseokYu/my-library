@@ -31,7 +31,22 @@ const uid=()=>api.uid()||'';
 const key=()=>SESSION_KEY+uid();
 function readJSON(k){try{const v=JSON.parse(localStorage.getItem(k)||'null');return v&&typeof v==='object'?v:null}catch{return null}}
 function getSession(){const s=readJSON(key());return s&&s.id&&s.bookId?s:null}
-function putSession(s){try{s?localStorage.setItem(key(),JSON.stringify(s)):localStorage.removeItem(key())}catch{}}
+// v2.28.0: 저장·삭제가 실제로 되었는지 돌려줍니다(저장 공간 부족·접근 제한 시 false). 호출부는 실패하면 다음 단계로 넘어가지 않습니다.
+function putSession(s){
+ try{
+  const k=key();
+  if(s){const v=JSON.stringify(s);localStorage.setItem(k,v);if(localStorage.getItem(k)!==v)throw Error('verify')}
+  else{localStorage.removeItem(k);if(localStorage.getItem(k)!==null)throw Error('verify')}
+  storeFailAt=0;return true;
+ }catch(err){storeFail(err);return false}
+}
+// 같은 오류 알림을 1초마다 반복하지 않도록 30초에 한 번만 알립니다.
+let storeFailAt=0;
+function storeFail(err){
+ const t=now();if(t-storeFailAt<30000)return;storeFailAt=t;
+ const full=/quota/i.test(String(err?.name||'')+String(err?.message||''));
+ api?.flash?.(full?'이 기기 저장 공간이 부족해 독서 상태를 저장하지 못했어요. 지금 새로고침하면 진행 중인 시간이 사라질 수 있어요.':'이 브라우저가 저장소 접근을 막아 독서 상태를 저장하지 못했어요. 지금 새로고침하면 진행 중인 시간이 사라질 수 있어요.');
+}
 const elapsed=(s,t=now())=>Math.max(0,(Number(s.acc)||0)+(s.runFrom?t-s.runFrom:0));
 export function fmtClock(ms){const t=Math.floor(ms/1000),h=Math.floor(t/3600),m=Math.floor(t%3600/60),x=t%60;return [h,m,x].map(v=>String(v).padStart(2,'0')).join(':')}
 export function fmtDuration(sec){sec=Math.max(0,Math.round(sec));const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);if(!h&&!m)return sec>0?'1분 미만':'0분';return (h?h+'시간 ':'')+(m||!h?m+'분':'').trim()}
@@ -161,7 +176,7 @@ export function openReadMode(bookId,{autostart=false}={}){
   if(ob){openPicker({target:bookId});return}
   s=null;putSession(null); // 책이 지워진 세션은 정리합니다.
  }
- if(!s){s=newSession(bookId,autostart);putSession(s)}
+ if(!s){s=newSession(bookId,autostart);if(!putSession(s))return}
  else if(autostart&&!isStarted(s)){show();setRunning(true);return}
  show();
 }
@@ -225,8 +240,8 @@ export const readModeOpen=()=>!!root;
 // ---------- 타이머 ----------
 function setRunning(run){
  const s=getSession();if(!s)return;const t=now();
- if(run&&!s.runFrom){s.runFrom=t;s.beat=t;s.started=true}else if(!run&&s.runFrom){s.acc=elapsed(s,t);s.runFrom=null}
- putSession(s);tick(true);
+ if(run&&!s.runFrom){s.runFrom=t;s.beat=t;s.started=true}else if(!run&&s.runFrom){s.acc=elapsed(s,t);s.runFrom=null}else return true;
+ const ok=putSession(s);tick(true);return ok;
 }
 // 1초마다 숫자 몇 개만 바꿉니다(장면은 다시 그리지 않습니다).
 function tick(force){
@@ -254,34 +269,98 @@ function checkAway(){
 }
 let modalCtx=null;
 function openModal(html,ctx={}){if(!root)return;const m=root.querySelector('.rm-modal');modalCtx=ctx;m.innerHTML=`<div class="rm-card" role="dialog" aria-modal="true">${html}</div>`;m.hidden=false;m.querySelector('textarea,input,.primary')?.focus({preventScroll:true})}
-function closeModal(){const m=root?.querySelector('.rm-modal');if(m){m.hidden=true;m.innerHTML=''}modalCtx=null}
+// 기록 창은 저장하지 않은 내용이 있으면 바로 닫지 않고 '저장 / 버리기 / 계속 작성'을 묻습니다(force=true는 저장·버리기 뒤 내부에서 닫을 때).
+function closeModal(force=false){
+ if(!force&&modalCtx?.record&&recordDirty()){showRecordConfirm();return false}
+ const m=root?.querySelector('.rm-modal');if(m){m.hidden=true;m.innerHTML=''}modalCtx=null;return true;
+}
 
 // ---------- 기록: 문구(모은 문장 + 페이지)와 메모(감상 칸). 둘 다 기존 기록 구조를 그대로 씁니다 ----------
+// v2.28.0 초안 보호: 입력할 때마다 '계정·책·종류(문구/메모)'별로 이 기기에 초안을 남깁니다. 저장에 성공해야만 초안을 지웁니다.
+// 다시 열면 문구 초안은 빈 칸에 되살리고, 메모 초안은 저장된 감상과 다르면 덮어쓰지 않고 불러올지 묻습니다.
+const DRAFT_KEY='my-library-rmdraft-v1';
+const draftKey=(bid,kind)=>`${DRAFT_KEY}:${uid()||'local'}:${bid}:${kind}`;
+function getDraft(bid,kind){const d=readJSON(draftKey(bid,kind));return d&&typeof d.text==='string'?d:null}
+function putDraft(bid,kind,d){try{d?localStorage.setItem(draftKey(bid,kind),JSON.stringify(d)):localStorage.removeItem(draftKey(bid,kind));return true}catch{return false}}
+const fmtAt=iso=>{const d=new Date(iso);return Number.isNaN(+d)?'':`${d.getMonth()+1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+function recordVals(){return {q:root?.querySelector('#rm-quote')?.value??'',p:root?.querySelector('#rm-page')?.value??'',m:root?.querySelector('#rm-memo')?.value??''}}
+function recordDirty(){if(!modalCtx?.record)return false;const v=recordVals();return !!(v.q.trim()||v.p.trim())||v.m!==modalCtx.memoBase}
+function keepDraft(kind){
+ const c=modalCtx;if(!c?.record)return;const v=recordVals();
+ if(kind==='quote')putDraft(c.bid,'quote',v.q.trim()||v.p.trim()?{text:v.q,page:v.p,at:new Date().toISOString()}:null);
+ else putDraft(c.bid,'memo',v.m!==c.memoBase?{text:v.m,base:c.memoBase,at:new Date().toISOString()}:null);
+}
+function recentQuotesHTML(b){const recent=(b.quotes||[]).slice(-3).reverse();return recent.length?`<p class="rm-envhead">최근 모은 문구</p><ul class="rm-recent">${recent.map(q=>`<li>“${esc(q.text.length>70?q.text.slice(0,70)+'…':q.text)}”${q.page?` <small>p.${esc(q.page)}</small>`:''}</li>`).join('')}</ul>`:''}
 function openRecord(tab='quote'){
  const s=getSession(),b=s&&book(s.bookId);if(!b)return;
- const recent=(b.quotes||[]).slice(-3).reverse();
- openModal(`<h3>기록</h3><div class="rm-tabs" role="tablist"><button type="button" role="tab" data-rm="rtab" data-tab="quote" aria-selected="${tab==='quote'}">문구</button><button type="button" role="tab" data-rm="rtab" data-tab="memo" aria-selected="${tab==='memo'}">메모</button></div>
- <div class="rm-pane" data-pane="quote" ${tab==='quote'?'':'hidden'}><label class="rm-notelabel" for="rm-quote">인상 깊은 문구</label><textarea class="rm-text short" id="rm-quote" maxlength="600" placeholder="마음에 남은 문장을 옮겨 적어 두세요"></textarea><div class="rm-pagerow"><label for="rm-page">페이지</label><input id="rm-page" maxlength="20" inputmode="numeric" placeholder="선택"></div>
- ${recent.length?`<p class="rm-envhead">최근 모은 문구</p><ul class="rm-recent">${recent.map(q=>`<li>“${esc(q.text.length>70?q.text.slice(0,70)+'…':q.text)}”${q.page?` <small>p.${esc(q.page)}</small>`:''}</li>`).join('')}</ul>`:''}</div>
- <div class="rm-pane" data-pane="memo" ${tab==='memo'?'':'hidden'}><p class="rm-muted">「${esc(titleOf(b))}」의 감상 칸에 저장돼요.</p><textarea class="rm-text" id="rm-memo" maxlength="100000" placeholder="떠오른 생각을 적어 두세요">${esc(b.notes||'')}</textarea></div>
+ const qd=getDraft(b.id,'quote'),md=getDraft(b.id,'memo'),notes=b.notes||'';
+ const memoAsk=md&&md.text!==notes;
+ if(md&&!memoAsk)putDraft(b.id,'memo',null); // 이미 저장된 내용과 같은 초안은 정리
+ openModal(`<h3>기록</h3><div class="rm-tabs" role="tablist"><button type="button" role="tab" data-rm="rtab" data-tab="quote" aria-selected="${tab==='quote'}">문구</button><button type="button" role="tab" data-rm="rtab" data-tab="memo" aria-selected="${tab==='memo'}">메모${memoAsk?' <span class="rm-dot" aria-label="저장하지 않은 초안 있음">•</span>':''}</button></div>
+ <div class="rm-pane" data-pane="quote" ${tab==='quote'?'':'hidden'}>${qd?`<p class="rm-draftnote">저장하지 않은 문구를 불러왔어요${qd.at?` (${esc(fmtAt(qd.at))})`:''}.</p>`:''}<label class="rm-notelabel" for="rm-quote">인상 깊은 문구</label><textarea class="rm-text short" id="rm-quote" maxlength="600" placeholder="마음에 남은 문장을 옮겨 적어 두세요">${esc(qd?.text||'')}</textarea><div class="rm-pagerow"><label for="rm-page">페이지</label><input id="rm-page" maxlength="20" inputmode="numeric" placeholder="선택" value="${esc(qd?.page||'')}"></div>
+ <div class="rm-recentwrap">${recentQuotesHTML(b)}</div></div>
+ <div class="rm-pane" data-pane="memo" ${tab==='memo'?'':'hidden'}>${memoAsk?`<div class="rm-draftask" role="group" aria-label="메모 초안"><p>저장하지 않은 메모 초안이 있어요${md.at?` (${esc(fmtAt(md.at))})`:''}. 지금 저장된 감상과 달라서 자동으로 바꾸지 않았어요.</p><div class="rm-actions left"><button type="button" class="rm-btn" data-rm="draft-load">초안 불러오기</button><button type="button" class="rm-btn quiet" data-rm="draft-drop">초안 버리기</button></div></div>`:''}<p class="rm-muted">「${esc(titleOf(b))}」의 감상 칸에 저장돼요.</p><textarea class="rm-text" id="rm-memo" maxlength="100000" placeholder="떠오른 생각을 적어 두세요">${esc(notes)}</textarea></div>
+ <p class="rm-status" role="status" aria-live="polite"></p>
  <p class="rm-muted small">기록하는 동안에도 타이머는 그대로 흘러요.</p>
- <div class="rm-actions"><button type="button" class="rm-btn" data-rm="modal-cancel">닫기</button><button type="button" class="rm-btn primary" data-rm="record-save">저장</button></div>`,{record:true,tab});
+ <div class="rm-actions"><button type="button" class="rm-btn" data-rm="modal-cancel">닫기</button><button type="button" class="rm-btn primary" data-rm="record-save">저장</button></div>
+ <div class="rm-confirm" role="alertdialog" aria-modal="true" aria-labelledby="rm-confirm-h" hidden><p id="rm-confirm-h"><strong>저장하지 않은 기록이 있어요</strong></p><p class="rm-muted rm-confirm-what"></p><div class="rm-actions wrap"><button type="button" class="rm-btn quiet" data-rm="rc-discard">버리기</button><span class="rm-grow"></span><button type="button" class="rm-btn" data-rm="rc-continue">계속 작성</button><button type="button" class="rm-btn primary" data-rm="rc-save">저장</button></div></div>`,{record:true,tab,bid:b.id,memoBase:notes,memoDraft:memoAsk?md:null});
+ root.querySelector(tab==='quote'?'#rm-quote':'#rm-memo')?.focus({preventScroll:true});
 }
 function recordTab(tab){if(!root||!modalCtx?.record)return;modalCtx.tab=tab;root.querySelectorAll('.rm-tabs [data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===tab)));root.querySelectorAll('.rm-pane').forEach(x=>x.hidden=x.dataset.pane!==tab);root.querySelector(tab==='quote'?'#rm-quote':'#rm-memo')?.focus({preventScroll:true})}
-function saveRecord(){
- const s=getSession(),b=s&&book(s.bookId);if(!b||!modalCtx?.record)return;
- if(modalCtx.tab==='memo'){
-  const t=root.querySelector('#rm-memo')?.value??'';
-  if(t===(b.notes||'')){closeModal();return}
-  if(!t.trim()&&b.notes){closeModal();api.flash('칸이 비어 있어 기존 감상은 그대로 두었어요.');return}
-  if(api.patchBook(b.id,x=>({...x,notes:t}),'메모를 감상에 저장했어요.'))closeModal();
-  return;
- }
- const text=(root.querySelector('#rm-quote')?.value||'').trim(),page=(root.querySelector('#rm-page')?.value||'').trim();
- if(!text){api.flash('문구를 적어 주세요.');root.querySelector('#rm-quote')?.focus();return}
+function recordStatus(msg,err=false){const el=root?.querySelector('.rm-status');if(el){el.textContent=msg;el.classList.toggle('err',err)}}
+// 각 저장은 'ok' | 'skip'(바꿀 것 없음) | 'empty'(문구 비어 있음) | 'fail'(저장 실패: 입력·초안 유지)
+function saveQuote(){
+ const c=modalCtx,b=book(c.bid);if(!b)return 'fail';
+ const v=recordVals(),text=v.q.trim(),page=v.p.trim();
+ if(!text)return page?'empty':'skip';
  const q={id:'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),text,page,createdAt:new Date().toISOString()};
- if(api.patchBook(b.id,x=>({...x,quotes:[...(x.quotes||[]),q]}),`문구를 모았어요${page?` (p.${page})`:''}.`))closeModal();
+ if(!api.patchBook(b.id,x=>({...x,quotes:[...(x.quotes||[]),q]}),`문구를 모았어요${page?` (p.${page})`:''}.`))return 'fail';
+ putDraft(b.id,'quote',null);
+ const qa=root.querySelector('#rm-quote'),pa=root.querySelector('#rm-page');if(qa)qa.value='';if(pa)pa.value='';
+ const w=root.querySelector('.rm-recentwrap');if(w)w.innerHTML=recentQuotesHTML(book(b.id)||b);root.querySelector('.rm-draftnote')?.remove();
+ return 'ok';
 }
+function saveMemo(){
+ const c=modalCtx,b=book(c.bid);if(!b)return 'fail';
+ const t=recordVals().m,cur=b.notes||'';
+ if(t===cur){putDraft(b.id,'memo',null);c.memoBase=cur;return 'skip'}
+ if(!t.trim()&&cur){api.flash('칸이 비어 있어 기존 감상은 그대로 두었어요.');putDraft(b.id,'memo',null);const m=root.querySelector('#rm-memo');if(m)m.value=cur;c.memoBase=cur;return 'skip'}
+ if(!api.patchBook(b.id,x=>({...x,notes:t}),'메모를 감상에 저장했어요.'))return 'fail';
+ putDraft(b.id,'memo',null);c.memoBase=t;root.querySelector('.rm-draftask')?.remove();root.querySelector('.rm-dot')?.remove();
+ return 'ok';
+}
+const FAIL_MSG='저장하지 못했어요. 입력한 내용은 그대로 있어요. 다시 시도해 주세요.';
+function saveRecord(){
+ const c=modalCtx;if(!c?.record||c.saving)return;
+ c.saving=true;
+ try{
+  const r=c.tab==='memo'?saveMemo():saveQuote();
+  if(r==='fail'){recordStatus(FAIL_MSG,true);return}
+  if(r==='empty'){recordStatus('문구를 적어 주세요.',true);root.querySelector('#rm-quote')?.focus();return}
+  if(r==='skip'&&c.tab==='quote'){recordStatus('문구를 적어 주세요.',true);root.querySelector('#rm-quote')?.focus();return}
+  // 다른 탭에 저장하지 않은 초안이 남아 있으면 창을 닫지 않습니다.
+  if(recordDirty()){const other=c.tab==='memo'?'문구':'메모';recordStatus(`${r==='ok'?'저장했어요. ':''}${other} 탭에 아직 저장하지 않은 내용이 있어요.`);return}
+  closeModal(true);
+ }finally{if(modalCtx===c)c.saving=false}
+}
+function showRecordConfirm(){
+ const box=root?.querySelector('.rm-confirm');if(!box)return;const v=recordVals(),c=modalCtx;
+ const what=[(v.q.trim()||v.p.trim())&&'문구',v.m!==c.memoBase&&'메모'].filter(Boolean).join('·');
+ box.querySelector('.rm-confirm-what').textContent=`${what}에 저장하지 않은 내용이 있어요. 버리기를 누르기 전까지 이 기기에 초안으로 남아 있어요.`;
+ box.hidden=false;c.confirming=true;box.querySelector('[data-rm="rc-continue"]')?.focus({preventScroll:true});
+}
+function hideRecordConfirm(){const box=root?.querySelector('.rm-confirm');if(box)box.hidden=true;if(modalCtx){modalCtx.confirming=false;root.querySelector(modalCtx.tab==='quote'?'#rm-quote':'#rm-memo')?.focus({preventScroll:true})}}
+function confirmSave(){
+ const c=modalCtx;if(!c?.record||c.saving)return;c.saving=true;
+ try{
+  const v=recordVals(),res=[];
+  if(v.q.trim()||v.p.trim()){const r=saveQuote();if(r==='empty'){hideRecordConfirm();recordTab('quote');recordStatus('문구를 적어 주세요(페이지만 있어요).',true);return}res.push(r)}
+  if(v.m!==c.memoBase)res.push(saveMemo());
+  if(res.includes('fail')){hideRecordConfirm();recordStatus(FAIL_MSG,true);return}
+  closeModal(true);
+ }finally{if(modalCtx===c)c.saving=false}
+}
+function confirmDiscard(){const c=modalCtx;if(!c?.record)return;putDraft(c.bid,'quote',null);putDraft(c.bid,'memo',null);closeModal(true)}
 
 // ---------- 다른 책 읽기: 읽는 중·읽고 싶은 책에서 고릅니다 ----------
 // 읽고 싶은 책을 고르면 사용자가 고른 것이므로 '읽는 중'으로 옮깁니다. 진행 중인 독서가 있으면 그 시간을 어떻게 할지 먼저 묻습니다.
@@ -308,19 +387,27 @@ function pickBook(id){
  }
  startWith(id);
 }
-// 지금 세션을 정리하고 새 책으로 시작합니다.
+// 지금 세션을 정리하고 새 책으로 시작합니다. '저장하고 바꾸기'는 이전 책 저장이 성공해야만 넘어갑니다.
 function startWith(id,{saveOld=false}={}){
  const s=getSession(),b=book(id);if(!b)return;
  if(s&&s.bookId!==id){
-  if(saveOld&&pickCtx?.sid===s.id){putSession(null);addTime(s,pickCtx.sec,null)}
-  else putSession(null);
+  if(saveOld){
+   if(pickCtx?.sid!==s.id){pickError('진행 중인 독서가 바뀌었어요. 다시 골라 주세요.');return}
+   if(pickCtx.saving)return;
+   pickCtx.saving=true;const btn=picker?.querySelector('[data-rm="switch-save"]');if(btn){btn.disabled=true;btn.textContent='저장하는 중…'}
+   const r=saveSessionTime(s,pickCtx.sec,null);
+   if(pickCtx){pickCtx.saving=false}if(btn){btn.disabled=false;btn.textContent='저장하고 바꾸기'}
+   if(r==='busy'){pickError('다른 탭에서 이 독서를 저장하는 중이에요. 잠시 뒤 다시 눌러 주세요.');return}
+   if(r==='fail'){pickError('「'+titleOf(book(s.bookId)||{title:''})+'」의 독서 시간을 저장하지 못했어요. 시간과 진행 상태는 그대로 있어요. 다시 시도해 주세요.');return}
+   if(r==='dup')api.flash('이미 저장된 독서예요.');
+  }else if(!putSession(null)){pickError('진행 상태를 정리하지 못했어요. 다시 시도해 주세요.');return}
  }
  if(b.status==='want')api.patchBook(id,x=>({...x,status:'reading'}),`「${titleOf(b)}」을(를) 읽는 중으로 옮겼어요.`);
- closePicker();
  const cur=getSession();
- if(!cur||cur.bookId!==id)putSession(newSession(id,false));
- closeModal();show();
+ if(!cur||cur.bookId!==id){if(!putSession(newSession(id,false))){pickError('새 독서를 시작하지 못했어요. 저장 공간을 확인한 뒤 다시 시도해 주세요.');return}}
+ closePicker();closeModal(true);show();
 }
+function pickError(msg){const card=picker?.querySelector('.rm-pickcard');if(!card)return;let el=card.querySelector('.rm-saveerr');if(!el){el=document.createElement('p');el.className='rm-saveerr';el.setAttribute('role','alert');card.querySelector('.rm-actions')?.before(el)}el.textContent=msg;el.hidden=false}
 // 컬렉션의 '독서모드': 진행 중이면 그 화면, 아니면 가장 최근에 읽던 '읽는 중' 책, 없으면 고르기 창.
 export function openReadModeDefault(){
  const s=getSession();if(s&&book(s.bookId)){show();return}
@@ -331,6 +418,27 @@ export function openReadModeDefault(){
 
 // ---------- 독서 마치기 ----------
 // 책의 총 독서 시간(readSec)에 더하고, 마지막으로 읽은 시각(readAt)·세션 번호(readLast)를 남깁니다. notes가 문자열이면 감상도 함께 저장합니다.
+// v2.28.0 저장 순서: ① 같은 세션이 이미 더해졌는지(readLast) 확인 ② 여러 탭 동시 저장 잠금 ③ 책에 시간 더하기(브라우저 저장 성공 확인)
+// ④ 성공한 뒤에만 진행 중 세션을 지웁니다. 실패하면 세션·누적 시간·책을 그대로 두고 다시 시도할 수 있습니다.
+let savingTime=false;
+const LOCK_KEY='my-library-readsave-lock-v1';
+function saveSessionTime(s,sec,notes){
+ if(savingTime)return 'busy';
+ const cur=getSession();if(!cur||cur.id!==s.id){const b0=book(s.bookId);return b0&&b0.readLast===s.id?'dup':'gone'}
+ const b=book(s.bookId);
+ if(!b){return putSession(null)?'ok':'fail'}
+ if(b.readLast===s.id){putSession(null);return 'dup'}
+ let lock=null;try{lock=JSON.parse(localStorage.getItem(LOCK_KEY)||'null')}catch{}
+ if(lock&&lock.sid===s.id&&lock.tab!==TAB_ID&&now()-lock.at<10000)return 'busy';
+ try{localStorage.setItem(LOCK_KEY,JSON.stringify({sid:s.id,tab:TAB_ID,at:now()}))}catch{}
+ savingTime=true;
+ try{
+  if(!addTime(s,sec,notes))return 'fail';
+  if(!putSession(null))api.flash('독서 시간은 저장했지만 진행 상태를 정리하지 못했어요. 다시 열면 ‘이미 저장된 독서’로 정리돼요.');
+  return 'ok';
+ }finally{savingTime=false;try{const l=JSON.parse(localStorage.getItem(LOCK_KEY)||'null');if(l&&l.tab===TAB_ID)localStorage.removeItem(LOCK_KEY)}catch{}}
+}
+const TAB_ID=Math.random().toString(36).slice(2,10);
 function addTime(s,sec,notes){
  const b=book(s.bookId);if(!b)return true;
  if(b.readLast===s.id){api.flash('이미 저장된 독서예요.');return true}
@@ -346,25 +454,28 @@ function openFinish(){
  <details class="rm-edit"><summary>시간 고치기</summary><div class="rm-hm"><label><input type="number" id="rm-h" min="0" max="99" inputmode="numeric" value="${h}"> 시간</label><label><input type="number" id="rm-m" min="0" max="59" inputmode="numeric" value="${m}"> 분</label></div></details>
  ${b?`<label class="rm-notelabel" for="rm-fnotes">감상 (선택)</label><textarea class="rm-text" id="rm-fnotes" maxlength="100000" placeholder="남기고 싶은 말이 있다면">${esc(b.notes||'')}</textarea>`:''}
  <p class="rm-muted">책의 완독 상태는 바뀌지 않아요. ${uid()?'저장하면 내 계정(클라우드)에도 올라가요.':'로그인하지 않아 이 기기에만 저장돼요.'}</p>
- <div class="rm-actions wrap"><button type="button" class="rm-btn quiet" data-rm="finish-discard">기록하지 않고 종료</button><span class="rm-grow"></span><button type="button" class="rm-btn" data-rm="finish-back">계속 읽기</button><button type="button" class="rm-btn primary" data-rm="finish-save">저장</button></div>`,{finish:true,wasRunning,sec,h,m,id:s.id});
+ <p class="rm-saveerr" role="alert" hidden></p>
+ <div class="rm-actions wrap"><button type="button" class="rm-btn quiet" data-rm="finish-discard">기록하지 않고 종료</button><span class="rm-grow"></span><button type="button" class="rm-btn" data-rm="finish-back">계속 읽기</button><button type="button" class="rm-btn primary" data-rm="finish-save">저장</button></div>`,{finish:true,wasRunning,sec,h,m,id:s.id,bookId:s.bookId});
 }
 function finishSave(){
- const c=modalCtx;if(!c?.finish)return;const s=getSession();
- if(!s||s.id!==c.id){closeModal();hide();api.flash('이 독서는 이미 다른 탭에서 마쳤어요.');return}
+ const c=modalCtx;if(!c?.finish||c.saving)return;const s=getSession();
+ if(!s||s.id!==c.id){const b0=c.bookId&&book(c.bookId);closeModal();hide();api.flash(b0&&b0.readLast===c.id?'이미 저장된 독서예요.':'이 독서는 이미 다른 탭에서 마쳤어요.');return}
  const hv=Number(root.querySelector('#rm-h')?.value),mv=Number(root.querySelector('#rm-m')?.value);
  const edited=Number.isFinite(hv)&&Number.isFinite(mv)&&(hv!==c.h||mv!==c.m);
  const sec=edited?Math.max(0,Math.min(99*3600,Math.round(hv)*3600+Math.round(mv)*60)):c.sec;
- const b=book(s.bookId),noteEl=root.querySelector('#rm-fnotes'),t=noteEl?noteEl.value:null;
- // 세션을 먼저 지워 다른 탭에서 같은 기록을 다시 저장하지 못하게 합니다.
- putSession(null);
- if(b&&b.readLast===s.id){closeModal();hide();api.flash('이미 저장된 독서예요.');return}
- if(b&&!addTime(s,sec,t)){putSession(s);api.flash('저장하지 못했어요. 독서는 이어지고 있어요.');return}
- closeModal();hide();
+ const noteEl=root.querySelector('#rm-fnotes'),t=noteEl?noteEl.value:null;
+ const btn=root.querySelector('[data-rm="finish-save"]');c.saving=true;if(btn){btn.disabled=true;btn.textContent='저장하는 중…'}
+ const r=saveSessionTime(s,sec,t);
+ c.saving=false;if(btn){btn.disabled=false;btn.textContent='저장'}
+ if(r==='ok'||r==='dup'||r==='gone'){if(r==='dup')api.flash('이미 저장된 독서예요.');closeModal();hide();return}
+ if(r==='busy'){setFinishError('다른 탭에서 이 독서를 저장하는 중이에요. 잠시 뒤 다시 눌러 주세요.');return}
+ setFinishError('저장하지 못했어요. 이번 독서 시간과 진행 상태는 그대로 있어요. 다시 시도해 주세요.');
 }
+function setFinishError(msg){const el=root?.querySelector('.rm-saveerr');if(el){el.textContent=msg;el.hidden=false}}
 function finishDiscard(){
  const c=modalCtx;if(!c?.finish)return;
  if(!confirm('이번 독서 시간을 기록하지 않고 마칠까요?'))return;
- const s=getSession();if(s&&s.id===c.id)putSession(null);
+ const s=getSession();if(s&&s.id===c.id&&!putSession(null)){setFinishError('진행 상태를 정리하지 못했어요. 다시 시도해 주세요.');return}
  closeModal();hide();api.flash('기록하지 않고 마쳤어요.');
 }
 
@@ -411,6 +522,11 @@ function onClick(e){
   case'switch':toggleMenu(false);openPicker();break;
   case'lamp':prefs.lamp=!prefs.lamp;savePrefs();applyEnv();break;
   case'modal-cancel':closeModal();break;
+  case'rc-continue':hideRecordConfirm();break;
+  case'rc-save':confirmSave();break;
+  case'rc-discard':confirmDiscard();break;
+  case'draft-load':{const c=modalCtx,m=root.querySelector('#rm-memo');if(c?.memoDraft&&m){m.value=c.memoDraft.text;keepDraft('memo');root.querySelector('.rm-draftask')?.remove();recordStatus('메모 초안을 불러왔어요. 저장을 눌러야 감상에 반영돼요.');m.focus()}break}
+  case'draft-drop':{const c=modalCtx;if(c?.record){putDraft(c.bid,'memo',null);c.memoDraft=null;root.querySelector('.rm-draftask')?.remove();root.querySelector('.rm-dot')?.remove();recordStatus('메모 초안을 버렸어요.')}break}
   case'finish':toggleMenu(false);openFinish();break;
   case'finish-save':finishSave();break;
   case'finish-discard':finishDiscard();break;
@@ -433,7 +549,13 @@ export function initReadMode(a){
  api=a;loadPrefs();
  document.addEventListener('click',onClick);
  document.addEventListener('pointerdown',e=>{lastPointer=e.pointerType||'mouse'},true);
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&picker&&!picker.hidden){e.stopPropagation();closePicker();return}if(!root||e.key!=='Escape')return;e.stopPropagation();if(menuOpen)toggleMenu(false);else if(modalCtx&&!modalCtx.finish&&!modalCtx.gap)closeModal()},true);
+ document.addEventListener('keydown',e=>{
+  // 독서모드의 작은 창 안에서 Tab이 창 밖으로 나가지 않게 합니다(확인창이 열려 있으면 확인창 안에서만).
+  if(e.key==='Tab'&&root){const m=root.querySelector('.rm-modal:not([hidden])');if(m){const scope=m.querySelector('.rm-confirm:not([hidden])')||m.querySelector('.rm-card');const f=[...scope.querySelectorAll('button:not([disabled]),textarea,input,summary,[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(f.length){const i=f.indexOf(document.activeElement);if(e.shiftKey&&(i<=0)){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&(i===-1||i===f.length-1)){e.preventDefault();f[0].focus()}}}}
+  if(e.key==='Escape'&&picker&&!picker.hidden){e.stopPropagation();closePicker();return}
+  if(!root||e.key!=='Escape')return;e.stopPropagation();
+  if(menuOpen)toggleMenu(false);else if(modalCtx?.confirming)hideRecordConfirm();else if(modalCtx&&!modalCtx.finish&&!modalCtx.gap)closeModal()},true);
+ document.addEventListener('input',e=>{if(!root||!modalCtx?.record)return;const id=e.target.id;if(id==='rm-quote'||id==='rm-page')keepDraft('quote');else if(id==='rm-memo')keepDraft('memo');if(id)recordStatus('')});
  document.addEventListener('visibilitychange',()=>{
   const s=getSession();
   if(document.visibilityState==='hidden'){if(s&&s.runFrom){s.beat=now();putSession(s)}return}

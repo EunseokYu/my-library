@@ -366,3 +366,21 @@ html.rm-pan-out #root :is(.sidebar,.mobile-nav,.topbar,.hero,.toolbar,.stats,.se
 /* 움직임 줄이기: 이동 없이 짧은 페이드만 */
 .rm.rm-enter-min{animation:rmUiShow 150ms linear both}
 @media(prefers-reduced-motion:reduce){html.rm-pan-in #root,html.rm-pan-out #root,html.rm-pan-in #root *,html.rm-pan-out #root *{animation:none!important}.rm.rm-enter,.rm.rm-enter *,.rm.rm-leave,.rm.rm-leave *{animation:none!important}}
+
+/* ---------- v2.28.0 기록 초안 보호·저장 실패 안내 ---------- */
+.rm-card{position:relative}
+.rm-confirm{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:22px;border-radius:14px;background:rgba(251,248,242,.97)}
+.rm-confirm[hidden]{display:none}
+.rm-confirm p{margin:0 0 6px}
+.rm-draftnote{margin:0 0 8px;padding:8px 10px;border-radius:8px;background:#f1ebe0;font-size:12.5px;color:#6e6156}
+.rm-draftask{margin:0 0 10px;padding:10px 12px;border:1px solid #e3d3b6;border-radius:10px;background:#fbf3e4;font-size:13px;color:#5d5047}
+.rm-draftask p{margin:0 0 6px;line-height:1.55}
+.rm-actions.left{justify-content:flex-start;margin-top:6px}
+.rm-status{min-height:0;margin:8px 0 0;font-size:12.5px;color:#5e7a63}
+.rm-status:empty{display:none}
+.rm-status.err,.rm-saveerr{color:#9a3a2e}
+.rm-saveerr{margin:10px 0 0;font-size:13px;line-height:1.5}
+.rm-saveerr[hidden]{display:none}
+.rm-dot{color:#b5763a;font-size:14px;margin-left:2px}
+.rm-btn:focus-visible,.rm-tabs button:focus-visible{outline:2px solid #3d2f27;outline-offset:2px}
+@media(max-width:420px){.rm-confirm .rm-actions{gap:6px}.rm-confirm .rm-btn{padding:10px 12px}}
