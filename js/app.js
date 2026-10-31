@@ -1,6 +1,6 @@
 // 나의 서재 — 앱 코드 (T2에서 index.html에서 옮김. 실행 순서·IIFE 그대로)
 import {titleKey,baseWorkTitle,authorKey,cleanDisplayTitle,cleanAuthor,ED_MORPHS,ED_ANCHOR_MORPHS,workBaseTitle,canonicalWork,workKeyOf} from './workkey.js?v=2.15.0';
-import {initReadMode,openReadMode,openReadModeDefault,syncReadModeUI,fmtDuration} from './readmode.js?v=2.22.0';
+import {initReadMode,openReadMode,openReadModeDefault,syncReadModeUI,fmtDuration} from './readmode.js?v=2.23.0';
 (()=>{
 'use strict';
 const THEME_KEY='my-library-theme-v1', KEY='mnemosyne-library-v1', statuses={want:'읽고 싶은 책',reading:'읽는 중',done:'완독'}, colors=['#2f4a3d','#38503c','#44533f','#5e6e55','#6c7a5e','#a4ae95','#5a2e33','#6b3438','#6e3f36','#8c5545','#9a6650','#c49c88','#26344a','#2f3d4f','#384656','#56657a','#66758a','#a6b0bd','#4a3527','#5a4130','#6a4d36','#8a6a4c','#9c7f5e','#d3c2a2','#3f2d3f','#4d3647','#574250','#786273','#857870','#b9a9b1'];
@@ -1893,7 +1893,7 @@ function setColorMode(mode){const f=$('#colorMode');if(f)f.value=mode;const n=$(
 function previewAutoColor(){if($('#colorMode')?.value!=='auto')return;const c=$('#bookColor');if(!c)return;c.value=autoColorOf({id:editing||'new-book',spineType:$('#spineType')?.value||'auto',lifeBook:!!$('#lifeBook')?.checked})}
 document.addEventListener('change',e=>{if(e.target.id==='spineType'||e.target.id==='lifeBook')previewAutoColor()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog)requestClose()});if(!('ResizeObserver' in window))window.addEventListener('resize',scheduleShelf);window.addEventListener('storage',e=>{if(e.key===AUTH_KEY||e.key===SYNC_KEY){loadSync();updateSyncStatus()}if(e.key===KEY&&!dialog){load();render()}});document.addEventListener('change',e=>{if(e.target.id!=='quick-status')return;const v=e.target.value;if(!statuses[v]||!editing)return;commit(books.map(x=>x.id===editing?{...x,status:v}:x),'독서 상태를 저장했어요.')});initTheme();loadSync();load();handleAuthRedirect();render();if(session)syncNow();
 // v2.20.0 독서모드. 책 고치기는 patchBook(같은 ID, normalize, 기존 저장·동기화 경로)으로만 합니다.
-initReadMode({books:()=>books,uid:()=>session?.user?.id||'',spineHTML,packShelves,fitTitles:fitSpineTitles,coverHTML,cleanDisplayTitle,cleanAuthor,flash,
+initReadMode({books:()=>books,uid:()=>session?.user?.id||'',spineHTML,spineClass,spineColorOf,spineMotif,packShelves,fitTitles:fitSpineTitles,coverHTML,cleanDisplayTitle,cleanAuthor,flash,
  patchBook:(id,fn,msg)=>{if(!books.some(x=>x.id===id))return false;return commit(books.map(x=>x.id===id?normalize(fn(x)):x),msg)}});
 // 지난번에 다 못 그린 상징이 있으면 잠시 뒤 이어서 그립니다.
 setTimeout(()=>{const ids=books.filter(needsDrawing).map(b=>b.id);if(ids.length)queueDraw(ids,{instantOnly:true})},2500);

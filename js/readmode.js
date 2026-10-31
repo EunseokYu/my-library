@@ -119,15 +119,26 @@ function layoutShelf(){
  shelf.setAttribute('aria-label',`완독한 책 ${groups[0].length+groups[1].length}권이 꽂힌 책장`);
  api.fitTitles(shelf);
 }
+// v2.23.0 지금 읽는 책: 이 책에 저장된 책등 색·서체 유형·상징으로 앞표지를 만들고(데이터는 읽기만 함), 작은 받침대 위에 곧게 세웁니다.
+// 표지에는 제목·작가·상징만 넣습니다. 오른쪽 가장자리에 페이지 단면과 뒤표지가 좁게 보이고, 왼쪽에 책등과 표지 사이의 홈이 있습니다.
+function bookOnStandHTML(b){
+ const cls=api.spineClass(b),type=(cls.match(/\bt-([a-f])\b/)||[,'a'])[1],light=/\blight\b/.test(cls);
+ const motif=api.spineMotif(b,64)||'',title=esc(titleOf(b)),author=esc(api.cleanAuthor(b.author)||'');
+ return `<div class="rm-book bk-${type}${light?' bk-light':''}" style="--bk:${api.spineColorOf(b)}" role="img" aria-label="「${title}」 앞표지">
+  <span class="rm-bk-back" aria-hidden="true"></span><span class="rm-bk-pages" aria-hidden="true"></span>
+  <div class="rm-bk-front" aria-hidden="true"><span class="rm-bk-hinge"></span><div class="rm-bk-inner">${motif?`<span class="rm-bk-motif">${motif}</span>`:''}<strong class="rm-bk-title">${title}</strong>${author?`<span class="rm-bk-author">${author}</span>`:''}</div><span class="rm-bk-glow"></span></div>
+  <span class="rm-bk-contact" aria-hidden="true"></span></div>
+ <div class="rm-stand" aria-hidden="true"><span class="rm-stand-top"></span><span class="rm-stand-post"></span><span class="rm-stand-base"></span></div>`;
+}
 function sceneHTML(b){
  const c={...RM_CONFIG.style,lamp:RM_CONFIG.lamp};
- return `<div class="rm-scene" style="--shelf-rgb:${RM_CONFIG.shelfLight};--rm-wall:${c.wall};--rm-wood:${c.wood};--rm-wood-d:${c.woodDark};--rm-wood-l:${c.woodLight};--rm-cream:${c.cream};--rm-ink:${c.ink};--rm-light:${c.lightTint}">
+ return `<div class="rm-scene" style="--shelf-rgb:${RM_CONFIG.shelfLight};--lamp-rgb:${c.lamp.light};--rm-wall:${c.wall};--rm-wood:${c.wood};--rm-wood-d:${c.woodDark};--rm-wood-l:${c.woodLight};--rm-cream:${c.cream};--rm-ink:${c.ink};--rm-light:${c.lightTint}">
  <div class="rm-wall" aria-hidden="true"></div>
  <div class="rm-window" aria-hidden="true"><div class="rm-sky s-day"></div><div class="rm-sky s-dusk"></div><div class="rm-sky s-night"></div><div class="rm-clouds"></div>${skylineSVG()}<div class="rm-overcast"></div>${weatherHTML()}<div class="rm-glass"></div><div class="rm-frame"></div></div>
  <div class="rm-beam" aria-hidden="true"></div>
  <div class="rm-shelfwrap"><div class="rm-shelf" role="img"><div class="rm-back"></div><div class="rm-tier"><div class="rm-books"></div></div><div class="rm-board"></div><div class="rm-tier"><div class="rm-books"></div></div></div></div>
  <div class="rm-desk" aria-hidden="true"><div class="rm-desktop"></div><div class="rm-deskedge"></div></div>
- <div class="rm-current"><div class="rm-curtitle"><h2>${esc(titleOf(b))}</h2><p>${esc(api.cleanAuthor(b.author)||'작가 미상')}</p></div><div class="rm-curbook">${api.coverHTML(b,'cover rm-cover')}</div></div>
+ <div class="rm-current"><div class="rm-curtitle"><h2>${esc(titleOf(b))}</h2><p>${esc(api.cleanAuthor(b.author)||'작가 미상')}</p></div><div class="rm-curbook">${bookOnStandHTML(b)}</div></div>
  <div class="rm-dimmer" aria-hidden="true"></div>
  <div class="rm-lampzone" style="--shade:${c.lamp.shade};--shade-l:${c.lamp.shadeLight};--lamp-rgb:${c.lamp.light}"><div class="rm-lampbeam" aria-hidden="true"></div><div class="rm-lamppool" aria-hidden="true"></div><button type="button" class="rm-lamp" data-rm="lamp" aria-pressed="true" aria-label="전등 끄기"><span class="rm-canopy"></span><span class="rm-cord"></span><span class="rm-shade"><span class="rm-bulb"></span></span></button></div>
  </div>`;

@@ -262,3 +262,67 @@ html.rm-open,html.rm-open body{overflow:hidden}
 .rm:not(.rm-ready) .rm-startbtn{display:none}
 .rm.rm-ready .rm-play,.rm.rm-ready [data-rm="finish"]{display:none}
 .rm-narrow .rm-startbtn{height:58px;padding:0 26px}
+
+/* ---------- v2.23.0 지금 읽는 책(책등 디자인을 이은 앞표지) + 작은 책 받침대 ----------
+   책과 받침대를 합친 높이를 예전 표지 높이와 같게 맞춰 주변 배치(제목·전등 위치)는 그대로 둡니다. */
+.rm{
+ --bk-w:86%;            /* 받침대 영역 안에서 책 폭 */
+ --bk-ratio:.70;        /* 폭/높이 */
+ --bk-board:2.5px;      /* 앞표지 두께감(가장자리 음영) */
+ --bk-pages-w:5px;      /* 오른쪽에 보이는 페이지 단면 폭 */
+ --bk-back-w:2.5px;     /* 오른쪽에 보이는 뒤표지 폭 */
+ --bk-shade:.20;        /* 표지 음영 세기 */
+ --stand-wood:#7b5236;  --stand-wood-l:#9c6d48;
+ --stand-metal:#1f1c1a; --stand-metal-l:#3a3532;
+ --stand-top-w:58%;     /* 상판 폭(책 폭 기준) */
+ --stand-post-k:.12;    /* 기둥 높이 = 책 높이 × 이 값 */
+ --stand-base-w:44%;    /* 바닥 원판 폭 */
+}
+.rm-curbook{display:flex;flex-direction:column;align-items:center}
+.rm-book{position:relative;width:var(--bk-w);aspect-ratio:var(--bk-ratio);z-index:1}
+/* 뒤표지·페이지 단면: 오른쪽 가장자리에만 좁게 */
+.rm-bk-back{position:absolute;top:0;bottom:0;right:0;width:calc(var(--bk-back-w) + 3px);border-radius:0 2px 2px 0;
+ background:linear-gradient(90deg,color-mix(in srgb,var(--bk) 70%,#000),color-mix(in srgb,var(--bk) 55%,#000))}
+.rm-bk-pages{position:absolute;top:3px;bottom:3px;right:var(--bk-back-w);width:calc(var(--bk-pages-w) + 2px);
+ background:repeating-linear-gradient(180deg,#efe6d3 0 1.5px,#e2d6bf 1.5px 2.5px),#ece2cf;box-shadow:inset 2px 0 2px rgba(0,0,0,.18),inset -1px 0 0 rgba(0,0,0,.08)}
+/* 앞표지 */
+.rm-bk-front{position:absolute;top:0;bottom:0;left:0;right:calc(var(--bk-pages-w) + var(--bk-back-w) - 1px);overflow:hidden;border-radius:1px 2px 2px 1px;
+ background:linear-gradient(100deg,rgba(255,255,255,.05) 0%,transparent 35%,rgba(0,0,0,calc(var(--bk-shade)*.45)) 100%),var(--bk);color:#f3e6cc;
+ box-shadow:inset 1px 1px 0 rgba(255,255,255,.14),inset calc(var(--bk-board)*-1) 0 var(--bk-board) rgba(0,0,0,calc(var(--bk-shade)*1.1)),inset 0 calc(var(--bk-board)*-1) var(--bk-board) rgba(0,0,0,var(--bk-shade)),
+  1px 0 0 rgba(0,0,0,.25)}
+.rm-book.bk-light .rm-bk-front{color:#2e2a25}
+/* 책등과 앞표지 사이의 은은한 세로 홈 */
+.rm-bk-hinge{position:absolute;top:0;bottom:0;left:7.5%;width:4px;pointer-events:none;
+ background:linear-gradient(90deg,rgba(0,0,0,calc(var(--bk-shade)*.9)),rgba(255,255,255,.10) 55%,rgba(0,0,0,calc(var(--bk-shade)*.25)))}
+.rm-bk-inner{position:absolute;inset:12% 10% 11% 17%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--bookw)*.05);text-align:center}
+.rm-bk-motif{display:grid;place-items:center;opacity:.92}
+.rm-bk-motif svg{width:calc(var(--bookw)*.20);height:calc(var(--bookw)*.20)}
+.rm-bk-title{font:500 calc(var(--bookw)*.105)/1.3 'Noto Serif KR',serif;letter-spacing:.5px;word-break:keep-all;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rm-bk-author{font:400 calc(var(--bookw)*.058)/1.3 'Noto Serif KR',serif;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* 책등 유형별 표지 장식(같은 디자인 계열) */
+.bk-a .rm-bk-title{padding:calc(var(--bookw)*.035) 0;border-top:1px solid rgba(214,191,134,.6);border-bottom:1px solid rgba(214,191,134,.6)}
+.bk-a.bk-light .rm-bk-title{border-color:rgba(120,96,52,.45)}
+.bk-b .rm-bk-inner{align-items:flex-start;text-align:left;justify-content:flex-end}
+.bk-b .rm-bk-motif{position:absolute;top:0;left:0;opacity:.55}.bk-b .rm-bk-motif svg{width:calc(var(--bookw)*.13);height:calc(var(--bookw)*.13)}
+.bk-b .rm-bk-title,.bk-e .rm-bk-title{font-family:'DM Sans',system-ui,sans-serif}
+.bk-b .rm-bk-author,.bk-e .rm-bk-author{font-family:'DM Sans',system-ui,sans-serif}
+.bk-c .rm-bk-front::before{content:"";position:absolute;inset:7% 7% 7% 13%;border:1px solid rgba(214,191,134,.62);box-shadow:inset 0 0 0 2px var(--bk),inset 0 0 0 3px rgba(214,191,134,.3);border-radius:2px;pointer-events:none}
+.bk-c.bk-light .rm-bk-front::before{border-color:rgba(120,96,52,.5);box-shadow:inset 0 0 0 2px var(--bk),inset 0 0 0 3px rgba(120,96,52,.22)}
+.bk-d .rm-bk-motif svg{width:calc(var(--bookw)*.34);height:calc(var(--bookw)*.34)}
+.bk-e .rm-bk-front::after{content:"";position:absolute;left:0;right:0;top:15%;height:11%;background:color-mix(in srgb,var(--bk) 72%,#000);opacity:.85}
+.bk-e.bk-light .rm-bk-front::after{background:color-mix(in srgb,var(--bk) 84%,#000)}
+.bk-e .rm-bk-inner{justify-content:flex-end}
+.bk-f .rm-bk-front{background:repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 4px),linear-gradient(100deg,rgba(255,255,255,.05),transparent 35%,rgba(0,0,0,calc(var(--bk-shade)*.45))),var(--bk)}
+.bk-f .rm-bk-motif{color:#d6bf86;opacity:.9}
+/* 전구의 따뜻한 빛이 표지 위쪽에 은은하게 */
+.rm-bk-glow{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .5s;mix-blend-mode:screen;
+ background:radial-gradient(120% 70% at 55% -12%,rgba(var(--lamp-rgb),.32),rgba(var(--lamp-rgb),.08) 55%,transparent 75%)}
+.rm.lamp-on .rm-bk-glow{opacity:var(--lampk)}
+/* 받침대와 닿는 부분의 접촉 그림자 */
+.rm-bk-contact{position:absolute;left:6%;right:6%;bottom:-3px;height:7px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,rgba(20,12,6,.45),transparent 75%);z-index:-1}
+/* 책 받침대: 작은 월넛 상판 + 짧은 검은 기둥 + 얇은 검은 원판 */
+.rm-stand{display:flex;flex-direction:column;align-items:center;width:var(--bk-w)}
+.rm-stand-top{width:var(--stand-top-w);height:5px;border-radius:1px;background:linear-gradient(180deg,var(--stand-wood-l),var(--stand-wood));box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.rm-stand-post{width:max(3px,3.5%);height:calc(var(--bookw)*.86/var(--bk-ratio)*var(--stand-post-k));background:linear-gradient(90deg,var(--stand-metal-l),var(--stand-metal) 60%)}
+.rm-stand-base{position:relative;width:var(--stand-base-w);height:4px;border-radius:999px;background:linear-gradient(180deg,var(--stand-metal-l),var(--stand-metal))}
+.rm-stand-base::after{content:"";position:absolute;left:-20%;right:-20%;top:2px;height:8px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,rgba(20,12,6,.28),transparent 75%);z-index:-1}
