@@ -327,19 +327,42 @@ html.rm-open,html.rm-open body{overflow:hidden}
 .rm-stand-base{position:relative;width:var(--stand-base-w);height:4px;border-radius:999px;background:linear-gradient(180deg,var(--stand-metal-l),var(--stand-metal))}
 .rm-stand-base::after{content:"";position:absolute;left:-20%;right:-20%;top:2px;height:8px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,rgba(20,12,6,.28),transparent 75%);z-index:-1}
 
-/* ---------- v2.25.0 진입·종료 전환 ----------
-   진입 약 800ms(서재 살짝 확대 → 독서 공간 크로스페이드 → 책·UI 등장), 종료 약 450ms(역방향). transform·opacity만 씁니다. */
-html.rm-entering #root{transform:scale(1.04);opacity:.82;transition:transform 200ms cubic-bezier(.2,.7,.3,1),opacity 260ms ease-out}
-.rm.rm-enter{animation:rmSpaceIn 300ms cubic-bezier(.2,.7,.3,1) 200ms both}
-.rm.rm-enter .rm-curbook{animation:rmBookIn 300ms cubic-bezier(.2,.7,.3,1) 500ms both}
-.rm.rm-enter .rm-curtitle,.rm.rm-enter .rm-top,.rm.rm-enter .rm-ui{animation:rmUiIn 300ms ease-out 500ms both}
-.rm.rm-leave{animation:rmSpaceOut 450ms cubic-bezier(.4,0,.2,1) both}
-.rm.rm-leave .rm-curbook,.rm.rm-leave .rm-ui,.rm.rm-leave .rm-top,.rm.rm-leave .rm-curtitle{animation:rmUiOut 200ms ease-in both}
-@keyframes rmSpaceIn{from{opacity:0}to{opacity:1}}
-@keyframes rmBookIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
-@keyframes rmUiIn{from{opacity:0}to{opacity:1}}
-@keyframes rmSpaceOut{from{opacity:1}to{opacity:0}}
-@keyframes rmUiOut{from{opacity:1}to{opacity:0}}
-/* 움직임 줄이기: 짧은 페이드만 */
-.rm.rm-enter-min{animation:rmSpaceIn 150ms linear both}
-@media(prefers-reduced-motion:reduce){html.rm-entering #root{transform:none;transition:none}.rm.rm-enter,.rm.rm-enter *,.rm.rm-leave,.rm.rm-leave *{animation:none!important}}
+/* ---------- v2.26.0 공간 이동형 진입·종료 전환 ----------
+   서재(#root)와 독서 공간(.rm)을 한 방에 나란히 놓고 카메라가 오른쪽으로 이동하는 것처럼 같은 거리만큼 함께 움직입니다.
+   두 공간 모두 1.04배일 때 독서 공간 위치 = 서재 위치 + 104vw(가장자리가 맞닿음). transform·opacity만 씁니다. */
+html.rm-pan-in,html.rm-pan-in body,html.rm-pan-out,html.rm-pan-out body{overflow-x:clip}
+/* 진입 1,300ms */
+html.rm-pan-in #root{animation:rmRoomOut 1300ms both}
+html.rm-pan-in #root :is(.sidebar,.mobile-nav,.topbar,.hero,.toolbar,.stats,.sectionbottom,.hint,.readhead,.tagbar,.filterbar,.undo-bar){animation:rmUiFade 150ms ease-out both}
+.rm.rm-enter{animation:rmRoomIn 1300ms both}
+.rm.rm-enter :is(.rm-top,.rm-ui,.rm-curtitle){animation:rmUiShow 300ms ease-out 1000ms both}
+.rm.rm-enter :is(.rm-curbook,.rm-lampzone){animation:rmSettle 300ms ease-out 1000ms both}
+@keyframes rmRoomOut{
+ 0%,11.5%{transform:none;animation-timing-function:cubic-bezier(.45,0,.55,1)}
+ 38.5%{transform:translateX(-6vw) scale(1.04);animation-timing-function:cubic-bezier(.45,0,.25,1)}
+ 77%,100%{transform:translateX(-104vw) scale(1.04)}}
+@keyframes rmRoomIn{
+ 0%,11.5%{transform:translateX(100vw);animation-timing-function:cubic-bezier(.45,0,.55,1)}
+ 38.5%{transform:translateX(98vw) scale(1.04);animation-timing-function:cubic-bezier(.45,0,.25,1)}
+ 77%{transform:translateX(0) scale(1.04);animation-timing-function:cubic-bezier(.2,.7,.3,1)}
+ 100%{transform:none}}
+@keyframes rmUiFade{to{opacity:0}}
+@keyframes rmUiShow{from{opacity:0}to{opacity:1}}
+@keyframes rmSettle{from{opacity:.55}to{opacity:1}}
+/* 종료 800ms: 역방향(카메라가 왼쪽으로) */
+.rm.rm-leave{animation:rmRoomBack 800ms both}
+.rm.rm-leave :is(.rm-top,.rm-ui,.rm-curtitle){animation:rmUiHide 150ms ease-in both}
+html.rm-pan-out #root{animation:rmRoomReturn 800ms both}
+html.rm-pan-out #root :is(.sidebar,.mobile-nav,.topbar,.hero,.toolbar,.stats,.sectionbottom,.hint,.readhead,.tagbar,.filterbar,.undo-bar){animation:rmUiShow 200ms ease-out 600ms both}
+@keyframes rmRoomBack{
+ 0%{transform:none;animation-timing-function:cubic-bezier(.45,0,.55,1)}
+ 15%{transform:scale(1.03);animation-timing-function:cubic-bezier(.45,0,.25,1)}
+ 80%,100%{transform:translateX(104vw) scale(1.04)}}
+@keyframes rmRoomReturn{
+ 0%,15%{transform:translateX(-104vw) scale(1.04);animation-timing-function:cubic-bezier(.45,0,.25,1)}
+ 80%{transform:translateX(0) scale(1.03);animation-timing-function:cubic-bezier(.2,.7,.3,1)}
+ 100%{transform:none}}
+@keyframes rmUiHide{to{opacity:0}}
+/* 움직임 줄이기: 이동 없이 짧은 페이드만 */
+.rm.rm-enter-min{animation:rmUiShow 150ms linear both}
+@media(prefers-reduced-motion:reduce){html.rm-pan-in #root,html.rm-pan-out #root,html.rm-pan-in #root *,html.rm-pan-out #root *{animation:none!important}.rm.rm-enter,.rm.rm-enter *,.rm.rm-leave,.rm.rm-leave *{animation:none!important}}

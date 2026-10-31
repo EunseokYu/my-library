@@ -1,6 +1,6 @@
 // 나의 서재 — 앱 코드 (T2에서 index.html에서 옮김. 실행 순서·IIFE 그대로)
 import {titleKey,baseWorkTitle,authorKey,cleanDisplayTitle,cleanAuthor,ED_MORPHS,ED_ANCHOR_MORPHS,workBaseTitle,canonicalWork,workKeyOf} from './workkey.js?v=2.15.0';
-import {initReadMode,openReadMode,openReadModeDefault,syncReadModeUI,fmtDuration} from './readmode.js?v=2.25.0';
+import {initReadMode,openReadMode,openReadModeDefault,syncReadModeUI,fmtDuration} from './readmode.js?v=2.26.0';
 (()=>{
 'use strict';
 const THEME_KEY='my-library-theme-v1', KEY='mnemosyne-library-v1', statuses={want:'읽고 싶은 책',reading:'읽는 중',done:'완독'}, colors=['#2f4a3d','#38503c','#44533f','#5e6e55','#6c7a5e','#a4ae95','#5a2e33','#6b3438','#6e3f36','#8c5545','#9a6650','#c49c88','#26344a','#2f3d4f','#384656','#56657a','#66758a','#a6b0bd','#4a3527','#5a4130','#6a4d36','#8a6a4c','#9c7f5e','#d3c2a2','#3f2d3f','#4d3647','#574250','#786273','#857870','#b9a9b1'];

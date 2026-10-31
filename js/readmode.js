@@ -165,21 +165,23 @@ export function openReadMode(bookId,{autostart=false}={}){
  else if(autostart&&!isStarted(s)){show();setRunning(true);return}
  show();
 }
-// ---------- 진입·종료 전환 (v2.25.0) ----------
-// 진입(약 800ms): 0~200ms 서재가 살짝 확대되며 흐려짐 → 200~500ms 독서 공간이 겹쳐 나타남 → 500~800ms 책·글자·버튼이 나타남.
-// 종료(약 450ms): 독서 공간이 사라지며 살짝 확대돼 있던 서재가 제자리로 돌아옵니다.
+// ---------- 진입·종료 전환 (v2.26.0: 공간 이동형) ----------
+// 서재와 독서 공간이 한 방에 나란히 있는 것처럼, 카메라가 오른쪽으로 옮겨 가는 연출입니다.
+// 진입(1,300ms): 0~150ms 서재의 버튼·제목이 사라짐 → 150~500ms 서재가 살짝 확대되며 오른쪽으로 움직이기 시작(독서 공간 가장자리가 보임)
+//   → 500~1,000ms 책장이 왼쪽으로 벗어나고 독서 공간이 오른쪽에서 이어져 들어옴 → 1,000~1,300ms 독서 공간에 정착하며 책·조명·UI가 선명해짐.
+// 종료(800ms): 같은 길을 거꾸로(카메라가 왼쪽으로) 돌아옵니다. 스크롤 위치는 바꾸지 않습니다.
 // 전환은 화면 표시만 바꿉니다. 타이머·세션·기록은 건드리지 않습니다. 전환 중 다시 누르면 무시하고, 시간이 지나면 상태를 반드시 정리합니다.
-const ENTER_MS=800,LEAVE_MS=450;
+const ENTER_MS=1300,LEAVE_MS=800;
 let entering=0,leavingEl=null,leaveTimer=0,pushedState=false,ignorePop=false;
 const reducedMotion=()=>!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 function appEl(){return document.getElementById('root')}
-function finishLeave(){clearTimeout(leaveTimer);leaveTimer=0;if(leavingEl){leavingEl.remove();leavingEl=null}const a=appEl();if(a){a.style.transition='';a.style.transform='';a.style.opacity='';a.style.transformOrigin=''}document.documentElement.classList.remove('rm-entering')}
+function finishLeave(){clearTimeout(leaveTimer);leaveTimer=0;if(leavingEl){leavingEl.remove();leavingEl=null}const a=appEl();if(a){a.style.transition='';a.style.transform='';a.style.opacity='';a.style.transformOrigin=''}document.documentElement.classList.remove('rm-entering','rm-pan-in','rm-pan-out')}
 function animateIn(){
  const html=document.documentElement,a=appEl(),g=++entering;
  if(reducedMotion()){root.classList.add('rm-enter-min');setTimeout(()=>{if(g!==entering)return;entering=0;root?.classList.remove('rm-enter-min')},180);html.classList.add('rm-open');return}
  if(a){a.style.transformOrigin=`50% ${Math.round(scrollY+innerHeight/2)}px`}
- html.classList.add('rm-entering');root.classList.add('rm-enter');
- setTimeout(()=>{if(g!==entering)return;entering=0;root?.classList.remove('rm-enter');html.classList.remove('rm-entering');html.classList.add('rm-open');if(a)a.style.transformOrigin=''},ENTER_MS+30);
+ html.classList.add('rm-pan-in');root.classList.add('rm-enter');
+ setTimeout(()=>{if(g!==entering)return;entering=0;root?.classList.remove('rm-enter');html.classList.remove('rm-pan-in');html.classList.add('rm-open');if(a)a.style.transformOrigin=''},ENTER_MS+30);
 }
 function show(){
  const s=getSession();if(!s)return;const b=book(s.bookId);if(!b){putSession(null);return}
@@ -205,7 +207,7 @@ function hide({fromPop=false}={}){
  const el=root,html=document.documentElement,a=appEl();
  el.removeAttribute('id');el.setAttribute('aria-hidden','true');
  root=null;shownId='';menuOpen=false;entering=0;
- html.classList.remove('rm-open','rm-entering');
+ html.classList.remove('rm-open','rm-entering','rm-pan-in');
  if(a)a.inert=false;
  releaseWake();updatePill();
  // 남겨 둔 뒤로 가기 기록을 정리합니다(뒤로 가기로 닫힌 경우는 이미 정리됨).
@@ -214,8 +216,8 @@ function hide({fromPop=false}={}){
  if(reducedMotion()){el.remove();if(a){a.style.transform='';a.style.opacity=''}return}
  if(leavingEl)finishLeave();
  leavingEl=el;el.classList.remove('rm-enter','rm-enter-min');el.classList.add('rm-leave');el.style.pointerEvents='none';
- if(a){a.style.transformOrigin=`50% ${Math.round(scrollY+innerHeight/2)}px`;a.style.transition='none';a.style.transform='scale(1.03)';void a.offsetWidth;
-  a.style.transition=`transform ${LEAVE_MS}ms cubic-bezier(.2,.7,.3,1)`;a.style.transform=''}
+ if(a)a.style.transformOrigin=`50% ${Math.round(scrollY+innerHeight/2)}px`;
+ html.classList.add('rm-pan-out');
  leaveTimer=setTimeout(finishLeave,LEAVE_MS+40);
 }
 export const readModeOpen=()=>!!root;
