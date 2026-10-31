@@ -298,3 +298,49 @@ button.link{background:none;border:0;padding:0;cursor:pointer;font:inherit;font-
 /* v2.21.0: 휴대폰 아래 메뉴 5칸(서재·독서·책 목록·통계·설정) */
 .mobile-nav{grid-template-columns:repeat(5,1fr)}
 @media(max-width:620px){.mobile-nav button{font-size:10.5px;padding:9px 0}}
+
+/* ---------- v2.24.0 나의 서재: 첫 화면을 책장이 꽉 채우도록 ----------
+   여백을 줄이고, 화면이 넓고 높을수록 책장(책등 높이·폭·제목 칸)을 단계적으로 키웁니다.
+   책등 폭은 --spine-min/--spine-max 숫자로 정해 두어야 책장 배치 계산(measureShelf)이 그대로 읽습니다. */
+.shelfmain{padding-top:20px}
+.shelfmain .hero{padding:8px 0 0}
+.shelfmain .hero h1{font-size:24px;margin:0 0 2px}
+.shelfmain .hero .desc{font-size:12px}
+.shelfmain .toolbar{margin:8px 0 8px}
+.shelfmain .shelf-label{margin:0 0 4px}
+.shelfmain .shelf{gap:14px}
+@media(min-width:941px){
+ .app:has(.shelfmain){max-width:1760px;grid-template-columns:208px minmax(0,1fr)}
+ .app:has(.shelfmain) .sidebar{padding-left:18px;padding-right:18px}
+ .shelfmain{padding-left:clamp(18px,2vw,36px);padding-right:clamp(18px,2vw,36px)}
+}
+@media(min-width:941px) and (min-height:740px){
+ .shelfmain .shelf{--spine-min:28px;--spine-max:72px}
+ .shelfmain .spine{height:calc(var(--height)*1.16);max-height:296px}
+ .shelfmain .books{min-height:280px}
+ .shelfmain .spine .title{max-height:200px}
+}
+@media(min-width:941px) and (min-height:860px){
+ .shelfmain .shelf{--spine-min:31px;--spine-max:80px}
+ .shelfmain .spine{height:calc(var(--height)*1.28);max-height:326px}
+ .shelfmain .books{min-height:308px}
+ .shelfmain .spine .title{max-height:222px}
+ .shelfmain .spine-motif{height:32px;min-height:32px}
+}
+@media(min-width:1500px) and (min-height:1000px){
+ .shelfmain .shelf{--spine-min:34px;--spine-max:88px}
+ .shelfmain .spine{height:calc(var(--height)*1.42);max-height:362px}
+ .shelfmain .books{min-height:342px}
+ .shelfmain .spine .title{max-height:248px}
+ .shelfmain .spine-motif{height:36px;min-height:36px}
+}
+@media(max-width:620px){
+ .shelfmain{padding-top:16px}
+ .shelfmain .hero{padding:6px 0 0}
+ .shelfmain .hero h1{font-size:22px}
+ .shelfmain .hero .desc{display:none}
+ .shelfmain .toolbar{margin:8px 0 10px}
+ .shelfmain .spine{height:calc(var(--height)*1.1);max-height:none}
+ .shelfmain .books{min-height:240px}
+ .shelfmain .spine .title{max-height:180px}
+}
